@@ -7,6 +7,7 @@ import {
   FONT_STYLE,
   TEXT_ALIGN,
   TYPOGRAPHY,
+  OVERFLOW_WRAP,
 } from '../../../helpers/constants/design-system';
 import Box, { MultipleSizes } from '../box';
 
@@ -21,6 +22,7 @@ export default function Typography({
   fontWeight = 'normal',
   fontStyle = 'normal',
   align,
+  overflowWrap,
   boxProps = {},
   margin = [1, 0],
 }) {
@@ -33,6 +35,8 @@ export default function Typography({
     {
       [`typography--align-${align}`]: Boolean(align),
       [`typography--color-${color}`]: Boolean(color),
+      [`typography--size-${fontSize}`]: Boolean(fontSize),
+      [`typography--overflowwrap-${overflowWrap}`]: Boolean(overflowWrap),
     },
   );
 
@@ -67,6 +71,8 @@ Typography.propTypes = {
   margin: MultipleSizes,
   fontWeight: PropTypes.oneOf(Object.values(FONT_WEIGHT)),
   fontStyle: PropTypes.oneOf(Object.values(FONT_STYLE)),
+  overflowWrap: PropTypes.oneOf(Object.values(OVERFLOW_WRAP)),
+  fontSize: PropTypes.string,
   tag: PropTypes.oneOf([
     'p',
     'h1',
