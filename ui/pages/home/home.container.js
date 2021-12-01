@@ -18,6 +18,7 @@ import {
   getNewNetworkAdded,
   hasUnsignedQRHardwareTransaction,
   hasUnsignedQRHardwareMessage,
+  getNewCollectibleAddedMessage,
   getFailedTransactionsToDisplayCount,
 } from '../../selectors';
 
@@ -33,6 +34,7 @@ import {
   setRecoveryPhraseReminderHasBeenShown,
   setRecoveryPhraseReminderLastShown,
   setNewNetworkAdded,
+  setNewCollectibleAddedMessage,
 } from '../../store/actions';
 import { setThreeBoxLastUpdated, hideWhatsNewPopup } from '../../ducks/app/app';
 import { getWeb3ShimUsageAlertEnabledness } from '../../ducks/metamask/metamask';
@@ -123,6 +125,7 @@ const mapStateToProps = (state) => {
     seedPhraseBackedUp,
     newNetworkAdded: getNewNetworkAdded(state),
     isSigningQRHardwareTransaction,
+    newCollectibleAddedMessage: getNewCollectibleAddedMessage(state),
     failedTransactionsToDisplayCount: getFailedTransactionsToDisplayCount(
       state,
     ),
@@ -157,6 +160,9 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(setRecoveryPhraseReminderLastShown(lastShown)),
   setNewNetworkAdded: (newNetwork) => {
     dispatch(setNewNetworkAdded(newNetwork));
+  },
+  setNewCollectibleAddedMessage: (message) => {
+    dispatch(setNewCollectibleAddedMessage(message));
   },
 });
 

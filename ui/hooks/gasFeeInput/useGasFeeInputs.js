@@ -5,9 +5,9 @@ import {
   CUSTOM_GAS_ESTIMATE,
   GAS_RECOMMENDATIONS,
   EDIT_GAS_MODES,
+  PRIORITY_LEVELS,
 } from '../../../shared/constants/gas';
 import { GAS_FORM_ERRORS } from '../../helpers/constants/gas';
-import { areDappSuggestedAndTxParamGasFeesTheSame } from '../../helpers/utils/confirm-tx.util';
 import {
   checkNetworkAndAccountSupports1559,
   getAdvancedInlineGasShown,
@@ -74,6 +74,10 @@ export function useGasFeeInputs(
   minimumGasLimit = '0x5208',
   editGasMode = EDIT_GAS_MODES.MODIFY_IN_PLACE,
 ) {
+  // eslint-disable-next-line prefer-destructuring
+  const EIP_1559_V2_ENABLED =
+    process.env.EIP_1559_V2 === true || process.env.EIP_1559_V2 === 'true';
+
   const supportsEIP1559 =
     useSelector(checkNetworkAndAccountSupports1559) &&
     !isLegacyTransaction(transaction?.txParams);
@@ -102,10 +106,10 @@ export function useGasFeeInputs(
   });
 
   const [estimateUsed, setEstimateUsed] = useState(() => {
-    if (areDappSuggestedAndTxParamGasFeesTheSame(transaction)) {
-      return 'dappSuggested';
+    if (estimateToUse) {
+      return estimateToUse;
     }
-    return estimateToUse;
+    return PRIORITY_LEVELS.CUSTOM;
   });
 
   /**
@@ -114,9 +118,7 @@ export function useGasFeeInputs(
    * so that transaction is source of truth whenever possible.
    */
   useEffect(() => {
-    if (areDappSuggestedAndTxParamGasFeesTheSame(transaction)) {
-      setEstimateUsed('dappSuggested');
-    } else if (transaction?.userFeeLevel) {
+    if (transaction?.userFeeLevel) {
       setEstimateUsed(transaction?.userFeeLevel);
     }
   }, [setEstimateUsed, transaction]);
@@ -215,11 +217,6 @@ export function useGasFeeInputs(
   const { updateTransactionUsingGasFeeEstimates } = useTransactionFunctions({
     defaultEstimateToUse,
     gasLimit,
-    gasPrice,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-    gasFeeEstimates,
-    supportsEIP1559,
     transaction,
   });
 
@@ -304,6 +301,7 @@ export function useGasFeeInputs(
     hasGasErrors,
     hasSimulationError,
     supportsEIP1559,
+    supportsEIP1559V2: supportsEIP1559 && EIP_1559_V2_ENABLED,
     updateTransactionUsingGasFeeEstimates,
   };
 }

@@ -27,11 +27,10 @@ const GasDetailsItem = ({
   maxFeePerGas,
   maxPriorityFeePerGas,
   userAcknowledgedGasMissing,
-  txData,
   useNativeCurrencyAsPrimaryCurrency,
 }) => {
   const t = useI18nContext();
-  const { estimateUsed, hasSimulationError } = useGasFeeContext();
+  const { estimateUsed, hasSimulationError, transaction } = useGasFeeContext();
 
   if (hasSimulationError && !userAcknowledgedGasMissing) return null;
 
@@ -93,41 +92,43 @@ const GasDetailsItem = ({
           />
         </div>
       }
-      subText={t('editGasSubTextFee', [
-        <Box
-          key="editGasSubTextFeeLabel"
-          display="inline-flex"
-          className={classNames('gas-details-item__gasfee-label', {
-            'gas-details-item__gas-fee-warning': estimateUsed === 'high',
-          })}
-        >
-          <Box marginRight={1}>
-            <b>
-              {estimateUsed === 'high' && '⚠ '}
-              <I18nValue messageKey="editGasSubTextFeeLabel" />
-            </b>
-          </Box>
-          <div
-            key="editGasSubTextFeeValue"
-            className="gas-details-item__currency-container"
+      subText={
+        <>
+          <Box
+            key="editGasSubTextFeeLabel"
+            display="inline-flex"
+            className={classNames('gas-details-item__gasfee-label', {
+              'gas-details-item__gas-fee-warning': estimateUsed === 'high',
+            })}
           >
-            <HeartBeat />
-            <UserPreferencedCurrencyDisplay
-              key="editGasSubTextFeeAmount"
-              type={PRIMARY}
-              value={hexMaximumTransactionFee}
-              hideLabel={!useNativeCurrencyAsPrimaryCurrency}
-            />
-          </div>
-        </Box>,
-      ])}
+            <Box marginRight={1}>
+              <b>
+                {estimateUsed === 'high' && '⚠ '}
+                <I18nValue messageKey="editGasSubTextFeeLabel" />
+              </b>
+            </Box>
+            <div
+              key="editGasSubTextFeeValue"
+              className="gas-details-item__currency-container"
+            >
+              <HeartBeat />
+              <UserPreferencedCurrencyDisplay
+                key="editGasSubTextFeeAmount"
+                type={PRIMARY}
+                value={hexMaximumTransactionFee}
+                hideLabel={!useNativeCurrencyAsPrimaryCurrency}
+              />
+            </div>
+          </Box>
+        </>
+      }
       subTitle={
         <GasTiming
           maxPriorityFeePerGas={hexWEIToDecGWEI(
-            maxPriorityFeePerGas || txData.txParams.maxPriorityFeePerGas,
+            maxPriorityFeePerGas || transaction.txParams.maxPriorityFeePerGas,
           )}
           maxFeePerGas={hexWEIToDecGWEI(
-            maxFeePerGas || txData.txParams.maxFeePerGas,
+            maxFeePerGas || transaction.txParams.maxFeePerGas,
           )}
         />
       }
@@ -142,7 +143,6 @@ GasDetailsItem.propTypes = {
   maxFeePerGas: PropTypes.string,
   maxPriorityFeePerGas: PropTypes.string,
   userAcknowledgedGasMissing: PropTypes.bool.isRequired,
-  txData: PropTypes.object,
   useNativeCurrencyAsPrimaryCurrency: PropTypes.bool,
 };
 

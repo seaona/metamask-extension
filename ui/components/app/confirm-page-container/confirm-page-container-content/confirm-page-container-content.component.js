@@ -9,9 +9,6 @@ import { PageContainerFooter } from '../../../ui/page-container';
 import TransactionErrorDetailsModal from '../../modals/transaction-error-details-modal/transaction-error-details';
 import { ConfirmPageContainerSummary, ConfirmPageContainerWarning } from '.';
 
-// eslint-disable-next-line prefer-destructuring
-const EIP_1559_V2 = process.env.EIP_1559_V2;
-
 export default class ConfirmPageContainerContent extends Component {
   static contextTypes = {
     t: PropTypes.func.isRequired,
@@ -49,6 +46,7 @@ export default class ConfirmPageContainerContent extends Component {
     unapprovedTxCount: PropTypes.number,
     rejectNText: PropTypes.string,
     hideTitle: PropTypes.bool,
+    supportsEIP1559V2: PropTypes.bool,
     isFailedTransaction: PropTypes.bool,
   };
 
@@ -108,6 +106,7 @@ export default class ConfirmPageContainerContent extends Component {
       hideTitle,
       setUserAcknowledgedGasMissing,
       hideUserAcknowledgedGasMissing,
+      supportsEIP1559V2,
       isFailedTransaction,
     } = this.props;
 
@@ -149,20 +148,30 @@ export default class ConfirmPageContainerContent extends Component {
           hideTitle={hideTitle}
         />
         {this.renderContent()}
-        {!EIP_1559_V2 && !hasSimulationError && (errorKey || errorMessage) && (
-          <div className="confirm-page-container-content__error-container">
-            {errorKey ? (
-              <ErrorMessage errorKey={errorKey} />
-            ) : (
-              <DetailedErrorMessage
-                errorMessage={this.context.t('somethingWentWrong')}
-                linkText={this.context.t('moreDetails')}
-                onErrorMessageClick={() =>
-                  this.setState({ showTransactionErrorDetails: true })
-                }
-              />
-            )}
-          </div>
+        {!supportsEIP1559V2 &&
+          !hasSimulationError &&
+          (errorKey || errorMessage) && (
+            <div className="confirm-page-container-content__error-container">
+              {errorKey ? (
+                <ErrorMessage errorKey={errorKey} />
+              ) : (
+                <DetailedErrorMessage
+                  errorMessage={this.context.t('somethingWentWrong')}
+                  linkText={this.context.t('moreDetails')}
+                  onErrorMessageClick={() =>
+                    this.setState({ showTransactionErrorDetails: true })
+                  }
+                />
+              )}
+            </div>
+          )}
+        {this.state.showTransactionErrorDetails && (
+          <TransactionErrorDetailsModal
+            message={errorMessage}
+            closePopover={() => {
+              this.setState({ showTransactionErrorDetails: false });
+            }}
+          />
         )}
         {this.state.showTransactionErrorDetails && (
           <TransactionErrorDetailsModal

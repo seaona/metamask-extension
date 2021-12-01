@@ -26,7 +26,10 @@ import {
   TRANSACTION_STATUSES,
 } from '../../../shared/constants/transaction';
 import { getMethodName } from '../../helpers/utils/metrics';
-import { getTransactionTypeTitle } from '../../helpers/utils/transactions.util';
+import {
+  getTransactionTypeTitle,
+  isLegacyTransaction,
+} from '../../helpers/utils/transactions.util';
 import { toBuffer } from '../../../shared/modules/buffer-utils';
 
 import { TransactionModalContextProvider } from '../../contexts/transaction-modal';
@@ -57,7 +60,8 @@ import GasDetailsItem from './gas-details-item';
 import TransactionAlerts from './transaction-alerts';
 
 // eslint-disable-next-line prefer-destructuring
-const EIP_1559_V2 = process.env.EIP_1559_V2;
+const EIP_1559_V2_ENABLED =
+  process.env.EIP_1559_V2 === true || process.env.EIP_1559_V2 === 'true';
 
 const renderHeartBeatIfNotInTest = () =>
   process.env.IN_TEST === 'true' ? null : <LoadingHeartBeat />;
@@ -423,7 +427,9 @@ export default class ConfirmTransactionBase extends Component {
     ) : null;
 
     const renderGasDetailsItem = () => {
-      return EIP_1559_V2 ? (
+      return EIP_1559_V2_ENABLED &&
+        supportsEIP1559 &&
+        !isLegacyTransaction(txData) ? (
         <GasDetailsItem
           key="gas_details"
           hexMaximumTransactionFee={hexMaximumTransactionFee}
@@ -511,22 +517,25 @@ export default class ConfirmTransactionBase extends Component {
             </div>
           }
           subText={
-            !isMultiLayerFeeNetwork &&
-            t('editGasSubTextFee', [
-              <b key="editGasSubTextFeeLabel">{t('editGasSubTextFeeLabel')}</b>,
-              <div
-                key="editGasSubTextFeeValue"
-                className="confirm-page-container-content__currency-container"
-              >
-                {renderHeartBeatIfNotInTest()}
-                <UserPreferencedCurrencyDisplay
-                  key="editGasSubTextFeeAmount"
-                  type={PRIMARY}
-                  value={hexMaximumTransactionFee}
-                  hideLabel={!useNativeCurrencyAsPrimaryCurrency}
-                />
-              </div>,
-            ])
+            !isMultiLayerFeeNetwork && (
+              <>
+                <b key="editGasSubTextFeeLabel">
+                  {t('editGasSubTextFeeLabel')}
+                </b>
+                <div
+                  key="editGasSubTextFeeValue"
+                  className="confirm-page-container-content__currency-container"
+                >
+                  {renderHeartBeatIfNotInTest()}
+                  <UserPreferencedCurrencyDisplay
+                    key="editGasSubTextFeeAmount"
+                    type={PRIMARY}
+                    value={hexMaximumTransactionFee}
+                    hideLabel={!useNativeCurrencyAsPrimaryCurrency}
+                  />
+                </div>
+              </>
+            )
           }
           subTitle={
             <>
@@ -574,14 +583,12 @@ export default class ConfirmTransactionBase extends Component {
 
     return (
       <div className="confirm-page-container-content__details">
-        {EIP_1559_V2 && (
-          <TransactionAlerts
-            setUserAcknowledgedGasMissing={() =>
-              this.setUserAcknowledgedGasMissing()
-            }
-            userAcknowledgedGasMissing={userAcknowledgedGasMissing}
-          />
-        )}
+        <TransactionAlerts
+          setUserAcknowledgedGasMissing={() =>
+            this.setUserAcknowledgedGasMissing()
+          }
+          userAcknowledgedGasMissing={userAcknowledgedGasMissing}
+        />
         <TransactionDetail
           disabled={isDisabled()}
           userAcknowledgedGasMissing={userAcknowledgedGasMissing}
@@ -605,12 +612,14 @@ export default class ConfirmTransactionBase extends Component {
                 detailText={renderTotalDetailText()}
                 detailTotal={renderTotalDetailTotal()}
                 subTitle={t('transactionDetailGasTotalSubtitle')}
-                subText={t('editGasSubTextAmount', [
-                  <b key="editGasSubTextAmountLabel">
-                    {t('editGasSubTextAmountLabel')}
-                  </b>,
-                  renderTotalMaxAmount(),
-                ])}
+                subText={
+                  <>
+                    <b key="editGasSubTextAmountLabel">
+                      {t('editGasSubTextAmountLabel')}
+                    </b>
+                    {renderTotalMaxAmount()}
+                  </>
+                }
               />
             ),
           ]}
@@ -966,6 +975,7 @@ export default class ConfirmTransactionBase extends Component {
       gasFeeIsCustom,
       nativeCurrency,
       hardwareWalletRequiresConnection,
+      supportsEIP1559,
       isFailedTransaction,
     } = this.props;
     const {
@@ -1069,6 +1079,11 @@ export default class ConfirmTransactionBase extends Component {
           editingGas={editingGas}
           handleCloseEditGas={() => this.handleCloseEditGas()}
           currentTransaction={txData}
+          supportsEIP1559V2={
+            EIP_1559_V2_ENABLED &&
+            supportsEIP1559 &&
+            !isLegacyTransaction(txData)
+          }
           isFailedTransaction={isFailedTransaction}
         />
       </TransactionModalContextProvider>
