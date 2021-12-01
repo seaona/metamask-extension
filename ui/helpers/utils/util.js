@@ -437,10 +437,7 @@ export function getAssetImageURL(image, ipfsGateway) {
   }
 
   if (image.startsWith('ipfs://')) {
-    const contentIdentifier = util.getIpfsUrlContentIdentifier(image);
-    result = ipfsGateway.endsWith('/')
-      ? ipfsGateway + contentIdentifier
-      : `${ipfsGateway}/${contentIdentifier}`;
+    result = util.getFormattedIpfsUrl(ipfsGateway, image, true);
   }
   return result;
 }

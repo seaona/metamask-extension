@@ -2606,10 +2606,10 @@
   resolved "https://registry.yarnpkg.com/@metamask/contract-metadata/-/contract-metadata-1.31.0.tgz#9e3e46de7a955ea1ca61f7db20d9a17b5e91d3d0"
   integrity sha512-4FBJkg/vDiYp/thIiZknxrJ0lfsj2eWIPenwlNZmoqOhoL4VqhK5eKWxi+EuGMvv9taP+QBRk6Key7wC1uL78A==
 
-"@metamask/controllers@^21.0.1":
-  version "21.0.1"
-  resolved "https://registry.yarnpkg.com/@metamask/controllers/-/controllers-21.0.1.tgz#f7776a448afd3869dce76ecb34549e867fa78ec4"
-  integrity sha512-E8JLRlTC7jyUgJSaXgFYa3g5pt5NCtA87hyarZFoolNKL6yrQgLHxqRyfGV28TsNsawl1i++rxb/8rgAJSRPHw==
+"@metamask/controllers@^22.0.0":
+  version "22.0.0"
+  resolved "https://registry.yarnpkg.com/@metamask/controllers/-/controllers-22.0.0.tgz#54f172be2ae7e32ce47536a1ff06e35cc6ee3c80"
+  integrity sha512-5m4aT+B87IOAvvlbfgqI5n7Pd6VSQUjHBfm34qMBBL5jjUFUSfK6BL0h6ef2jxTE2VCuyBibQ8A7sETQ1+Hd+Q==
   dependencies:
     "@ethereumjs/common" "^2.3.1"
     "@ethereumjs/tx" "^3.2.1"
@@ -2637,6 +2637,7 @@
     immer "^9.0.6"
     isomorphic-fetch "^3.0.0"
     jsonschema "^1.2.4"
+    multiformats "^9.5.2"
     nanoid "^3.1.12"
     punycode "^2.1.1"
     single-call-balance-checker-abi "^1.0.0"
@@ -19724,6 +19725,11 @@ multicodec@^3.0.1:
   dependencies:
     uint8arrays "^2.1.5"
     varint "^6.0.0"
+
+multiformats@^9.5.2:
+  version "9.5.2"
+  resolved "https://registry.yarnpkg.com/multiformats/-/multiformats-9.5.2.tgz#14256e49bac8b6a5ecb558c4d3c347bb94873d65"
+  integrity sha512-nLQ9s7YOVtZdeNOVvCkNyFiZdS3wyq0gvCIvdm7Zy1zw3zBoColJKjMkIPXNdTqT7ruuq+G7HrezIN0cXiAZ0w==
 
 multihashes@^0.4.12, multihashes@^0.4.15, multihashes@~0.4.12, multihashes@~0.4.13, multihashes@~0.4.14, multihashes@~0.4.15:
   version "0.4.15"
