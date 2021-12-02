@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { PRIORITY_LEVELS } from '../../../../../../shared/constants/gas';
 import { SECONDARY } from '../../../../../helpers/constants/common';
 import { decGWEIToHexWEI } from '../../../../../helpers/utils/conversions.util';
-import {
-  getAdvancedGasFeeValues,
-  getIsAdvancedGasFeeDefault,
-} from '../../../../../selectors';
-import { setAdvancedGasFee } from '../../../../../store/actions';
+import { getAdvancedGasFeeValues } from '../../../../../selectors';
 import { useCurrencyDisplay } from '../../../../../hooks/useCurrencyDisplay';
 import { useGasFeeContext } from '../../../../../contexts/gasFee';
 import { useI18nContext } from '../../../../../hooks/useI18nContext';
@@ -20,10 +16,7 @@ import AdvancedGasFeeInputSubtext from '../../advanced-gas-fee-input-subtext';
 
 const PriorityFeeInput = () => {
   const t = useI18nContext();
-  const dispatch = useDispatch();
-
   const advancedGasFeeValues = useSelector(getAdvancedGasFeeValues);
-  const isAdvancedGasFeeDefault = useSelector(getIsAdvancedGasFeeDefault);
   const {
     setDirty,
     setMaxPriorityFeePerGas,
@@ -53,21 +46,7 @@ const PriorityFeeInput = () => {
 
   useEffect(() => {
     setMaxPriorityFeePerGas(priorityFee);
-    if (isAdvancedGasFeeDefault) {
-      dispatch(
-        setAdvancedGasFee({
-          ...advancedGasFeeValues,
-          priorityFee,
-        }),
-      );
-    }
-  }, [
-    priorityFee,
-    advancedGasFeeValues,
-    isAdvancedGasFeeDefault,
-    dispatch,
-    setMaxPriorityFeePerGas,
-  ]);
+  }, [priorityFee, setMaxPriorityFeePerGas]);
 
   return (
     <>

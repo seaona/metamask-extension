@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { PRIORITY_LEVELS } from '../../../../../../shared/constants/gas';
 import {
@@ -8,11 +8,7 @@ import {
 } from '../../../../../../shared/modules/conversion.utils';
 import { PRIMARY, SECONDARY } from '../../../../../helpers/constants/common';
 import { decGWEIToHexWEI } from '../../../../../helpers/utils/conversions.util';
-import {
-  getAdvancedGasFeeValues,
-  getIsAdvancedGasFeeDefault,
-} from '../../../../../selectors';
-import { setAdvancedGasFee } from '../../../../../store/actions';
+import { getAdvancedGasFeeValues } from '../../../../../selectors';
 import { useGasFeeContext } from '../../../../../contexts/gasFee';
 import { useI18nContext } from '../../../../../hooks/useI18nContext';
 import { useUserPreferencedCurrency } from '../../../../../hooks/useUserPreferencedCurrency';
@@ -45,7 +41,6 @@ const multiplyCurrencyValues = (baseFee, value, numberOfDecimals) =>
 
 const BaseFeeInput = () => {
   const t = useI18nContext();
-  const dispatch = useDispatch();
 
   const { gasFeeEstimates, estimateUsed, maxFeePerGas } = useGasFeeContext();
   const {
@@ -63,7 +58,6 @@ const BaseFeeInput = () => {
   } = useUserPreferencedCurrency(SECONDARY);
 
   const advancedGasFeeValues = useSelector(getAdvancedGasFeeValues);
-  const isAdvancedGasFeeDefault = useSelector(getIsAdvancedGasFeeDefault);
 
   const [editingInGwei, setEditingInGwei] = useState(false);
 
@@ -128,22 +122,11 @@ const BaseFeeInput = () => {
   useEffect(() => {
     setMaxFeePerGas(maxBaseFeeGWEI);
     setBaseFeeMultiplier(maxBaseFeeMultiplier);
-    if (isAdvancedGasFeeDefault) {
-      dispatch(
-        setAdvancedGasFee({
-          ...advancedGasFeeValues,
-          maxBaseFee: maxBaseFeeMultiplier,
-        }),
-      );
-    }
   }, [
     maxBaseFeeGWEI,
     maxBaseFeeMultiplier,
-    advancedGasFeeValues,
-    isAdvancedGasFeeDefault,
     setMaxFeePerGas,
     setBaseFeeMultiplier,
-    dispatch,
   ]);
 
   return (
