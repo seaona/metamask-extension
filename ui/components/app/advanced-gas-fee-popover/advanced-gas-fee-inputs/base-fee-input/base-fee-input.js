@@ -51,7 +51,7 @@ const BaseFeeInput = () => {
   const {
     setDirty,
     setMaxFeePerGas,
-    setMaxBaseFee,
+    setBaseFeeMultiplier,
   } = useAdvanceGasFeePopoverContext();
   const { estimatedBaseFee } = gasFeeEstimates;
   const {
@@ -127,7 +127,7 @@ const BaseFeeInput = () => {
 
   useEffect(() => {
     setMaxFeePerGas(maxBaseFeeGWEI);
-    setMaxBaseFee(maxBaseFeeMultiplier);
+    setBaseFeeMultiplier(maxBaseFeeMultiplier);
     if (isAdvancedGasFeeDefault) {
       dispatch(
         setAdvancedGasFee({
@@ -142,7 +142,7 @@ const BaseFeeInput = () => {
     advancedGasFeeValues,
     isAdvancedGasFeeDefault,
     setMaxFeePerGas,
-    setMaxBaseFee,
+    setBaseFeeMultiplier,
     dispatch,
   ]);
 
