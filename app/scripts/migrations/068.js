@@ -34,10 +34,10 @@ function transformState(state) {
   return {
     ...remainingState,
     PermissionController: getPermissionControllerState(PermissionsController),
-    PermissionLogController: getPermissionLogControllerState(
-      permissionsHistory,
-      permissionsLog,
-    ),
+    PermissionLogController: {
+      permissionActivityLog: permissionsLog,
+      permissionHistory: permissionsHistory,
+    },
     SubjectMetadataController: getSubjectMetadataControllerState(
       domainMetadata,
     ),
@@ -113,13 +113,6 @@ function getPermissionControllerState(PermissionsController) {
 
   return {
     subjects,
-  };
-}
-
-function getPermissionLogControllerState(permissionsHistory, permissionsLog) {
-  return {
-    permissionHistory: permissionsHistory,
-    permissionActivityLog: permissionsLog,
   };
 }
 
