@@ -133,7 +133,10 @@ const mapStateToProps = (state, ownProps) => {
     shortenAddress(toChecksumHexAddress(toAddress));
 
   const checksummedAddress = toChecksumHexAddress(toAddress);
-  const addressBookObject = addressBook[checksummedAddress];
+  const addressBookObject =
+    addressBook &&
+    addressBook[chainId] &&
+    addressBook[chainId][checksummedAddress];
   const toEns = ensResolutionsByAddress[checksummedAddress] || '';
   const toNickname = addressBookObject ? addressBookObject.name : '';
   const transactionStatus = transaction ? transaction.status : '';
@@ -246,6 +249,7 @@ const mapStateToProps = (state, ownProps) => {
     nativeCurrency,
     hardwareWalletRequiresConnection,
     isMultiLayerFeeNetwork,
+    chainId,
     isFailedTransaction,
   };
 };

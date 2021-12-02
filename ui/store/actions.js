@@ -72,19 +72,6 @@ export function tryUnlockMetamask(password) {
         return forceUpdateMetamaskState(dispatch);
       })
       .then(() => {
-        return new Promise((resolve, reject) => {
-          background.verifySeedPhrase((err) => {
-            if (err) {
-              dispatch(displayWarning(err.message));
-              reject(err);
-              return;
-            }
-
-            resolve();
-          });
-        });
-      })
-      .then(() => {
         dispatch(hideLoadingIndication());
       })
       .catch((err) => {
@@ -2229,6 +2216,29 @@ export function setUseCollectibleDetection(val) {
         dispatch(displayWarning(err.message));
       }
     });
+  };
+}
+
+export function setOpenSeaEnabled(val) {
+  return (dispatch) => {
+    dispatch(showLoadingIndication());
+    log.debug(`background.setOpenSeaEnabled`);
+    background.setOpenSeaEnabled(val, (err) => {
+      dispatch(hideLoadingIndication());
+      if (err) {
+        dispatch(displayWarning(err.message));
+      }
+    });
+  };
+}
+
+export function detectCollectibles() {
+  return async (dispatch) => {
+    dispatch(showLoadingIndication());
+    log.debug(`background.detectCollectibles`);
+    await promisifiedBackground.detectCollectibles();
+    dispatch(hideLoadingIndication());
+    await forceUpdateMetamaskState(dispatch);
   };
 }
 
