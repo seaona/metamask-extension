@@ -38,7 +38,6 @@ import {
 import {
   PermissionController,
   SubjectMetadataController,
-  CaveatMutatorOperation,
 } from '@metamask/snap-controllers';
 
 import { TRANSACTION_STATUSES } from '../../shared/constants/transaction';
@@ -96,14 +95,14 @@ import MetaMetricsController from './controllers/metametrics';
 import { segment } from './lib/segment';
 import createMetaRPCHandler from './lib/createMetaRPCHandler';
 import {
+  CaveatMutatorFactories,
   getCaveatSpecifications,
-  getPermissionSpecifications,
-  unrestrictedMethods,
-} from './controllers/permissions/specifications';
-import {
-  getPermittedAccountsByOrigin,
   getChangedAccounts,
-} from './controllers/permissions/selectors';
+  getPermissionBackgroundApiMethods,
+  getPermissionSpecifications,
+  getPermittedAccountsByOrigin,
+  unrestrictedMethods,
+} from './controllers/permissions';
 
 export const METAMASK_CONTROLLER_EVENTS = {
   // Fired after state changes that impact the extension badge (unapproved msg count)
@@ -1323,66 +1322,7 @@ export default class MetamaskController extends EventEmitter {
         permissionController.rejectPermissionsRequest,
         permissionController,
       ),
-      requestAccountsPermissionWithId: nodeify(async (origin) => {
-        const [, { id }] = await permissionController.requestPermissions(
-          { origin },
-          {
-            eth_accounts: {},
-          },
-        );
-        return id;
-      }, this),
-      addPermittedAccount: (origin, account) => {
-        const existing = permissionController.getCaveat(
-          origin,
-          RestrictedMethods.eth_accounts,
-          CaveatTypes.restrictReturnedAccounts,
-        );
-
-        if (existing.value.includes(account)) {
-          throw new Error(
-            `eth_accounts permission for origin "${origin}" already permits account "${account}".`,
-          );
-        }
-
-        permissionController.updateCaveat(
-          origin,
-          RestrictedMethods.eth_accounts,
-          CaveatTypes.restrictReturnedAccounts,
-          [...existing.value, account],
-        );
-      },
-      removePermittedAccount: (origin, account) => {
-        const existing = permissionController.getCaveat(
-          origin,
-          RestrictedMethods.eth_accounts,
-          CaveatTypes.restrictReturnedAccounts,
-        );
-
-        if (!existing.value.includes(account)) {
-          throw new Error(
-            `eth_accounts permission for origin "${origin}" already does not permit account "${account}".`,
-          );
-        }
-
-        const remainingAccounts = existing.value.filter(
-          (existingAccount) => existingAccount !== account,
-        );
-
-        if (remainingAccounts.length === 0) {
-          permissionController.revokePermission(
-            origin,
-            RestrictedMethods.eth_accounts,
-          );
-        } else {
-          permissionController.updateCaveat(
-            origin,
-            RestrictedMethods.eth_accounts,
-            CaveatTypes.restrictReturnedAccounts,
-            remainingAccounts,
-          );
-        }
-      },
+      ...getPermissionBackgroundApiMethods(permissionController),
 
       // swaps
       fetchAndSetQuotes: nodeify(
@@ -2106,27 +2046,16 @@ export default class MetamaskController extends EventEmitter {
    * remove the specified address from every eth_accounts permission. If a
    * permission only included this address, the permission is revoked entirely.
    *
-   * @param {string} targetAddress - The address of the account to stop exposing
+   * @param {string} targetAccount - The address of the account to stop exposing
    * to third parties.
    */
-  removeAllAccountPermissions(targetAddress) {
+  removeAllAccountPermissions(targetAccount) {
     this.permissionController.updatePermissionsByCaveat(
       CaveatTypes.restrictReturnedAccounts,
-      (existingAccounts) => {
-        const newAccounts = existingAccounts.filter(
-          (address) => address !== targetAddress,
-        );
-
-        if (newAccounts.length === existingAccounts.length) {
-          return { operation: CaveatMutatorOperation.noop };
-        } else if (newAccounts.length > 0) {
-          return {
-            operation: CaveatMutatorOperation.updateValue,
-            value: newAccounts,
-          };
-        }
-        return { operation: CaveatMutatorOperation.revokePermission };
-      },
+      (existingAccounts) =>
+        CaveatMutatorFactories[
+          CaveatTypes.restrictReturnedAccounts
+        ].removeAccount(targetAccount, existingAccounts),
     );
   }
 
