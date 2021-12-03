@@ -25,29 +25,29 @@ const NetworkStatistics = () => {
       >
         <I18nValue messageKey="networkStatus" />
       </Typography>
-      <div className="network-status__info">
-        <div className="network-status__info__field">
-          <span className="network-status__info__field-data">
+      <div className="network-statistics__info">
+        <div className="network-statistics__info__field">
+          <span className="network-statistics__info__field-data">
             <BaseFeeTooltip>
               {gasFeeEstimates?.estimatedBaseFee &&
                 `${gasFeeEstimates?.estimatedBaseFee} GWEI`}
             </BaseFeeTooltip>
           </span>
-          <span className="network-status__info__field-label">
+          <span className="network-statistics__info__field-label">
             <I18nValue messageKey="baseFee" />
           </span>
         </div>
-        <div className="network-status__info__separator" />
-        <div className="network-status__info__field network-status__info__field--priority-fee">
-          <span className="network-status__info__field-data">
+        <div className="network-statistics__info__separator" />
+        <div className="network-statistics__info__field network-statistics__info__field--priority-fee">
+          <span className="network-statistics__info__field-data">
             <PriorityFeeTooltip>0.5 - 22 GWEI</PriorityFeeTooltip>
           </span>
-          <span className="network-status__info__field-label">
+          <span className="network-statistics__info__field-label">
             <I18nValue messageKey="priorityFeeProperCase" />
           </span>
         </div>
-        <div className="network-status__info__separator" />
-        <div className="network-status__info__field">
+        <div className="network-statistics__info__separator" />
+        <div className="network-statistics__info__field">
           <StatusSlider />
         </div>
       </div>
