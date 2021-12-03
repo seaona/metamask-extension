@@ -1738,14 +1738,14 @@
     "message": "Network status"
   },
   "networkStatusBaseFeeTooltip": {
-    "message": "The base fee is set by the network and changes every 8-12 seconds. Our $1 and $2 options account for sudden increases.",
+    "message": "The base fee is set by the network and changes every 13-14 seconds. Our $1 and $2 options account for sudden increases.",
     "description": "$1 and $2 are bold text for Medium and Aggressive respectively."
   },
   "networkStatusPriorityFeeTooltip": {
     "message": "Range of priority fees (aka “miner tip”). This goes to miners and incentivizes them to prioritize your transaction."
   },
   "networkStatusStabilityFeeTooltip": {
-    "message": "Gas fees are $1 relative to the past 24 hours.",
+    "message": "Gas fees are $1 relative to the past 72 hours.",
     "description": "$1 is networks stability value - stable, low, high"
   },
   "networkURL": {
