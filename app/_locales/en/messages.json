@@ -1535,7 +1535,7 @@
     "message": "Lock time is too great"
   },
   "low": {
-    "message": "low"
+    "message": "Low"
   },
   "lowGasSettingToolTipMessage": {
     "message": "Use $1 to wait for a cheaper price. Time estimates are much less accurate as prices are somewhat unpredicible.",
