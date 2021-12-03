@@ -1520,7 +1520,7 @@
     "message": "Low"
   },
   "lowLowercase": {
-    "message": "Low"
+    "message": "low"
   },
   "lowPriorityMessage": {
     "message": "Future transactions will queue after this one. This price was last seen was some time ago."
