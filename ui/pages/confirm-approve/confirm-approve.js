@@ -8,10 +8,7 @@ import {
   updateCustomNonce,
   getNextNonce,
 } from '../../store/actions';
-import {
-  getTokenData,
-  isLegacyTransaction,
-} from '../../helpers/utils/transactions.util';
+import { getTokenData } from '../../helpers/utils/transactions.util';
 import {
   calcTokenAmount,
   getTokenAddressParam,
@@ -93,9 +90,7 @@ export default function ConfirmApprove() {
   } = useSelector((state) => transactionFeeSelector(state, transaction));
 
   const supportsEIP1559V2 =
-    EIP_1559_V2_ENABLED &&
-    networkAndAccountSupports1559 &&
-    !isLegacyTransaction(transaction?.txParams);
+    EIP_1559_V2_ENABLED && networkAndAccountSupports1559;
 
   const currentToken = (tokens &&
     tokens.find(({ address }) =>
