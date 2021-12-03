@@ -1775,10 +1775,10 @@
     "message": "New Contract"
   },
   "newNFTsDetected": {
-    "message": "New NFTs detected"
+    "message": "New! NFT detection"
   },
   "newNFTsDetectedInfo": {
-    "message": "One or more new NFTs were detected in your wallet."
+    "message": "Allow MetaMask to automatically detect NFTs from Opensea and display in your MetaMask wallet."
   },
   "newNetworkAdded": {
     "message": "“$1” was successfully added!"
@@ -2397,7 +2397,7 @@
     "message": "Select HD Path"
   },
   "selectNFTPrivacyPreference": {
-    "message": "Select NFT privacy preference"
+    "message": "Turn on NFT detection in Settings"
   },
   "selectPathHelp": {
     "message": "If you don't see the accounts you expect, try switching the HD path."

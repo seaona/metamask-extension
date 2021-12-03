@@ -20,7 +20,7 @@ import {
   getCollectibles,
   getCollectibleContracts,
 } from '../../../ducks/metamask/metamask';
-import { getUseCollectibleDetection } from '../../../selectors';
+import { getIsMainnet, getUseCollectibleDetection } from '../../../selectors';
 import { EXPERIMENTAL_ROUTE } from '../../../helpers/constants/routes';
 import { detectCollectibles } from '../../../store/actions';
 
@@ -28,12 +28,12 @@ export default function CollectiblesTab({ onAddNFT }) {
   const collectibles = useSelector(getCollectibles);
   const collectibleContracts = useSelector(getCollectibleContracts);
   const useCollectibleDetection = useSelector(getUseCollectibleDetection);
+  const isMainnet = useSelector(getIsMainnet);
   const history = useHistory();
-  const newNFTsDetected = false;
   const t = useI18nContext();
-  const collections = {};
   const dispatch = useDispatch();
 
+  const collections = {};
   collectibles.forEach((collectible) => {
     if (collections[collectible.address]) {
       collections[collectible.address].collectibles.push(collectible);
@@ -62,7 +62,9 @@ export default function CollectiblesTab({ onAddNFT }) {
         />
       ) : (
         <Box padding={[6, 12, 6, 12]}>
-          {newNFTsDetected ? <NewCollectiblesNotice /> : null}
+          {isMainnet && !useCollectibleDetection ? (
+            <NewCollectiblesNotice />
+          ) : null}
           <Box justifyContent={JUSTIFY_CONTENT.CENTER}>
             <img src="./images/no-nfts.svg" />
           </Box>
