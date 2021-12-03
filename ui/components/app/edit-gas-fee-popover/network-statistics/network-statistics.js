@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { COLORS } from '../../../../helpers/constants/design-system';
+import {
+  COLORS,
+  TYPOGRAPHY,
+} from '../../../../helpers/constants/design-system';
 import { useGasFeeContext } from '../../../../contexts/gasFee';
 import I18nValue from '../../../ui/i18n-value';
 import Typography from '../../../ui/typography/typography';
@@ -15,10 +18,10 @@ const NetworkStatistics = () => {
     <div className="network-statistics">
       <Typography
         color={COLORS.UI4}
-        fontSize="10px"
         fontWeight="bold"
         margin={[3, 0]}
-        variant="h6"
+        tag={TYPOGRAPHY.H6}
+        variant={TYPOGRAPHY.H8}
       >
         <I18nValue messageKey="networkStatus" />
       </Typography>
