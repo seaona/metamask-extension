@@ -230,6 +230,7 @@ export function useGasFeeInputs(
     updateTransactionUsingGasFeeEstimates,
   } = useTransactionFunctions({
     defaultEstimateToUse,
+    editGasMode,
     gasFeeEstimates,
     gasLimit,
     transaction,

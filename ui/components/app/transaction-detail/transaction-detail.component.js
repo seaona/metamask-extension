@@ -44,7 +44,7 @@ export default function TransactionDetail({
             </span>
             <i className="fas fa-chevron-right asset-list-item__chevron-right" />
           </button>
-          {estimateUsed === 'custom' && onEdit && (
+          {estimateUsed === 'custom' && (
             <button onClick={() => openModal('advancedGasFee')}>
               {t('edit')}
             </button>

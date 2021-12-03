@@ -698,7 +698,7 @@ export default function ViewQuote() {
   return (
     <GasFeeContextProvider
       transaction={transaction}
-      mode={EDIT_GAS_MODES.SWAPS}
+      editGasMode={EDIT_GAS_MODES.SWAPS}
     >
       <TransactionModalContextProvider captureEventEnabled={false}>
         <div className="view-quote">
