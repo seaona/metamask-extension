@@ -169,17 +169,17 @@
   "advancedBaseGasFeeToolTip": {
     "message": "Any difference between your max base fee and the current base fee will be refunded after completion."
   },
+  "advancedGasFeeDefaultOptIn": {
+    "message": "Use the “new values” and advanced setting as default."
+  },
+  "advancedGasFeeDefaultOptOut": {
+    "message": "Always use these values and advanced setting as default."
+  },
   "advancedGasFeeModalTitle": {
     "message": "Advanced gas fee"
   },
   "advancedGasPriceTitle": {
     "message": "Gas price"
-  },
-  "advancedGassFeeDefaultOptIn": {
-    "message": "Use the “new values” and advanced setting as default."
-  },
-  "advancedGassFeeDefaultOptOut": {
-    "message": "Always use these values and advanced setting as default."
   },
   "advancedOptions": {
     "message": "Advanced Options"
