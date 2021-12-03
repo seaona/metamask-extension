@@ -81,6 +81,7 @@ const createProps = (customProps = {}) => {
     tokenConversionRate: 0.015,
     chainId: MAINNET_CHAIN_ID,
     networkAndAccountSupports1559: false,
+    supportsEIP1559V2: false,
     ...customProps,
   };
 };
