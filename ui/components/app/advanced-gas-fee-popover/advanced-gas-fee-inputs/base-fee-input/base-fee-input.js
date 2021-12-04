@@ -130,7 +130,7 @@ const BaseFeeInput = () => {
   ]);
 
   return (
-    <Box className="base-fee-input">
+    <Box className="base-fee-input" margin={[0, 2]}>
       <FormField
         onChange={updateBaseFee}
         titleText={t('maxBaseFee')}

@@ -10,6 +10,7 @@ import { useGasFeeContext } from '../../../../../contexts/gasFee';
 import { useI18nContext } from '../../../../../hooks/useI18nContext';
 import { useUserPreferencedCurrency } from '../../../../../hooks/useUserPreferencedCurrency';
 import FormField from '../../../../ui/form-field';
+import Box from '../../../../ui/box';
 
 import { useAdvanceGasFeePopoverContext } from '../../context';
 import AdvancedGasFeeInputSubtext from '../../advanced-gas-fee-input-subtext';
@@ -49,7 +50,7 @@ const PriorityFeeInput = () => {
   }, [priorityFee, setMaxPriorityFeePerGas]);
 
   return (
-    <>
+    <Box margin={[0, 2]}>
       <FormField
         onChange={updatePriorityFee}
         titleText={t('priorityFee')}
@@ -60,7 +61,7 @@ const PriorityFeeInput = () => {
         numeric
       />
       <AdvancedGasFeeInputSubtext latest="1-18 GWEI" historical="23-359 GWEI" />
-    </>
+    </Box>
   );
 };
 

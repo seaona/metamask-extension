@@ -42,7 +42,11 @@ const AdvancedGasFeeGasLimit = () => {
   }
 
   return (
-    <Typography tag={TYPOGRAPHY.Paragraph} variant={TYPOGRAPHY.H7}>
+    <Typography
+      tag={TYPOGRAPHY.Paragraph}
+      variant={TYPOGRAPHY.H7}
+      margin={[0, 2]}
+    >
       <Box
         display="flex"
         alignItems="center"
