@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Box from '../../ui/box';
 import Button from '../../ui/button';
 import Typography from '../../ui/typography/typography';
-import NewCollectiblesNotice from '../new-collectibles-notice';
+import CollectiblesDetectionNotice from '../collectibles-detection-notice';
 import CollectiblesItems from '../collectibles-items';
 import {
   COLORS,
@@ -19,6 +19,7 @@ import { useI18nContext } from '../../../hooks/useI18nContext';
 import {
   getCollectibles,
   getCollectibleContracts,
+  getCollectiblesDetectionNoticeDismissed,
 } from '../../../ducks/metamask/metamask';
 import { getIsMainnet, getUseCollectibleDetection } from '../../../selectors';
 import { EXPERIMENTAL_ROUTE } from '../../../helpers/constants/routes';
@@ -29,6 +30,7 @@ export default function CollectiblesTab({ onAddNFT }) {
   const collectibleContracts = useSelector(getCollectibleContracts);
   const useCollectibleDetection = useSelector(getUseCollectibleDetection);
   const isMainnet = useSelector(getIsMainnet);
+  const collectibleDetectionNoticeDismissed = useSelector(getCollectiblesDetectionNoticeDismissed);
   const history = useHistory();
   const t = useI18nContext();
   const dispatch = useDispatch();
@@ -62,8 +64,8 @@ export default function CollectiblesTab({ onAddNFT }) {
         />
       ) : (
         <Box padding={[6, 12, 6, 12]}>
-          {isMainnet && !useCollectibleDetection ? (
-            <NewCollectiblesNotice />
+          {isMainnet && !useCollectibleDetection && !collectibleDetectionNoticeDismissed ? (
+            <CollectiblesDetectionNotice />
           ) : null}
           <Box justifyContent={JUSTIFY_CONTENT.CENTER}>
             <img src="./images/no-nfts.svg" />

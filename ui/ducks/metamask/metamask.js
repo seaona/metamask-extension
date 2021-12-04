@@ -36,6 +36,7 @@ export default function reduceMetamask(state = {}, action) {
       showFiatInTestnets: false,
       showTestNetworks: false,
       useNativeCurrencyAsPrimaryCurrency: true,
+      collectiblesDetectionNoticeDismissed: false,
     },
     firstTimeFlowType: null,
     completedOnboarding: false,
@@ -181,6 +182,13 @@ export default function reduceMetamask(state = {}, action) {
       };
     }
 
+    case actionConstants.DISMISS_COLLECTIBLES_DETECTION_NOTICE: {
+      return {
+        ...metamaskState,
+        collectiblesDetectionNoticeDismissed: true,
+      };
+    }
+
     case actionConstants.SET_FIRST_TIME_FLOW_TYPE: {
       return {
         ...metamaskState,
@@ -278,6 +286,10 @@ export const getCollectibleContracts = (state) => {
   } = state;
 
   return allCollectibleContracts?.[selectedAddress]?.[chainId] || [];
+};
+
+export const getCollectiblesDetectionNoticeDismissed = (state) => {
+  return state.metamask.collectiblesDetectionNoticeDismissed;
 };
 
 export function getBlockGasLimit(state) {

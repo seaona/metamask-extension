@@ -2067,6 +2067,10 @@ export function completeOnboarding() {
   };
 }
 
+export function dismissCollectiblesDetectionNotice() {
+ return setPreference('collectiblesDetectionNoticeDismissed', true)
+}
+
 export function setMouseUserState(isMouseUser) {
   return {
     type: actionConstants.SET_MOUSE_USER_STATE,

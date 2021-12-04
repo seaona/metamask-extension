@@ -56,6 +56,7 @@ export default class PreferencesController {
       identities: {},
       lostIdentities: {},
       forgottenPassword: false,
+      collectiblesDetectionNoticeDismissed: false,
       preferences: {
         autoLockTimeLimit: undefined,
         showFiatInTestnets: false,
@@ -620,5 +621,12 @@ export default class PreferencesController {
     }
 
     this.store.updateState({ infuraBlocked: isBlocked });
+  }
+
+  /**
+   * A setter for the `collectiblesDetectionNoticeDismissed` property
+   */
+  setCollectiblesDetectionNoticeDismissed() {
+    this.store.updateState({ collectiblesDetectionNoticeDismissed: true });
   }
 }

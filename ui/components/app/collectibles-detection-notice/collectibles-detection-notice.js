@@ -13,14 +13,25 @@ import {
 import { useI18nContext } from '../../../hooks/useI18nContext';
 import Button from '../../ui/button';
 import { EXPERIMENTAL_ROUTE } from '../../../helpers/constants/routes';
+import { useDispatch } from 'react-redux';
+import { dismissCollectiblesDetectionNotice } from '../../../store/actions';
 
-export default function NewCollectiblesNotice() {
+export default function CollectiblesDetectionNotice() {
   const t = useI18nContext();
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const onDismiss = () => {
+    dispatch(dismissCollectiblesDetectionNotice());
+  };
+
   return (
-    <Box marginBottom={8} className="new-collectibles-notice">
-      <Dialog type="message" className="new-collectibles-notice__message">
-        <button className="new-collectibles-notice__message__close-button" />
+    <Box marginBottom={8} className="collectibles-detection-notice">
+      <Dialog type="message" className="collectibles-detection-notice__message">
+        <button
+          onClick={onDismiss}
+          className="collectibles-detection-notice__message__close-button"
+        />
         <Box display={DISPLAY.FLEX}>
           <Box paddingTop={2}>
             <i style={{ fontSize: '1rem' }} className="fa fa-info-circle" />
@@ -48,14 +59,7 @@ export default function NewCollectiblesNotice() {
                 history.push(EXPERIMENTAL_ROUTE);
               }}
             >
-              <Typography
-                // color={COLORS.BLACK}
-                align={TEXT_ALIGN.LEFT}
-                variant={TYPOGRAPHY.Paragraph}
-                fontWeight={FONT_WEIGHT.BOLD}
-              >
-                {t('selectNFTPrivacyPreference')}
-              </Typography>
+              {t('selectNFTPrivacyPreference')}
             </Button>
           </Box>
         </Box>

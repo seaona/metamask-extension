@@ -484,6 +484,11 @@ export function getShowTestNetworks(state) {
   return Boolean(showTestNetworks);
 }
 
+export function getCollectiblesDetectionNoticeDismissed(state) {
+  const { collectiblesDetectionNoticeDismissed } = getPreferences(state);
+  return Boolean(collectiblesDetectionNoticeDismissed);
+}
+
 export function getShouldShowFiat(state) {
   const isMainNet = getIsMainnet(state);
   const conversionRate = getConversionRate(state);
