@@ -27,6 +27,7 @@ import {
 import SwapIcon from '../../ui/icon/swap-icon.component';
 import BuyIcon from '../../ui/icon/overview-buy-icon.component';
 import SendIcon from '../../ui/icon/overview-send-icon.component';
+import ChatIcon from '../../ui/icon/overview-chat-icon.component';
 import { setSwapsFromToken } from '../../../ducks/swaps/swaps';
 import IconButton from '../../ui/icon-button';
 import { isHardwareKeyring } from '../../../helpers/utils/hardware';
@@ -158,6 +159,23 @@ const EthOverview = ({ className }) => {
                 {contents}
               </Tooltip>
             )}
+          />
+          <IconButton
+            className="eth-overview__button"
+            data-testid="eth-overview-send"
+            Icon={ChatIcon}
+            label={t('chat')}
+            onClick={() => {
+              trackEvent({
+                event: 'Clicked Send: Eth',
+                category: EVENT.CATEGORIES.NAVIGATION,
+                properties: {
+                  action: 'Home',
+                  legacy_event: true,
+                },
+              });
+              history.push(SEND_ROUTE);
+            }}
           />
         </>
       }
