@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "master"
+      - "staging"
+      - "trying"
+  pull_request:
+
+jobs:
+  build_and_test:
+    env:
+      BUF_VERSION: "0.56.0"
+      NIM_WAKU_VERSION: "v0.9"
+    strategy:
+      matrix:
+        node: [16]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.3.3
+
+      - name: Get nim-waku
+        shell: bash
+        run: |
+          mkdir -p nim-waku/build
+          cd nim-waku
+          wget "https://github.com/status-im/nim-waku/releases/download/${NIM_WAKU_VERSION}/nim-waku-ubuntu-latest.tar.gz"
+          tar xavf nim-waku-ubuntu-latest.tar.gz
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Ensure wakunode2 is ready
+        shell: bash
+        run: |
+          uname -a
+          cd nim-waku/build
+          ./wakunode2 --help
+
+      - name: Install bufbuild
+        uses: mathematic-inc/setup-buf@v2beta
+        with:
+          buf-version: ${{ env.BUF_VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: "3.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache npm cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: node-${{ matrix.os }}-${{ matrix.node }}-v1-${{ hashFiles('**/package-lock.json') }}
+
+      - name: install using npm ci
+        uses: bahmutov/npm-install@v1
+
+      - name: Generate protobuf code
+        run: npm run proto
+
+      - name: Check all protobuf code was committed
+        shell: bash
+        run: |
+          res=$(git status --short --ignore-submodules)
+          echo -n "'$res'" # For debug purposes
+          [ $(echo -n "$res"|wc -l) -eq 0 ]
+
+      - name: build
+        run: npm run build
+
+      - name: Check no proto files changed
+        shell: bash
+        run: |
+          [ $(git status --short --ignore-submodules|wc -l) -eq 0 ]
+
+      - name: test
+        env:
+          DEBUG: "waku:nim-waku*,waku:test*"
+        run: npm run test
+
+      - name: Upload logs on failure
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: nim-waku-logs
+          path: log/

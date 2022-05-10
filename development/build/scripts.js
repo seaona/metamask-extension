@@ -218,6 +218,12 @@ function createScriptTasks({
       createTaskForBundleSentry({ devMode, testing }),
     );
 
+    // this can run whenever
+    const setupWaku = createTask(
+      `${taskPrefix}:setup-waku`,
+      createTaskForBundleSetupWaku({ devMode, testing }),
+    );
+
     const phishingDetectSubtask = createTask(
       `${taskPrefix}:phishing-detect`,
       createTaskForBundlePhishingDetect({ devMode, testing }),
@@ -246,6 +252,7 @@ function createScriptTasks({
       disableConsoleSubtask,
       installSentrySubtask,
       phishingDetectSubtask,
+      setupWaku,
     ].map((subtask) =>
       runInChildProcess(subtask, {
         applyLavaMoat,
@@ -281,6 +288,23 @@ function createScriptTasks({
     return createNormalBundle({
       browserPlatforms,
       buildType,
+      destFilepath: `${label}.js`,
+      devMode,
+      entryFilepath: `./app/scripts/${label}.js`,
+      ignoredFiles,
+      label,
+      testing,
+      policyOnly,
+      shouldLintFenceFiles,
+      version,
+    });
+  }
+
+  function createTaskForBundleSetupWaku({ devMode, testing }) {
+    const label = 'setupWaku';
+    return createNormalBundle({
+      buildType,
+      browserPlatforms,
       destFilepath: `${label}.js`,
       devMode,
       entryFilepath: `./app/scripts/${label}.js`,

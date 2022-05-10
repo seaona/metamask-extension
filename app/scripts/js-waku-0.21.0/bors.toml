@@ -1,0 +1,11 @@
+status = [
+  "build_and_test (16, ubuntu-latest)",
+  "examples_build_and_test (eth-pm)",
+  "examples_build_and_test (eth-pm-wallet-encryption)",
+  "examples_build_and_test (relay-angular-chat)",
+  "examples_build_and_test (relay-reactjs-chat)",
+  "examples_build_and_test (store-reactjs-chat)",
+  "examples_build_and_test (web-chat)",
+]
+block_labels = ["work-in-progress"]
+delete_merged_branches = true
