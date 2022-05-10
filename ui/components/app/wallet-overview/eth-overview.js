@@ -9,6 +9,7 @@ import { I18nContext } from '../../../contexts/i18n';
 import {
   SEND_ROUTE,
   BUILD_QUOTE_ROUTE,
+  CHAT_ROUTE,
 } from '../../../helpers/constants/routes';
 import Tooltip from '../../ui/tooltip';
 import UserPreferencedCurrencyDisplay from '../user-preferenced-currency-display';
@@ -162,19 +163,19 @@ const EthOverview = ({ className }) => {
           />
           <IconButton
             className="eth-overview__button"
-            data-testid="eth-overview-send"
+            data-testid="eth-overview-chat"
             Icon={ChatIcon}
             label={t('chat')}
             onClick={() => {
               trackEvent({
-                event: 'Clicked Send: Eth',
+                event: 'Clicked Chat',
                 category: EVENT.CATEGORIES.NAVIGATION,
                 properties: {
                   action: 'Home',
                   legacy_event: true,
                 },
               });
-              history.push(SEND_ROUTE);
+              history.push(CHAT_ROUTE);
             }}
           />
         </>
