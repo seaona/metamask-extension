@@ -1479,6 +1479,12 @@
   "history": {
     "message": "History"
   },
+  "ignoreAll": {
+    "message": "Ignore all"
+  },
+  "ignoreTokenWarning": {
+    "message": "If you hide tokens, they will not be shown in your wallet. However, you can still add them by searching for them."
+  },
   "import": {
     "message": "Import",
     "description": "Button to import an account from a selected file"
@@ -1527,6 +1533,10 @@
   },
   "importWallet": {
     "message": "Import wallet"
+  },
+  "importWithCount": {
+    "message": "Import $1",
+    "description": "$1 will the number of detected tokens that are selected for importing, if all of them are selected then $1 will be all"
   },
   "importYourExisting": {
     "message": "Import your existing wallet using a Secret Recovery Phrase"
@@ -2037,6 +2047,13 @@
   },
   "newToMetaMask": {
     "message": "New to MetaMask?"
+  },
+  "newTokensImportedMessage": {
+    "message": "You’ve successfully imported $1.",
+    "description": "$1 is the string of symbols of all the tokens imported"
+  },
+  "newTokensImportedTitle": {
+    "message": "Token imported"
   },
   "newTotal": {
     "message": "New Total"
@@ -3643,6 +3660,10 @@
   },
   "tokenSymbol": {
     "message": "Token Symbol"
+  },
+  "tokensFoundTitle": {
+    "message": "$1 new tokens found",
+    "description": "$1 is the number of new tokens detected"
   },
   "tooltipApproveButton": {
     "message": "I understand"
