@@ -1,5 +1,5 @@
-import { discovery, Waku, WakuMessage, getPredefinedBootstrapNodes } from "./js-waku-0.21.0/src";
-const contentTopic = '/relay-demo/1/message/utf-8';
+import { Waku, WakuMessage } from "js-waku";
+const contentTopic = '/metamask';
 
 function start() {
   try {
@@ -7,9 +7,9 @@ function start() {
         console.log('Issue starting Waku node', e);
       }
     ).then(wakuNode => {
-
+      console.log("node setup correctly")
       wakuNode.relay.addObserver((wakuMessage) => {
-        console.log("sendmessage")
+        console.log("observer added")
         const text = wakuMessage.payloadAsUtf8;
         console.log(text)
       }, [contentTopic]);
@@ -20,7 +20,7 @@ function start() {
         })
         .then(() => {
           sendMessage = () => {
-            console.log("sendmessage")
+            console.log("preparing message")
             const text = "test";
             WakuMessage.fromUtf8String(text, contentTopic).catch(e => console.log('Error encoding message', e)).then(
             wakuMessage => {

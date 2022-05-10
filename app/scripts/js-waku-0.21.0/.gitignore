@@ -1,8 +1,0 @@
-.idea/*
-.nyc_output
-.angular
-build
-node_modules
-src/**.js
-coverage
-*.log

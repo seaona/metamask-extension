@@ -179,6 +179,7 @@
     "globalthis": "^1.0.1",
     "human-standard-token-abi": "^2.0.0",
     "immer": "^9.0.6",
+    "js-waku": "^0.22.0",
     "json-rpc-engine": "^6.1.0",
     "json-rpc-middleware-stream": "^2.1.1",
     "jsonschema": "^1.2.4",
@@ -381,7 +382,7 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "engines": {
-    "node": "^14.15.1",
+    "node": "^16.14.0",
     "yarn": "^1.16.0"
   },
   "lavamoat": {
@@ -446,7 +447,8 @@
       "@keystonehq/bc-ur-registry-eth>hdkey>secp256k1": false,
       "@metamask/rpc-methods>@metamask/key-tree>secp256k1": false,
       "eth-lattice-keyring>gridplus-sdk>secp256k1": false,
-      "eth-lattice-keyring>secp256k1": false
+      "eth-lattice-keyring>secp256k1": false,
+      "js-waku>protobufjs": false
     }
   }
 }
