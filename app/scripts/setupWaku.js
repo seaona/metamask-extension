@@ -1,41 +1,42 @@
-import { Waku, WakuMessage } from "./js-waku-0.21.0/src";
+import { discovery, Waku, WakuMessage, getPredefinedBootstrapNodes } from "./js-waku-0.21.0/src";
+const contentTopic = '/relay-demo/1/message/utf-8';
 
+function start() {
+  try {
+    Waku.create({ bootstrap: { default: true } }).catch(e => {
+        console.log('Issue starting Waku node', e);
+      }
+    ).then(wakuNode => {
 
-async function start() {
-const contentTopic ='/metamask/chat'
+      wakuNode.relay.addObserver((wakuMessage) => {
+        console.log("sendmessage")
+        const text = wakuMessage.payloadAsUtf8;
+        console.log(text)
+      }, [contentTopic]);
 
-const waku = await Waku.create({ bootstrap: { default: true } });
-// Wait to be connected to at least one peer
-await new Promise((resolve, reject) => {
-  // If we are not connected to any peer within 10sec let's just reject
-  // As we are not implementing connection management in this example
-
-  setTimeout(reject, 10000);
-  waku.libp2p.connectionManager.on("peer:connect", () => {
-    console.log("CONNNEEEECTGEEED")
-    resolve(null);
-  });
-
-});
-
-const processIncomingMessage = (wakuMessage) => {
-  console.log("messageeee")
-  console.log(`Message Received: ${wakuMessage.payloadAsUtf8}`);
-};
-
-waku.relay.addObserver(processIncomingMessage, ['/metamask/chat']);
-
-  const wakuMessage = await WakuMessage.fromUtf8String(
-    'Here is a message',
-    `/metamask/chat`,
-  );
-
-  await waku.relay.send(wakuMessage);
-
- 
-
+      wakuNode.waitForRemotePeer()
+        .catch((e) => {
+          console.log('Failed to connect to peers: ' + e.toString());
+        })
+        .then(() => {
+          sendMessage = () => {
+            console.log("sendmessage")
+            const text = "test";
+            WakuMessage.fromUtf8String(text, contentTopic).catch(e => console.log('Error encoding message', e)).then(
+            wakuMessage => {
+              wakuNode.relay.send(wakuMessage).catch((e) => {
+                console.log('Error sending message', e);
+              }).then(() => {
+                console.log('Message sent', text);
+              });
+            }
+            );
+          };
+        });
+    });
+} catch (e) {
+    console.log(e);
+  }
 }
-
-
 
 start()
