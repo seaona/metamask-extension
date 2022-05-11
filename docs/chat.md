@@ -13,6 +13,8 @@
 
 `./build/wakunode2 --ports-shift:1 --staticnode:/ip4/0.0.0.0/tcp/60000/p2p/16Uiu2HAmJcBHW3o4PuKHLcn8aR9B9f4CGq4ytf36crhPdo9HLHV7 --rpc`
 
+Further info: https://github.com/status-im/nwaku
+
 ## RPC Methods
 Make post calls to the node using the port exposed  `127.0.0.1:8545`
 ### Health Check
