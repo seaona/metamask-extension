@@ -15,6 +15,11 @@ import { showQrScanner } from '../../store/actions';
 import Box from '../../components/ui/box';
 import Button from '../../components/ui/button';
 import EnsInput from './add-recipient/ens-input';
+import { 
+  wakuSubscribeToSubtopic,
+  wakuSendMessage,
+  wakuReadMessages,
+} from './chat.utils';
 
 const contentTopic = `/relay-reactjs-chat/1/chat/proto`;
 
@@ -23,6 +28,8 @@ const SimpleChatMessage = new protobuf.Type('SimpleChatMessage')
   .add(new protobuf.Field('text', 2, 'string'));
 
 export default function ChatScreen() {
+  wakuSubscribeToSubtopic()
+  wakuReadMessages()
   const userInput = useSelector(getRecipientUserInput);
   const recipient = useSelector(getRecipient);
   const isUsingMyAccountsForRecipientSearch = useSelector(
@@ -97,10 +104,11 @@ export default function ChatScreen() {
 
   const sendMessageOnClick = () => {
     // Check Waku is started and connected first.
-    if (wakuStatus !== 'Ready') {
+    /*if (wakuStatus !== 'Ready') {
       return;
-    }
-
+    }*/
+    wakuSendMessage("0x1a2b3c4d5e6f")
+    messages = wakuReadMessages()
     sendMessage(`Here is message #${sendCounter}`, waku, new Date()).then(() =>
       console.log('Message sent'),
     );
@@ -149,7 +157,7 @@ export default function ChatScreen() {
 
       <header className="App-header">
         <p>{wakuStatus}</p>
-        <button onClick={sendMessageOnClick} disabled={wakuStatus !== 'Ready'}>
+        <button onClick={sendMessageOnClick} >
           Send Message
         </button>
         <ul>

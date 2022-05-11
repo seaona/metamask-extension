@@ -25,7 +25,100 @@ export {
   isBalanceSufficient,
   isTokenBalanceSufficient,
   ellipsify,
+  wakuSubscribeToSubtopic,
+  wakuSendMessage,
+  wakuReadMessages,
 };
+
+import fetch from "node-fetch";
+
+const WAKU_NODE = 'http://127.0.0.1:8545'
+
+function wakuSubscribeToSubtopic(subtopic='metamask') {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "jsonrpc": "2.0",
+    "id": "id",
+    "method": "post_waku_v2_relay_v1_subscriptions",
+    "params": [
+      [
+        subtopic,
+      ]
+    ]
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(WAKU_NODE, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+function wakuSendMessage(message='0x', subtopic='metamask') {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "jsonrpc": "2.0",
+    "id": "id",
+    "method": "post_waku_v2_relay_v1_message",
+    "params": [
+      subtopic,
+      {
+        "payload": message,
+        "timestamp": 1626813243
+      }
+    ]
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(WAKU_NODE, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+
+function wakuReadMessages(subtopic='metamask') {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  var raw = JSON.stringify({
+    "jsonrpc": "2.0",
+    "id": "id",
+    "method": "get_waku_v2_relay_v1_messages",
+    "params": [
+      subtopic,
+    ]
+  });
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(WAKU_NODE, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
 
 function calcGasTotal(gasLimit = '0', gasPrice = '0') {
   return multiplyCurrencies(gasLimit, gasPrice, {
@@ -193,3 +286,5 @@ function getAssetTransferData({ sendToken, fromAddress, toAddress, amount }) {
 function ellipsify(text, first = 6, last = 4) {
   return `${text.slice(0, first)}...${text.slice(-last)}`;
 }
+
+
