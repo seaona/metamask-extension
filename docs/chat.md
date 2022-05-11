@@ -1,25 +1,15 @@
 ## Setting up a Waku local node
-- Clone Project
+- Clone Project `git clone https://github.com/status-im/nwaku.git`
 
-`https://github.com/status-im/nwaku.git`
+- Cd to the project folder `cd nwaku`
 
-- Cd to the project folder
+- Build the project (we only need version 2) `make wakunode2`
 
-`cd nwaku`
+- See info `./build/wakunode2 --help`
 
-- Build the project (we only need version 2)
+- Run wakunode2 with RPC enabled `./build/wakunode2 --rpc --ports-shift:0`
 
-`make wakunode2`
-
-- See info
-
-`./build/wakunode2 --help`
-
-- Run wakunode2 with RPC enabled
-
-`./build/wakunode2 --rpc --ports-shift:0`
-
-- (Optional) run another node and connect the two of them - change the node address for the one from the first node
+- (Optional) run another node and connect the two of them - change the node address below (starting with /ip4...) for the one from your first node
 
 `./build/wakunode2 --ports-shift:1 --staticnode:/ip4/0.0.0.0/tcp/60000/p2p/16Uiu2HAmJcBHW3o4PuKHLcn8aR9B9f4CGq4ytf36crhPdo9HLHV7 --rpc`
 
