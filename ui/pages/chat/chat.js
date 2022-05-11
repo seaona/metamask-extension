@@ -30,7 +30,10 @@ const SimpleChatMessage = new protobuf.Type('SimpleChatMessage')
 
 export default function ChatScreen() {
 
-  //to add MM active sender address in the for of: metamask/ethereum-address
+  // TODO grab address from state: selectedIdentity = this.props
+  const checksummedAddress = "0x...";
+
+  //for each MM address we will filter by the subtopic: metamask/${checksummedAddress}
   wakuSubscribeToSubtopic(`metamask`);
 
   const userInput = useSelector(getRecipientUserInput);
@@ -123,7 +126,7 @@ export default function ChatScreen() {
   };
 
   const receiveMessageOnClick = async () => {
-    let msgsResponse = await wakuReadMessages()
+    await wakuReadMessages()
   };
   
   return (
