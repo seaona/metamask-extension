@@ -15,7 +15,8 @@ import { showQrScanner } from '../../store/actions';
 import Box from '../../components/ui/box';
 import Button from '../../components/ui/button';
 import EnsInput from './add-recipient/ens-input';
-import { 
+import {
+  wakuHealthCheck,
   wakuSubscribeToSubtopic,
   wakuSendMessage,
   wakuReadMessages,
@@ -28,8 +29,10 @@ const SimpleChatMessage = new protobuf.Type('SimpleChatMessage')
   .add(new protobuf.Field('text', 2, 'string'));
 
 export default function ChatScreen() {
-  wakuSubscribeToSubtopic()
-  wakuReadMessages()
+
+  //to add MM active sender address in the for of: metamask/ethereum-address
+  wakuSubscribeToSubtopic(`metamask`);
+
   const userInput = useSelector(getRecipientUserInput);
   const recipient = useSelector(getRecipient);
   const isUsingMyAccountsForRecipientSearch = useSelector(
@@ -38,7 +41,7 @@ export default function ChatScreen() {
   const dispatch = useDispatch();
 
   const [waku, setWaku] = useState(undefined);
-  const [wakuStatus, setWakuStatus] = useState('None');
+  const [wakuStatus, setWakuStatus] = useState('None'); // to do: api call health check
   const [sendCounter, setSendCounter] = React.useState(0);
   const [messages, setMessages] = React.useState([]);
 
@@ -107,16 +110,22 @@ export default function ChatScreen() {
     /*if (wakuStatus !== 'Ready') {
       return;
     }*/
-    wakuSendMessage("0x1a2b3c4d5e6f")
-    messages = wakuReadMessages()
-    sendMessage(`Here is message #${sendCounter}`, waku, new Date()).then(() =>
+
+    wakuSendMessage('0x1a2b3c4d5e6f', 'metamask'); //to add MM reciever address in the for of: metamask/ethereum-address
+
+   /* sendMessage(`Here is message #${sendCounter}`, waku, new Date()).then(() =>
       console.log('Message sent'),
     );
 
     // For demonstration purposes.
     setSendCounter(sendCounter + 1);
+    */
   };
 
+  const receiveMessageOnClick = async () => {
+    let msgsResponse = await wakuReadMessages()
+  };
+  
   return (
     <div className="page-container">
       <PageContainerHeader
@@ -159,6 +168,9 @@ export default function ChatScreen() {
         <p>{wakuStatus}</p>
         <button onClick={sendMessageOnClick} >
           Send Message
+        </button>
+        <button onClick={receiveMessageOnClick} >
+          Receive Message
         </button>
         <ul>
           {messages.map((msg) => {
