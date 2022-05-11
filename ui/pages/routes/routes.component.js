@@ -59,6 +59,7 @@ import {
   ONBOARDING_ROUTE,
   ADD_COLLECTIBLE_ROUTE,
   TOKEN_DETAILS,
+  CHAT_ROUTE,
 } from '../../helpers/constants/routes';
 
 import {
@@ -71,6 +72,7 @@ import OnboardingFlow from '../onboarding-flow/onboarding-flow';
 import QRHardwarePopover from '../../components/app/qr-hardware-popover';
 import { SEND_STAGES } from '../../ducks/send';
 import { THEME_TYPE } from '../settings/experimental-tab/experimental-tab.constant';
+import ChatScreen from '../chat';
 
 export default class Routes extends Component {
   static propTypes = {
@@ -184,6 +186,7 @@ export default class Routes extends Component {
           component={SendTransactionScreen}
           exact
         />
+        <Authenticated path={CHAT_ROUTE} component={ChatScreen} exact />
         <Authenticated
           path={`${TOKEN_DETAILS}/:address/`}
           component={TokenDetailsPage}
