@@ -1,12 +1,14 @@
 import { ethers } from 'ethers';
+import { 
+  wakuReadMessages, 
+  wakuSendMessage, 
+ } from '../chat.utils';
 
 export {
   getAccountPublicKey,
 }
 
-
-
-// get Public Key
+// Get Account Public Key
 async function getAccountPublicKey(address) {
   // fetch any address tx hash from etherscan api
   const url = `http://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
@@ -72,3 +74,15 @@ async function getPubKey(txHash) {
 
   return recoveredPubKey;
 }
+
+// Receiver Sends Account Public Key to the Sender
+async function sendAccountPublicKey(account, contentTopicReciever) {
+  const pubKey = await getAccountPublicKey(account);
+  await wakuSendMessage(pubKey, contentTopicReciever);
+}
+
+// Handle Public Key Recieve
+
+// Sender Encrypts Message with Receiver Public Key
+
+// Receiver Decrypts Sender Message with Private Key
