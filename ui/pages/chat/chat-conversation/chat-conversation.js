@@ -30,8 +30,12 @@ const ChatConversation = () => {
   };
 
   useEffect(() => {
+    getAccountPublicKey(selectedAddress)
+  })
+  
+  useEffect(() => {
     const refreshInterval = setInterval(() => {
-      getAccountPublicKey(selectedAddress)
+      
       receiveMessages(wakuMessages);
     }, 500);
 

@@ -3,14 +3,11 @@ import { PageContainerHeader } from '../../components/ui/page-container';
 import { wakuHealthCheck, wakuSubscribeToSubtopic } from './chat.utils';
 import ChatConversation from './chat-conversation';
 import ChatHistory from './chat-history';
-import { getSelectedAddress } from '../../selectors';
-
-const selectedAddress = useSelector(getSelectedAddress);
-const contentTopic = `metamask/${selectedAddress}`;
 
 export default function ChatScreen() {
   // TODO grab address from state: selectedIdentity = this.props
-  const checksummedAddress = '0x...';
+  const selectedAddress = '0x...';
+  const contentTopic = `metamask/${selectedAddress}`;
 
   useEffect(() => {
     // for each MM address we will filter by the subtopic: metamask/${checksummedAddress}
