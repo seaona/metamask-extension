@@ -1,0 +1,122 @@
+.chat-page-container {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.chat {
+  &__container {
+    display: flex;
+    flex-direction: row;
+    min-height: 70%;
+    width: 100%;
+    position: relative;
+  }
+
+  &__history {
+    display: flex;
+    flex-direction: column;
+    min-width: max-content;
+    width: 30%;
+  }
+
+  &__conversation {
+    background-color: var(--color-background-default);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 60%;
+    border-left: 1px solid var(--color-border-muted);
+
+    &-contact {
+      background-color: var(--color-background-default);
+      display: grid;
+      grid-gap: 4px 12px;
+		  grid-template-columns: 32px auto;
+  	  grid-template-rows: 16px 16px;
+      height: fit-content;
+      padding: 20px 10px 60px 10px;
+
+      &-picture {
+		    grid-column: 1 / span 1;
+		    grid-row: 1 / span 2;
+      }
+
+      &-alias {
+        grid-column: 2 / span 1;
+        font-weight: bold;
+      }
+
+      &-address {
+        grid-column: 2 ;
+        grid-row: 2 ;
+      }
+
+      a {
+        color: var(--color-primary-default);
+      }
+    }
+
+    &-thread {
+      background-color: var(--color-background-default);
+      flex-grow: 1;
+      display: flex;
+      flex-direction:column;
+      row-gap: 40px;
+      overflow-y: auto;
+
+      &-message-container {
+        background-color: var(--color-background-default);
+        display: grid;
+        grid-gap: 6px 4px;
+        grid-template-columns: 24px 4px fit-content(40%) fit-content(40%) fit-content(40%) auto;
+        grid-template-rows: 16px 10px auto;
+        padding: 0px 10px 0px 10px;
+      }
+
+      &-picture {
+        grid-column: 1 / span 1;
+        grid-row: 1 / span 2;
+      }
+
+      &-alias {
+        grid-column: 3 / span 1;
+        font-weight: bold;
+        color: var(--brand-colors-grey-grey500);
+      }
+
+      &-timestamp {
+        grid-column: 4 / span 1 ;
+        grid-row: 1 ;
+        font-size: small;
+        font-weight: light;
+        color: var(--brand-colors-grey-grey500);
+      }
+
+      &-read-status {
+        grid-column: 5 / span 1 ;
+        grid-row: 1;
+        font-size: small;
+        font-weight: light;
+        color: var(--brand-colors-grey-grey500);
+      }
+
+      &-message {
+        grid-column: 3 / span 4 ;
+        grid-row: 2 / span 2;
+        color: var(--brand-colors-grey-grey500);
+      }
+    }
+  }
+
+  &__message{
+    &-container {
+      display: flex;
+      width: 70%;
+      position: absolute;
+      bottom: 0;
+      padding: 10px 10px 10px 10px;
+    }
+  }
+}

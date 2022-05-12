@@ -138,7 +138,7 @@ export default class EnsInput extends Component {
                 className="ens-input__wrapper__input"
                 type="text"
                 dir="auto"
-                placeholder={t('recipientAddressPlaceholder')}
+                placeholder="Search contacts or wallet address"
                 onChange={this.onChange}
                 onPaste={this.onPaste}
                 spellCheck="false"

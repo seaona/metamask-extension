@@ -194,7 +194,6 @@
     "pify": "^5.0.0",
     "promise-to-callback": "^1.0.0",
     "prop-types": "^15.6.1",
-    "protobufjs": "~6.11.2",
     "pubnub": "4.27.3",
     "pump": "^3.0.0",
     "punycode": "^2.1.1",
