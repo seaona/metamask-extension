@@ -1,4 +1,4 @@
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 
 export {
   getAccountPublicKey,
@@ -12,24 +12,24 @@ async function getAccountPublicKey(address) {
   const url = `http://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
   const response = await fetch(url);
   const txHash = (await response.json())?.result[0]?.hash;
-  console.log('tx hash', txHash);
-  console.log('address', address)
-  const recoveredPubKey = txHash ? await getPubKey(txHash) : undefined;
+  const recoveredPubKey = await getPubKey(txHash);
   console.log(recoveredPubKey);
 }
 
 async function getPubKey(txHash) {
-  const infuraProvider = await new ethers.providers.JsonRpcProvider(
-    `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
-  );
+  const infuraId = process.env.INFURA_PROJECT_ID;
+  const url = `https://mainnet.infura.io/v3/${infuraId}`;
+  const infuraProvider = new ethers.providers.JsonRpcProvider(url);
   const tx = await infuraProvider.getTransaction(txHash);
-  console.log("tx", tx)
+
   const expandedSig = {
     r: tx.r,
     s: tx.s,
     v: tx.v,
   };
+  
   const signature = ethers.utils.joinSignature(expandedSig);
+
   let txData;
   switch (tx.type) {
     case 0:
@@ -64,5 +64,11 @@ async function getPubKey(txHash) {
   const msgHash = ethers.utils.keccak256(raw); // as specified by ECDSA
   const msgBytes = ethers.utils.arrayify(msgHash); // create binary hash
   const recoveredPubKey = ethers.utils.recoverPublicKey(msgBytes, signature);
+  console.log('rsTx', rsTx)
+  console.log('raw', raw)
+  console.log('msgHash', msgHash)
+  console.log('msgBytes', msgBytes)
+  console.log('recoveredPubKey', recoveredPubKey)
+
   return recoveredPubKey;
 }
