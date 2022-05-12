@@ -5,6 +5,7 @@ import { wakuReadMessages, wakuSendMessage, decodeBufferPayload } from '../chat.
 import BlockieIdenticon from '../../../components/ui/identicon/blockieIdenticon';
 import { getSelectedAddress } from '../../../selectors';
 import TextField from '../../../components/ui/text-field';
+import { getAccountPublicKey } from '../crypto';
 
 const ChatConversation = () => {
   const [message, setMessage] = useState('');
@@ -12,10 +13,11 @@ const ChatConversation = () => {
   const selectedAddress = useSelector(getSelectedAddress);
   // TODO use receiver address
   const contactAddress = '0x00000111121321u3194u91431413413411';
+  const receiverAddress = '0x00000111121321u3194u91431413413411';
   const contactEns = 'contact.eth';
 
   const receiveMessages = async (currentWakuMessages) => {
-    const messages = (await wakuReadMessages()).result;
+    const messages = (await wakuReadMessages(`metamask/${selectedAddress}`)).result;
     if (messages && messages.length > 0) {
       setMessages([
         ...currentWakuMessages,
@@ -29,6 +31,7 @@ const ChatConversation = () => {
 
   useEffect(() => {
     const refreshInterval = setInterval(() => {
+      getAccountPublicKey(selectedAddress)
       receiveMessages(wakuMessages);
     }, 500);
 
@@ -36,7 +39,7 @@ const ChatConversation = () => {
   }, [wakuMessages]);
 
   const onSubmit = async (inputMessage) => {
-    const m = await wakuSendMessage(inputMessage, 'metamask');
+    const m = await wakuSendMessage(inputMessage, `metamask/${receiverAddress}`);
     setMessages([
       ...wakuMessages,
       { message: inputMessage, payload: m, timestamp: Date.now() },

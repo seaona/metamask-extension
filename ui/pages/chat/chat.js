@@ -3,8 +3,10 @@ import { PageContainerHeader } from '../../components/ui/page-container';
 import { wakuHealthCheck, wakuSubscribeToSubtopic } from './chat.utils';
 import ChatConversation from './chat-conversation';
 import ChatHistory from './chat-history';
+import { getSelectedAddress } from '../../selectors';
 
-const contentTopic = `metamask`;
+const selectedAddress = useSelector(getSelectedAddress);
+const contentTopic = `metamask/${selectedAddress}`;
 
 export default function ChatScreen() {
   // TODO grab address from state: selectedIdentity = this.props

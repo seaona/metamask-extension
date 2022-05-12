@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-
+ 
 export {
   wakuHealthCheck,
   wakuSubscribeToSubtopic,
