@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Box from '../../../components/ui/box';
-import { wakuReadMessages, wakuSendMessage } from '../chat.utils';
+import { wakuReadMessages, wakuSendMessage, decodeBufferPayload } from '../chat.utils';
 import BlockieIdenticon from '../../../components/ui/identicon/blockieIdenticon';
 import { getSelectedAddress } from '../../../selectors';
 import TextField from '../../../components/ui/text-field';
@@ -90,7 +90,7 @@ const ChatConversation = () => {
                       &#10004;
                     </div>
                     <div className="chat__conversation-thread-message">
-                      {msg.message ?? JSON.stringify(msg.payload)}
+                      {msg.message ?? Buffer.from(msg.payload).toString()}
                     </div>
                   </div>
                 </li>
