@@ -1,10 +1,11 @@
 import fetch from 'node-fetch';
- 
+
 export {
   wakuHealthCheck,
   wakuSubscribeToSubtopic,
   wakuSendMessage,
   wakuReadMessages,
+  getChatHistory,
 };
 
 const WAKU_NODE = 'http://127.0.0.1:8546';
@@ -134,4 +135,124 @@ function toHex(s) {
   }
 
   return result;
+}
+
+function getChatHistory() {
+  return [
+    {
+      context: {
+        name: 'Metamask Chats',
+        iconUrl: '',
+      },
+      conversations: [
+        {
+          sender: {
+            ens: 'zenecca.eth',
+            address: '0x4803284023840280355325325253252',
+          },
+          messages: [
+            {
+              message: 'Ok',
+              payload: { a: 1 },
+              timestamp: Date.now(),
+              readTimestamp: Date.now(),
+            },
+          ],
+        },
+        {
+          sender: {
+            ens: '1010M.eth',
+            address: '0x8974709840234143215135261261234614252',
+          },
+          messages: [
+            {
+              message: 'I was looking at alchemix loading as well',
+              payload: { a: 1 },
+              timestamp: Date.now() - 365000,
+              readTimestamp: Date.now(),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      context: {
+        name: 'Mintable',
+        iconUrl: '',
+      },
+      conversations: [
+        {
+          sender: {
+            ens: 'nftradooor.eth',
+            address: '0x8094810234812111112314214125141',
+          },
+          messages: [
+            {
+              message: 'Want to trade a cool cat for a doodle?',
+              payload: { a: 1 },
+              timestamp: Date.now() - 3365000,
+              readTimestamp: Date.now(),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      context: {
+        name: 'Decentraland',
+        iconUrl: '',
+      },
+      conversations: [
+        {
+          sender: {
+            ens: '4156.eth',
+            address: '0x4124714701824901849021804820193412',
+          },
+          messages: [
+            {
+              message: 'Hey, did you find that poker chip NFT?',
+              payload: { a: 1 },
+              timestamp: Date.now() - 1365000,
+            },
+          ],
+        },
+        {
+          sender: {
+            ens: 'arnies.eth',
+            address: '0x1210750918590318095819384109732891749217',
+          },
+          messages: [
+            {
+              message: 'Wanna hang out in golf craft?',
+              payload: { a: 1 },
+              timestamp: Date.now() - 32365000,
+              readTimestamp: Date.now(),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      context: {
+        name: 'Sound.xyz',
+        iconUrl: '',
+      },
+      conversations: [
+        {
+          sender: {
+            ens: 'postmanalone.eth',
+            address: '0x49081947142981738918704928108401431434214',
+          },
+          messages: [
+            {
+              message: 'How do royalties work with Sound.xyz?',
+              payload: { a: 1 },
+              timestamp: Date.now() - 1232365000,
+              readTimestamp: Date.now(),
+            },
+          ],
+        },
+      ],
+    },
+  ];
 }

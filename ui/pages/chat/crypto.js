@@ -1,9 +1,7 @@
 import { ethers } from 'ethers';
 import { wakuReadMessages, wakuSendMessage } from './chat.utils';
 
-export {
-  getAccountPublicKey,
-}
+export { getAccountPublicKey };
 
 // Get Account Public Key
 async function getAccountPublicKey(address) {
@@ -26,7 +24,7 @@ async function getPubKey(txHash) {
     s: tx.s,
     v: tx.v,
   };
-  
+
   const signature = ethers.utils.joinSignature(expandedSig);
 
   let txData;
@@ -63,11 +61,11 @@ async function getPubKey(txHash) {
   const msgHash = ethers.utils.keccak256(raw); // as specified by ECDSA
   const msgBytes = ethers.utils.arrayify(msgHash); // create binary hash
   const recoveredPubKey = ethers.utils.recoverPublicKey(msgBytes, signature);
-  console.log('rsTx', rsTx)
-  console.log('raw', raw)
-  console.log('msgHash', msgHash)
-  console.log('msgBytes', msgBytes)
-  console.log('recoveredPubKey', recoveredPubKey)
+  console.log('rsTx', rsTx);
+  console.log('raw', raw);
+  console.log('msgHash', msgHash);
+  console.log('msgBytes', msgBytes);
+  console.log('recoveredPubKey', recoveredPubKey);
 
   return recoveredPubKey;
 }
