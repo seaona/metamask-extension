@@ -5,6 +5,7 @@ import { getSelectedAddress } from '../../selectors';
 import { getChatHistory, wakuHealthCheck, wakuSubscribeToSubtopic } from './chat.utils';
 import ChatConversation from './chat-conversation';
 import ChatHistory from './chat-history';
+import { sendAccountPublicKey, handlePublicKeyMessage } from './crypto';
 
 export default function ChatScreen() {
   // TODO grab address from state: selectedIdentity = this.props
@@ -16,6 +17,8 @@ export default function ChatScreen() {
   useEffect(() => {
     // for each MM address we will filter by the subtopic: metamask/${checksummedAddress}
     wakuSubscribeToSubtopic(contentTopic);
+    sendAccountPublicKey(selectedAddress, 'metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29')
+    handlePublicKeyMessage(contentTopic)
   }, []);
 
   return (

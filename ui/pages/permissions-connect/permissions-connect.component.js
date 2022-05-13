@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import { getEnvironmentType } from '../../../app/scripts/lib/util';
 import { ENVIRONMENT_TYPE_NOTIFICATION } from '../../../shared/constants/app';
 import { MILLISECOND } from '../../../shared/constants/time';
-import { DEFAULT_ROUTE } from '../../helpers/constants/routes';
+import { DEFAULT_ROUTE, CHAT_ROUTE } from '../../helpers/constants/routes';
 import PermissionPageContainer from '../../components/app/permission-page-container';
 import ChooseAccount from './choose-account';
 import PermissionsRedirect from './redirect';
@@ -171,9 +171,9 @@ export default class PermissionConnect extends Component {
     this.removeBeforeUnload();
 
     if (approved) {
-      setTimeout(() => history.push(DEFAULT_ROUTE), APPROVE_TIMEOUT);
+      setTimeout(() => history.push(CHAT_ROUTE), APPROVE_TIMEOUT);
     } else {
-      history.push(DEFAULT_ROUTE);
+      history.push(CHAT_ROUTE);
     }
   }
 

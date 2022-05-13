@@ -30,10 +30,6 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
   };
 
   useEffect(() => {
-    getAccountPublicKey(selectedAddress);
-  });
-
-  useEffect(() => {
     const refreshInterval = setInterval(() => {
       receiveMessages(wakuMessages);
     }, 500);
@@ -42,7 +38,7 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
   }, [wakuMessages]);
 
   const onSubmit = async (inputMessage) => {
-    const m = await wakuSendMessage(inputMessage, `metamask/${senderAddress}`);
+    const m = await wakuSendMessage(inputMessage, `metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29`);
     setMessages([
       ...wakuMessages,
       {

@@ -7,21 +7,26 @@ export {
   encryptMessage,
   decryptPrivateMessage,
   sendEncryptedMessage,
+  sendAccountPublicKey,
+  handlePublicKeyMessage,
 };
+
+const WAKU_NODE = 'http://127.0.0.1:8546';
 
 // Get Account Public Key
 async function getAccountPublicKey(address) {
   // fetch any address tx hash from etherscan api
-  const url = `http://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
+  const url = `http://api-rinkeby.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
   const response = await fetch(url);
   const txHash = (await response.json())?.result[0]?.hash;
   const recoveredPubKey = await getPubKey(txHash);
   console.log(recoveredPubKey);
+  return recoveredPubKey;
 }
 
 async function getPubKey(txHash) {
   const infuraId = process.env.INFURA_PROJECT_ID;
-  const url = `https://mainnet.infura.io/v3/${infuraId}`;
+  const url = `https://rinkeby.infura.io/v3/${infuraId}`;
   const infuraProvider = new ethers.providers.JsonRpcProvider(url);
   const tx = await infuraProvider.getTransaction(txHash);
 
@@ -76,13 +81,66 @@ async function getPubKey(txHash) {
   return recoveredPubKey;
 }
 
+
+
 // Receiver Sends Account Public Key to the Sender
-async function sendAccountPublicKey(account, contentTopicReciever) {
+async function sendAccountPublicKey(account, contentTopic) {
+  console.log("inside send pubkey")
   const pubKey = await getAccountPublicKey(account);
-  await wakuSendMessage(pubKey, contentTopicReciever);
+  console.log("pubk key", pubKey)
+  const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+
+  const raw = JSON.stringify({
+    jsonrpc: '2.0',
+    id: 'id',
+    method: 'post_waku_v2_relay_v1_message',
+    params: [
+      contentTopic,
+      {
+        contentTopic,
+        payload: pubKey,
+        timestamp: Date.now(),
+      },
+    ],
+  });
+
+  const requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow',
+  };
+
+  await fetch(WAKU_NODE, requestOptions)
+  const pubkeymsg = await wakuReadMessages(contentTopic)
+  console.log("read msg encoded", pubkeymsg)
+  const publicKeydecoded = await Buffer.from(pubkeymsg.result[0].payload).toString(16);
+  console.log("read msg decoded",publicKeydecoded)
+  return publicKeydecoded;
+
 }
 
 // Handle Public Key Recieve
+
+async function handlePublicKeyMessage(subtopic) {
+  const encodedMessage = await wakuReadMessages(subtopic)
+  const publicKeydecoded = Buffer.from(encodedMessage.result.payload).toString();
+  console.log(publicKeydecoded);
+  return publicKeydecoded;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Sender Encrypts Message with Receiver Public Key
 async function encryptMessage(message, recipientAddress) {
@@ -111,8 +169,9 @@ async function encryptMessage(message, recipientAddress) {
 
 }
 
-// Send Encrypted Message
-async function sendEncryptedMessage(encryptedMessage, recipientAddress) {
+// Sender Sends Encrypted Message
+async function sendEncryptedMessage(message, recipientAddress) {
+  const encryptedMessage = await encryptMessage(message, recipientAddress);
   await wakuSendMessage(encryptedMessage, `metamask/${recipientAddress}`)
 }
 
@@ -122,7 +181,7 @@ async function decryptPrivateMessage(wakuMsg, myAddress) {
   if (!wakuMsg.payload) return;
 
   const infuraId = process.env.INFURA_PROJECT_ID;
-  const url = `https://mainnet.infura.io/v3/${infuraId}`;
+  const url = `https://rinkeby.infura.io/v3/${infuraId}`;
   const infuraProvider = new ethers.providers.JsonRpcProvider(url);
 
   const decryptedPayload = await infuraProvider.send(
