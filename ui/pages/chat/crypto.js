@@ -1,8 +1,5 @@
 import { ethers } from 'ethers';
-import { 
-  wakuReadMessages, 
-  wakuSendMessage, 
- } from '../chat.utils';
+import { wakuReadMessages, wakuSendMessage } from './chat.utils';
 
 export {
   getAccountPublicKey,
