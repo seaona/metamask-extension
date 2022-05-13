@@ -1,7 +1,13 @@
 import { ethers } from 'ethers';
 import { wakuReadMessages, wakuSendMessage } from './chat.utils';
-
-export { getAccountPublicKey };
+import { utils, Waku, WakuMessage } from "js-waku";
+import * as sigUtil from "eth-sig-util";
+export { 
+  getAccountPublicKey,
+  encryptMessage,
+  decryptPrivateMessage,
+  sendEncryptedMessage,
+};
 
 // Get Account Public Key
 async function getAccountPublicKey(address) {
@@ -79,5 +85,68 @@ async function sendAccountPublicKey(account, contentTopicReciever) {
 // Handle Public Key Recieve
 
 // Sender Encrypts Message with Receiver Public Key
+async function encryptMessage(message, recipientAddress) {
+  const pubKey = await getAccountPublicKey(recipientAddress);
+
+  if (!recipientAddress) return;
+  if (!message) return;
+  if (!pubKey) return;
+
+  const privateMessage = new PrivateMessage({
+    toAddress: utils.hexToBytes(address),
+    message: message,
+  });
+
+  console.log("priv message", privateMessage)
+  const payload = privateMessage.encode();
+
+  const encObj = sigUtil.encrypt(
+    Buffer.from(pubKey).toString("base64"),
+    { data: utils.bytesToHex(payload) },
+    "x25519-xsalsa20-poly1305"
+  );
+
+  const encryptedPayload = Buffer.from(JSON.stringify(encObj), "utf8");
+  return WakuMessage.fromBytes(encryptedPayload, PrivateMessageContentTopic);
+
+}
+
+// Send Encrypted Message
+async function sendEncryptedMessage(encryptedMessage, recipientAddress) {
+  await wakuSendMessage(encryptedMessage, `metamask/${recipientAddress}`)
+}
 
 // Receiver Decrypts Sender Message with Private Key
+async function decryptPrivateMessage(wakuMsg, myAddress) {
+  console.log("Private Message received:", wakuMsg);
+  if (!wakuMsg.payload) return;
+
+  const infuraId = process.env.INFURA_PROJECT_ID;
+  const url = `https://mainnet.infura.io/v3/${infuraId}`;
+  const infuraProvider = new ethers.providers.JsonRpcProvider(url);
+
+  const decryptedPayload = await infuraProvider.send(
+    'eth_decrypt',
+    [wakuMsg.payloadAsUtf8, myAddress]
+  )
+  
+  console.log("Decrypted Payload:", decryptedPayload);
+  const privateMessage = PrivateMessage.decode(
+    Buffer.from(decryptedPayload, 'hex')
+  );
+
+  if (!privateMessage) {
+    console.log("Failed to decode Private Message");
+    return;
+  }
+  if (!equals(privateMessage.toAddress, utils.hexToBytes(address))) return;
+
+  const timestamp = wakuMsg.timestamp ? wakuMsg.timestamp : new Date();
+  const msg = privateMessage.message;
+
+  console.log("Message decrypted:",msg);
+  console.log("timestap2", timestamp)
+
+  return msg;
+
+}
