@@ -8,7 +8,7 @@ export {
   getChatHistory,
 };
 
-const WAKU_NODE = 'http://127.0.0.1:8545';
+const WAKU_NODE = 'http://127.0.0.1:8546';
 
 // Waku Check if node is available
 function wakuHealthCheck(subtopic = 'metamask') {
