@@ -41,9 +41,9 @@ import getFirstPreferredLangCode from './lib/get-first-preferred-lang-code';
 import getObjStructure from './lib/getObjStructure';
 import setupEnsIpfsResolver from './lib/ens-ipfs/setup';
 import { getPlatform } from './lib/util';
-import chatListener, {
+import initChatListener, {
+  openChatTab,
   CHAT_NOTIFICATION_ID,
-  isChatPageHidden,
 } from './chat/chat.listener';
 
 /* eslint-enable import/first */
@@ -651,17 +651,14 @@ browser.runtime.onConnect.addListener(async () => {
   const selectedAddress =
     persistentStore?.data?.PreferencesController?.selectedAddress;
   if (selectedAddress) {
-    chatListener(selectedAddress);
+    initChatListener(selectedAddress);
   }
 });
 
 // Handle chat notification click
 browser.notifications.onClicked.addListener(async (notificationId) => {
   if (notificationId === CHAT_NOTIFICATION_ID) {
-    const chatPageHidden = await isChatPageHidden();
-    if (chatPageHidden) {
-      platform.openExtensionInBrowser('/chat');
-    }
+    await openChatTab();
     browser.notifications.clear(CHAT_NOTIFICATION_ID);
   }
 });
