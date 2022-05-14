@@ -37,7 +37,6 @@ const ChatHistory = ({
           onSubmit={(e) => {
             e.preventDefault();
             console.log(rInput.current.value);
-            console.log(recipient);
             onSubmit();
           }}
         >

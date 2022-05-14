@@ -11,7 +11,7 @@ import {
 } from '../chat.utils';
 import BlockieIdenticon from '../../../components/ui/identicon/blockieIdenticon';
 import { getSelectedAddress } from '../../../selectors';
-import { getAccountPublicKey } from '../crypto';
+import { encryptMessage, getAccountPublicKey } from '../crypto';
 import Copy from '../../../components/ui/icon/copy-icon.component';
 
 const ChatConversation = ({ senderAddress, senderEns }) => {
@@ -48,6 +48,7 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
       inputMessage,
       `metamask/${senderAddress.toLowerCase()}`,
     );
+    await encryptMessage(inputMessage)
     setMessages([
       ...wakuMessages,
       {

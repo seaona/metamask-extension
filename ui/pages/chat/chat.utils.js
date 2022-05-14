@@ -91,7 +91,6 @@ async function wakuSendMessage(message = '', contentTopic = 'metamask') {
   return fetch(WAKU_NODE, requestOptions)
     .then((response) => {
       const result = response.json();
-      console.log(result);
       return result;
     })
     .catch((error) => console.log('error', error));

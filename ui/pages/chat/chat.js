@@ -23,13 +23,22 @@ export default function ChatScreen() {
   const contentTopic = `metamask/${selectedAddress}`;
 
   useEffect(() => {
-    // for each MM address we will filter by the subtopic: metamask/${checksummedAddress}
+    // Subscribe to the subtopic you want to read messages from
     wakuSubscribeToSubtopic(contentTopic);
-    sendAccountPublicKey(
-      selectedAddress,
-      `metamask/${senderAddress}`,
-    );
-    handlePublicKeyMessage(contentTopic);
+
+    // Broadcast your public key
+    setTimeout(function(){
+      sendAccountPublicKey(
+        selectedAddress,
+        `metamask/${senderAddress.toLowerCase()}`,
+      );
+    }, 10000);
+
+    // Handle recipient public key
+    setTimeout(function(){
+      handlePublicKeyMessage(contentTopic);
+    }, 5000);
+    
   }, []);
 
   return (

@@ -2,6 +2,8 @@ import { ethers } from 'ethers';
 import { wakuReadMessages, wakuSendMessage } from './chat.utils';
 import { utils, Waku, WakuMessage } from "js-waku";
 import * as sigUtil from "eth-sig-util";
+import * as ethUtil from 'ethereumjs-util';
+
 export { 
   getAccountPublicKey,
   encryptMessage,
@@ -20,7 +22,6 @@ async function getAccountPublicKey(address) {
   const response = await fetch(url);
   const txHash = (await response.json())?.result[0]?.hash;
   const recoveredPubKey = await getPubKey(txHash);
-  console.log(recoveredPubKey);
   return recoveredPubKey;
 }
 
@@ -76,18 +77,16 @@ async function getPubKey(txHash) {
   console.log('raw', raw);
   console.log('msgHash', msgHash);
   console.log('msgBytes', msgBytes);
-  console.log('recoveredPubKey', recoveredPubKey);
+  console.log('fetched pubkey sender', recoveredPubKey);
 
   return recoveredPubKey;
 }
 
 
-
 // Receiver Sends Account Public Key to the Sender
 async function sendAccountPublicKey(account, contentTopic) {
-  console.log("inside send pubkey")
   const pubKey = await getAccountPublicKey(account);
-  console.log("pubk key", pubKey)
+  console.log("pubkey sender broadcasted")
   const myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
 
@@ -113,60 +112,39 @@ async function sendAccountPublicKey(account, contentTopic) {
   };
 
   await fetch(WAKU_NODE, requestOptions)
-  const pubkeymsg = await wakuReadMessages(contentTopic)
-  console.log("read msg encoded", pubkeymsg)
-  const publicKeyDecoded = await Buffer.from(pubkeymsg.result[0].payload).toString('hex');
-  const prefixPublicKeyDecoded = `0x${publicKeyDecoded}`
-  console.log("read msg decoded",prefixPublicKeyDecoded)
-  return prefixPublicKeyDecoded;
-
 }
 
 // Handle Public Key Recieve
-
 async function handlePublicKeyMessage(subtopic) {
-  const encodedMessage = await wakuReadMessages(subtopic)
-  const publicKeydecoded = Buffer.from(encodedMessage.result.payload).toString("hex");
-  console.log(publicKeydecoded);
-  return publicKeydecoded;
+  const pubkeymsg = await wakuReadMessages(subtopic)
+  const publicKeyDecoded = await Buffer.from(pubkeymsg.result[0].payload).toString('hex');
+  const prefixPublicKeyDecoded = `0x${publicKeyDecoded}`
+  console.log("pubkey recipient received", prefixPublicKeyDecoded)
+  return prefixPublicKeyDecoded;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Sender Encrypts Message with Receiver Public Key
 async function encryptMessage(message, recipientAddress) {
-  const pubKey = await getAccountPublicKey(recipientAddress);
+  const pubKey = '0x047672b08cc1a53fd36c0d0df844b4ea696ba3be2e7a7e4c7d5566e85fd4e78057d1192f115fbfbe50b97a0dc53c6965ed3ec3e31a473b0c1ac8b7c9dfb4e7d736';
 
-  if (!recipientAddress) return;
-  if (!message) return;
-  if (!pubKey) return;
-
-  const privateMessage = new PrivateMessage({
-    toAddress: utils.hexToBytes(address),
-    message: message,
-  });
-
-  console.log("priv message", privateMessage)
-  const payload = privateMessage.encode();
-
-  const encObj = sigUtil.encrypt(
-    Buffer.from(pubKey).toString("base64"),
-    { data: utils.bytesToHex(payload) },
-    "x25519-xsalsa20-poly1305"
+  const encryptedMessage = ethUtil.bufferToHex(
+    Buffer.from(
+      JSON.stringify(
+        sigUtil.encrypt(
+          pubKey,
+          { data: message },
+          'x25519-xsalsa20-poly1305'
+        )
+      ),
+      'utf8'
+    )
   );
 
-  const encryptedPayload = Buffer.from(JSON.stringify(encObj), "utf8");
-  return WakuMessage.fromBytes(encryptedPayload, PrivateMessageContentTopic);
+  console.log("message encrypted with pubkey reciver", encryptedMessage)
+
+  const encryptedPayload = Buffer.from(JSON.stringify(encryptedMessage), "utf8");
+  console.log("payload ready", encryptedPayload);
+  return encryptedPayload;
 
 }
 
