@@ -115,9 +115,10 @@ async function sendAccountPublicKey(account, contentTopic) {
   await fetch(WAKU_NODE, requestOptions)
   const pubkeymsg = await wakuReadMessages(contentTopic)
   console.log("read msg encoded", pubkeymsg)
-  const publicKeydecoded = await Buffer.from(pubkeymsg.result[0].payload).toString(16);
-  console.log("read msg decoded",publicKeydecoded)
-  return publicKeydecoded;
+  const publicKeyDecoded = await Buffer.from(pubkeymsg.result[0].payload).toString('hex');
+  const prefixPublicKeyDecoded = `0x${publicKeyDecoded}`
+  console.log("read msg decoded",prefixPublicKeyDecoded)
+  return prefixPublicKeyDecoded;
 
 }
 
@@ -125,7 +126,7 @@ async function sendAccountPublicKey(account, contentTopic) {
 
 async function handlePublicKeyMessage(subtopic) {
   const encodedMessage = await wakuReadMessages(subtopic)
-  const publicKeydecoded = Buffer.from(encodedMessage.result.payload).toString();
+  const publicKeydecoded = Buffer.from(encodedMessage.result.payload).toString("hex");
   console.log(publicKeydecoded);
   return publicKeydecoded;
 }

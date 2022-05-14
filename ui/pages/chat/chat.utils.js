@@ -7,6 +7,7 @@ export {
   wakuReadMessages,
   getChatHistory,
   formatTimestamp,
+  formatMessages,
 };
 
 const WAKU_NODE = 'http://127.0.0.1:8546';
@@ -257,6 +258,18 @@ function getChatHistory() {
     },
   ];
 }
+
+function formatMessages(msg) {
+  var buffToString = Buffer.from(msg).toString()
+  var formatedMsg = `${buffToString[1]}`
+  for(let i=2; i<buffToString.length; i++) {
+    if(i%2 == 1) {
+      formatedMsg = `${formatedMsg}${buffToString[i]}`
+    }
+  }
+  return formatedMsg;
+}
+
 
 function formatTimestamp(timestamp) {
   const rawTimestamp = new Date(timestamp);

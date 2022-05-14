@@ -27,7 +27,7 @@ export default function ChatScreen() {
     wakuSubscribeToSubtopic(contentTopic);
     sendAccountPublicKey(
       selectedAddress,
-      'metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29',
+      `metamask/${senderAddress}`,
     );
     handlePublicKeyMessage(contentTopic);
   }, []);

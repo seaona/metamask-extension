@@ -7,6 +7,7 @@ import {
   wakuSendMessage,
   decodeBufferPayload,
   formatTimestamp,
+  formatMessages,
 } from '../chat.utils';
 import BlockieIdenticon from '../../../components/ui/identicon/blockieIdenticon';
 import { getSelectedAddress } from '../../../selectors';
@@ -18,7 +19,7 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
   const textMessage = useRef(null);
   const [wakuMessages, setMessages] = useState([]);
   const selectedAddress = useSelector(getSelectedAddress);
-
+  
   const receiveMessages = async (currentWakuMessages) => {
     const messages = (await wakuReadMessages(`metamask/${selectedAddress}`))
       .result;
@@ -41,9 +42,11 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
   }, [wakuMessages]);
 
   const onSubmit = async (inputMessage) => {
+    console.log("receiver adress", senderAddress)
+    console.log("selected adress", selectedAddress)
     const m = await wakuSendMessage(
       inputMessage,
-      `metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29`,
+      `metamask/${senderAddress}`,
     );
     setMessages([
       ...wakuMessages,
@@ -96,7 +99,7 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
                     />
                   </div>
                   <div className="chat__conversation-thread-alias">
-                    {msg.sender ?? senderEns || senderAddress}
+                    {msg.sender ?? (senderEns || senderAddress)}
                   </div>
                   <div className="chat__conversation-thread-timestamp">
                     {formatTimestamp(msg.timestamp)}
@@ -105,7 +108,7 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
                     &#10004;
                   </div>
                   <div className="chat__conversation-thread-message">
-                    {msg.message ?? Buffer.from(msg.payload).toString()}
+                    {msg.message ?? formatMessages(msg.payload)}
                   </div>
                 </div>
               </li>
