@@ -44,11 +44,11 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
   const onSubmit = async (inputMessage) => {
     console.log("receiver adress", senderAddress)
     console.log("selected adress", selectedAddress)
+    // await encryptMessage(inputMessage)
     const m = await wakuSendMessage(
       inputMessage,
       `metamask/${senderAddress.toLowerCase()}`,
     );
-    await encryptMessage(inputMessage)
     setMessages([
       ...wakuMessages,
       {
