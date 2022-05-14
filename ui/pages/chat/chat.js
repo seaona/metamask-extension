@@ -1,8 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { PageContainerHeader } from '../../components/ui/page-container';
 import { getSelectedAddress } from '../../selectors';
-import { getChatHistory, wakuHealthCheck, wakuSubscribeToSubtopic } from './chat.utils';
+import {
+  getChatHistory,
+  wakuHealthCheck,
+  wakuSubscribeToSubtopic,
+} from './chat.utils';
 import ChatConversation from './chat-conversation';
 import ChatHistory from './chat-history';
 import { sendAccountPublicKey, handlePublicKeyMessage } from './crypto';
@@ -10,15 +14,22 @@ import { sendAccountPublicKey, handlePublicKeyMessage } from './crypto';
 export default function ChatScreen() {
   // TODO grab address from state: selectedIdentity = this.props
   const selectedAddress = useSelector(getSelectedAddress);
-  const senderAddress = '0x00000111121321u3194u91431413413411';
-  const senderEns = 'contact.eth';
+  const [senderEns, setSenderEns] = useState('contact.eth');
+  const [senderAddress, setSenderAddress] = useState(
+    '0x00000111121321u3194u91431413413411',
+  );
+  const [context, setContext] = useState('Metamask Chats');
+
   const contentTopic = `metamask/${selectedAddress}`;
 
   useEffect(() => {
     // for each MM address we will filter by the subtopic: metamask/${checksummedAddress}
     wakuSubscribeToSubtopic(contentTopic);
-    sendAccountPublicKey(selectedAddress, 'metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29')
-    handlePublicKeyMessage(contentTopic)
+    sendAccountPublicKey(
+      selectedAddress,
+      'metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29',
+    );
+    handlePublicKeyMessage(contentTopic);
   }, []);
 
   return (
@@ -33,8 +44,22 @@ export default function ChatScreen() {
       />
 
       <div className="chat__container">
-        <ChatHistory history={getChatHistory() ?? []} />
-        <ChatConversation senderAddress={senderAddress} senderEns={senderEns} />
+        <ChatHistory
+          history={getChatHistory() ?? []}
+          setSenderEns={setSenderEns}
+          senderEns={senderEns}
+          setSenderAddress={setSenderAddress}
+          senderAddress={senderAddress}
+          activeContext={context}
+          setActiveContext={setContext}
+        />
+        <div className="chat__divider" />
+        {(senderEns || senderAddress) && (
+          <ChatConversation
+            senderAddress={senderAddress}
+            senderEns={senderEns}
+          />
+        )}
       </div>
     </div>
   );

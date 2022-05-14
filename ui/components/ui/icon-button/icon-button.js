@@ -28,7 +28,7 @@ export default function IconButton({
           <div className="icon-button__circle">
             <Icon />
           </div>
-          <span>{label}</span>
+          {label && <span>{label}</span>}
         </>,
       )}
     </button>
@@ -39,7 +39,7 @@ IconButton.propTypes = {
   onClick: PropTypes.func.isRequired,
   Icon: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   tooltipRender: PropTypes.func,
   className: PropTypes.string,
   'data-testid': PropTypes.string,

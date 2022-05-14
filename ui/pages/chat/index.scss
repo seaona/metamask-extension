@@ -8,23 +8,66 @@
 .chat {
   &__container {
     display: grid;
-    grid-gap: 6px 4px;
-		grid-template-columns: 35% auto;
-  	grid-template-rows: 70px 550px 60px;
+    grid-gap: 0 0;
+		grid-template-columns: 35% 4px auto;
+  	grid-template-rows: 80px 50% 100px 1px;
 		background-color: #fff;
     height: 100%;
     width: 100%;
   }
 
   &__history {
-    background-color: var(--color-background-alternative);
-    font-size: small;
-    border-right: 1px solid var(--color-text-alternative);
-
-    &-address-search {
+    &-address {
 		  grid-column: 1 / span 1;
 		  grid-row: 1 / span 1;
-      padding: 8px;
+      display: flex;
+      padding-top: 16px;
+      padding-bottom: 16px;
+      padding-left: 16px;
+      padding-right: 0;
+      background-color: var(--color-background-alternative);
+
+      form {
+        width: 100%;
+        height: 100%;
+      }
+
+      &-input {
+        width: 100%;
+        height: 100%;
+        display: flex;
+
+        &-search {
+          border-radius: 7px;
+          border: 1px solid var(--color-border-default);
+          width: 80%;
+          height: 100%;
+          display: flex;
+          padding: 12px 12px 12px 12px;
+          background-color: var(--color-background-default);
+          justify-content: space-between;
+
+          &-icon {
+            height: 24px;
+            width: 24px;
+            margin: auto;
+          }
+
+          &-field {
+            flex-grow: 1;
+          }
+
+          &-reset {
+            height: 24px;
+            width: 24px;
+            margin: auto;
+          }
+        }
+
+        &-button {
+          margin: auto;
+        }
+      }
     }
 
     &-conversation-list {
@@ -43,21 +86,21 @@
     }
 
     &-conversation-subgroup {
-      padding: 10px;
+      padding: 16px;
       background-color: var(--color-background-alternative);
 
       li {
         padding-top: 5px
       }
 
-      li:after {
+      li::after {
         content: "";
         display: block;
         border-bottom: 1px solid var(--color-text-alternative);
         padding-top: 8px;
       }
 
-      li:last-child:after {
+      li:last-child::after {
         display:none
       }
 
@@ -77,6 +120,10 @@
     }
 
     &-entry {
+      &.active {
+        background-color: var(--color-primary-default);
+      }
+
       &-picture {
         width: 28px;
         height: 28px;
@@ -86,7 +133,7 @@
       }
 
       &-sender {
-        grid-column: 2 / span 1;
+        grid-column: 2 / span 2;
         grid-row: 1 / span 1;
 
         &-ens {
@@ -127,11 +174,19 @@
     &-warning {
       grid-column: 1 / span 1;
       grid-row: 3 / span 1;
-      background-color: var(--color-background-default);
-      margin: 8px;
-      border-radius: 10px;
-      padding: 10px 8px 10px 8px;
-      width: fit-content;
+      padding: auto;
+      padding-top: auto;
+      padding-bottom: auto;
+      background-color: var(--color-background-alternative);
+
+      &-container {
+        background-color: var(--color-background-default);
+        border-radius: 10px;
+        padding: 10px 8px 10px 8px;
+        width: fit-content;
+        margin: auto;
+        margin-top: 24px;
+      }
 
       &-title {
         font-weight: bold;
@@ -146,11 +201,17 @@
 
   }
 
-  &__conversation {
-    border-left: 1px solid var(--color-border-muted);
+  &__divider {
+		grid-column: 2 ;
+		grid-row: 1 / span 3 ;
+    background-color: var(--color-background-default);
+		border-left: 1px solid var(--color-border-muted);
+		padding: 0;
+  }
 
+  &__conversation {
     &-contact {
-      grid-column: 2 / span 1;
+      grid-column: 3 / span 1;
    	  grid-row: 1 / span 1 ;
       background-color: var(--color-background-default);
       display: grid;
@@ -188,7 +249,7 @@
       flex-direction: column;
       row-gap: 40px;
       overflow-y: auto;
-      grid-column: 2 / span 1 ;
+      grid-column: 3 / span 1 ;
 		  grid-row: 2 / span 1 ;
       padding-top: 20px;
 
@@ -239,10 +300,43 @@
     }
 
     &-input {
-      padding: 10px 10px 10px 10px;
-      grid-column: 2 / span 1 ;
+      grid-column: 3 / span 1 ;
       grid-row: 3 / span 1;
-      font-size: small;
+
+      form {
+        width: 100%;
+        height: 100%;
+        padding: 10px 10px 10px 10px;
+      }
+
+      &-container {
+        border-radius: 7px;
+        border: 1px solid var(--color-border-muted);
+        width: 100%;
+        height: 100%;
+        display: flex;
+        padding: 12px 12px 12px 12px;
+        background-color: var(--brand-colors-orange-orange000);
+
+        &-button {
+          background-color:transparent;
+          border: 1px solid var(--color-primary-default);
+          border-radius: 25px;
+          color: var(--color-primary-default);
+          font-weight: bold;
+          padding: 10px 20px 10px 20px;
+          height: fit-content;
+          margin-top: auto;
+        }
+      }
     }
+  }
+
+  &__bottom-border {
+		grid-column: 1 / span 3;
+		grid-row: 4 / span 1 ;
+    background-color: var(--color-background-default);
+		border-bottom: 1px solid var(--color-border-muted);
+		padding: 0;
   }
 }

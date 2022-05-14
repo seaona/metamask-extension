@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { TextField } from '@material-ui/core';
 import {
   wakuReadMessages,
   wakuSendMessage,
   decodeBufferPayload,
+  formatTimestamp,
 } from '../chat.utils';
 import BlockieIdenticon from '../../../components/ui/identicon/blockieIdenticon';
 import { getSelectedAddress } from '../../../selectors';
-import TextField from '../../../components/ui/text-field';
 import { getAccountPublicKey } from '../crypto';
+import Copy from '../../../components/ui/icon/copy-icon.component';
 
 const ChatConversation = ({ senderAddress, senderEns }) => {
   const [message, setMessage] = useState('');
+  const textMessage = useRef(null);
   const [wakuMessages, setMessages] = useState([]);
   const selectedAddress = useSelector(getSelectedAddress);
 
@@ -38,7 +41,10 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
   }, [wakuMessages]);
 
   const onSubmit = async (inputMessage) => {
-    const m = await wakuSendMessage(inputMessage, `metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29`);
+    const m = await wakuSendMessage(
+      inputMessage,
+      `metamask/0x1C53dc20D1E36ed8359250dE626ACAe36BD28a29`,
+    );
     setMessages([
       ...wakuMessages,
       {
@@ -48,7 +54,6 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
         sender: selectedAddress,
       },
     ]);
-    setMessage('');
   };
 
   return (
@@ -57,15 +62,20 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
         <div className="chat__conversation-contact-picture">
           <BlockieIdenticon
             borderRadius="9999px"
-            address={senderAddress}
+            address={
+              senderAddress || '0x0894081290381038201801331ensneedstoberesolved'
+            }
             diameter={32}
           />
         </div>
-        <div className="chat__conversation-contact-alias">{senderEns}</div>
+        <div className="chat__conversation-contact-alias">
+          {senderEns || senderAddress}
+        </div>
         <div className="chat__conversation-contact-address">
-          {senderAddress} {'   '}
+          {senderAddress} {'     '}
           <a href={`https://etherscan.io/address/${selectedAddress}`}>
-            View on Etherscan
+            <Copy size={11} color="var(--color-primary-default)" /> View on
+            Etherscan
           </a>
         </div>
       </div>
@@ -78,15 +88,18 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
                   <div className="chat__conversation-thread-picture">
                     <BlockieIdenticon
                       borderRadius="9999px"
-                      address={senderEns ?? senderAddress}
+                      address={
+                        senderAddress ??
+                        '0x0894081290381038201801331ensneedstoberesolved'
+                      }
                       diameter={24}
                     />
                   </div>
                   <div className="chat__conversation-thread-alias">
-                    {msg.sender ?? senderEns ?? senderAddress}
+                    {msg.sender ?? senderEns || senderAddress}
                   </div>
                   <div className="chat__conversation-thread-timestamp">
-                    {new Date(msg.timestamp).toLocaleTimeString().split('(')[0]}
+                    {formatTimestamp(msg.timestamp)}
                   </div>
                   <div className="chat__conversation-thread-read-status">
                     &#10004;
@@ -102,26 +115,38 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
       </div>
 
       <div className="chat__conversation-input">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmit(message);
-          }}
-        >
-          <TextField
-            id="message-input-id"
-            data-testid="message-input"
-            type="text"
-            autoComplete="off"
-            onChange={(e) => {
-              setMessage(e.target.value);
-            }}
-            value={message}
-            fullWidth
-            focused
-            required
-            className="multiline"
-          />
+        <form>
+          <div className="chat__conversation-input-container">
+            <textarea
+              ref={textMessage}
+              style={{
+                border: 'none',
+                flexGrow: 1,
+                marginLeft: '4px',
+                marginRight: '4px',
+                backgroundColor: 'transparent',
+                width: 'auto',
+                resize: 'none',
+              }}
+              placeholder="Type message"
+              onKeyDown={(e) => {
+                if (e.keyCode === 13 && e.shiftKey === false) {
+                  e.preventDefault();
+                  onSubmit(textMessage.current.value);
+                  textMessage.current.value = '';
+                }
+              }}
+            />
+            <button
+              className="chat__conversation-input-container-button"
+              onClick={() => {
+                onSubmit(textMessage.current.value);
+                textMessage.current.value = '';
+              }}
+            >
+              SEND
+            </button>
+          </div>
         </form>
       </div>
     </>

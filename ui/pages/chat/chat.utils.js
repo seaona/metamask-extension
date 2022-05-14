@@ -6,6 +6,7 @@ export {
   wakuSendMessage,
   wakuReadMessages,
   getChatHistory,
+  formatTimestamp,
 };
 
 const WAKU_NODE = 'http://127.0.0.1:8546';
@@ -255,4 +256,28 @@ function getChatHistory() {
       ],
     },
   ];
+}
+
+function formatTimestamp(timestamp) {
+  const rawTimestamp = new Date(timestamp);
+
+  let h = rawTimestamp.getHours();
+  let ampm = 'am';
+
+  if (h > 12) {
+    h %= 12;
+    ampm = 'pm';
+  }
+  h = h < 10 ? `0${h}` : h;
+
+  let m = rawTimestamp.getMinutes();
+  m = m < 10 ? `0${m}` : m;
+
+  let datePrefix = '';
+  if (Date.now() - rawTimestamp > 24 * 60 * 60 * 1000) {
+    datePrefix = rawTimestamp.toUTCString().split(' ').slice(1, 3).join(' ');
+    datePrefix += ', ';
+  }
+
+  return `${datePrefix}${h}:${m}${ampm}`;
 }
