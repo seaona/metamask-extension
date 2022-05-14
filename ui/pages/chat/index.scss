@@ -18,6 +18,9 @@
 
   &__history {
     &-address {
+      @media(max-width: $break-small) {
+        display: none;
+      }
 		  grid-column: 1 / span 1;
 		  grid-row: 1 / span 1;
       display: flex;
@@ -71,6 +74,9 @@
     }
 
     &-conversation-list {
+      @media(max-width: $break-small) {
+        display: none;
+      }
       grid-column: 1 / span 1;
       grid-row: 2 / span 1;
       overflow-y: auto;
@@ -86,6 +92,9 @@
     }
 
     &-conversation-subgroup {
+      @media(max-width: $break-small) {
+        display: none;
+      }
       padding: 16px;
       background-color: var(--color-background-alternative);
 
@@ -172,6 +181,9 @@
     }
 
     &-warning {
+      @media(max-width: $break-small) {
+        display: none;
+      }
       grid-column: 1 / span 1;
       grid-row: 3 / span 1;
       padding: auto;
@@ -202,6 +214,9 @@
   }
 
   &__divider {
+    @media(max-width: $break-small) {
+      display: none;
+    }
 		grid-column: 2 ;
 		grid-row: 1 / span 3 ;
     background-color: var(--color-background-default);

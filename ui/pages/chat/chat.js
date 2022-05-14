@@ -14,7 +14,7 @@ import { sendAccountPublicKey, handlePublicKeyMessage } from './crypto';
 export default function ChatScreen() {
   // TODO grab address from state: selectedIdentity = this.props
   const selectedAddress = useSelector(getSelectedAddress);
-  const [senderEns, setSenderEns] = useState('contact.eth');
+  const [senderEns, setSenderEns] = useState('vitalik.eth');
   const [senderAddress, setSenderAddress] = useState(
     '0x00000111121321u3194u91431413413411',
   );
