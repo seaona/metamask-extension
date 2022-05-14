@@ -46,7 +46,7 @@ const ChatConversation = ({ senderAddress, senderEns }) => {
     console.log("selected adress", selectedAddress)
     const m = await wakuSendMessage(
       inputMessage,
-      `metamask/${senderAddress}`,
+      `metamask/${senderAddress.toLowerCase()}`,
     );
     setMessages([
       ...wakuMessages,
