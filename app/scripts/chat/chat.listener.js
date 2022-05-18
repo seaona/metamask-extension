@@ -5,10 +5,10 @@ import {
 } from '../../../ui/pages/chat/chat.utils';
 
 export const CHAT_NOTIFICATION_ID = 'chat-notification';
-const CHAT_LISTENER_POLL_INTERVAL = 2000;
+const CHAT_LISTENER_POLL_INTERVAL = 5000;
 const CHAT_HOME_URL = 'home.html#chat';
 
-function getOwnTabs() {
+function getExtensionTabs() {
   return Promise.all(
     browser.extension
       .getViews({ type: 'tab' })
@@ -25,10 +25,9 @@ function getOwnTabs() {
 
 async function getActiveTabId(url) {
   try {
-    const ownTabs = await getOwnTabs();
-    if (ownTabs?.length) {
-      const chatTab = ownTabs.find((tab) => tab.url.includes(url));
-      console.log('got chat for open', chatTab);
+    const extensionTabs = await getExtensionTabs();
+    if (extensionTabs?.length) {
+      const chatTab = extensionTabs.find((tab) => tab.url.includes(url));
       if (chatTab) {
         return chatTab.id;
       }
@@ -41,15 +40,14 @@ async function getActiveTabId(url) {
 
 async function checkTabExists(url) {
   try {
-    const ownTabs = await browser.extension.getViews({ type: 'tab' });
-
-    if (ownTabs?.length) {
-      const chatTab = ownTabs.find(
-        (newTab) =>
-          newTab.location.href.includes(url) && !newTab.document.hidden,
+    const extensionTabs = await browser.extension.getViews({ type: 'tab' });
+    if (extensionTabs?.length) {
+      const chatTab = extensionTabs.find(
+        (tab) =>
+          tab.location.href.includes(url) &&
+          // tab is visible
+          !tab.document.hidden,
       );
-
-      console.log('got chatTbals', chatTab);
       if (chatTab) {
         return true;
       }
@@ -62,7 +60,6 @@ async function checkTabExists(url) {
 
 export async function openChatTab() {
   const chatTabId = await getActiveTabId(CHAT_HOME_URL);
-  console.log('chatTabId', chatTabId);
   if (chatTabId) {
     browser.tabs.update(chatTabId, { active: true });
   } else {
@@ -72,31 +69,39 @@ export async function openChatTab() {
 
 export default function chatListener(selectedAddress) {
   console.log('starting chat listener....');
+  // TODO - auto-subscription is just for the demo
+  let subscribedToMMTopic = false;
 
-  function sendChatNotification() {
+  async function sendChatNotification() {
     browser.notifications.create(CHAT_NOTIFICATION_ID, {
-      type: 'progress',
-      progress: 100,
-      title: 'New message in MetaMask chat',
-      message: 'Somebody has just messaged the group',
+      type: 'basic',
+      title: 'New message in MetaMask group',
+      message: 'Somebody has just left a message in the group',
       priority: 2,
       iconUrl: browser.runtime.getURL('../../images/icon-64.png'),
     });
   }
 
   async function listenToNewChatMessages() {
-    // Fetch new messages
-    try {
-      const resp = await wakuReadMessages();
-      if (resp?.result?.length) {
-        const chatTabExists = await checkTabExists(CHAT_HOME_URL); // force active check
-        if (!chatTabExists) {
+    // TODO - auto-subscription is just for the demo
+    if (!subscribedToMMTopic) {
+      await wakuSubscribeToSubtopic();
+      subscribedToMMTopic = true;
+    }
+
+    // Check to see if chat tab is already open and is in focus
+    const chatTabExists = await checkTabExists(CHAT_HOME_URL);
+    if (!chatTabExists) {
+      try {
+        // Fetch new chat messages
+        const resp = await wakuReadMessages();
+        if (resp?.result?.length) {
           // Notify user of new message/s
-          sendChatNotification();
+          await sendChatNotification();
         }
+      } catch (err) {
+        console.log('error listening to new chat messages');
       }
-    } catch (err) {
-      console.log('error listening to new chat messages');
     }
   }
 
