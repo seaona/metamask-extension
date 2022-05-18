@@ -13,7 +13,7 @@ export {
   handlePublicKeyMessage,
 };
 
-const WAKU_NODE = 'http://127.0.0.1:8546';
+const WAKU_NODE = 'http://127.0.0.1:8545';
 
 // Get Account Public Key
 async function getAccountPublicKey(address) {
