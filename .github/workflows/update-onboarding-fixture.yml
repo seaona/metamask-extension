@@ -54,6 +54,7 @@ jobs:
     if: ${{ needs.is-fork-pull-request.outputs.IS_FORK == 'false' }}
     outputs:
       COMMIT_SHA: ${{ steps.commit-sha.outputs.COMMIT_SHA }}
+      BRANCH: ${{ steps.branch.outputs.BRANCH }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -75,9 +76,15 @@ jobs:
         id: commit-sha
         run: echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: Get branch name
+        id: branch
+        run: echo "BRANCH=$(gh pr view "${PR_NUMBER}" --json headRefName --jq '.headRefName')" >> "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.FIXTURE_UPDATE_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+
       - name: Find and download dist artifact
         run: |
-          BRANCH=$(gh pr view "${PR_NUMBER}" --json headRefName --jq '.headRefName')
           RUN_ID=$(gh run list --workflow "Main" --branch "${BRANCH}" --json databaseId,status,conclusion --limit 20 --jq 'map(select(.status=="completed" and .conclusion=="success")) | first | .databaseId')
           if [ -z "$RUN_ID" ]; then
             echo "No successful 'Main' workflow run found for branch ${BRANCH}"
@@ -85,8 +92,8 @@ jobs:
           fi
           gh run download "${RUN_ID}" -n build-dist-browserify -D build-dist-browserify
         env:
+          BRANCH: ${{ steps.branch.outputs.BRANCH }}
           GITHUB_TOKEN: ${{ secrets.FIXTURE_UPDATE_TOKEN }}
-          PR_NUMBER: ${{ github.event.issue.number }}
 
       - name: Cache dist artifact
         uses: actions/cache/save@v4
@@ -112,7 +119,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.prepare.outputs.COMMIT_SHA }}
+          ref: ${{ needs.prepare.outputs.BRANCH }}
 
       - name: Checkout and setup environment
         uses: MetaMask/action-checkout-and-setup@v1
