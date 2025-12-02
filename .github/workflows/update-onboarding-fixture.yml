@@ -161,6 +161,15 @@ jobs:
           yarn test:e2e:single test/e2e/dist/wallet-fixture-export.spec.ts --browser chrome --retries 1
           yarn lint:prettier:fix
 
+      - name: Upload test artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-fixture-update
+          path: |
+            ./test-artifacts
+            ./test/test-results/e2e
+
       - name: Cache updated fixture
         uses: actions/cache/save@v4
         with:
