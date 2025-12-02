@@ -128,6 +128,18 @@ jobs:
           skip-allow-scripts: true
           use-yarn-hydrate: true
 
+      - name: Restore .metamask folder
+        id: restore-metamask
+        uses: actions/cache/restore@v4
+        with:
+          path: .metamask
+          key: .metamask-${{ hashFiles('yarn.lock') }}
+          fail-on-cache-miss: false
+
+      - name: Install anvil if cache missed
+        if: ${{ steps.restore-metamask.outputs.cache-hit != 'true' }}
+        run: yarn mm-foundryup
+
       - name: Restore dist artifact
         uses: actions/cache/restore@v4
         with:
