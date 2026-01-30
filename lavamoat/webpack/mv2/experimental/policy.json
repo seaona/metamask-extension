@@ -4271,8 +4271,7 @@
     },
     "@metamask/snaps-utils>fast-xml-parser": {
       "globals": {
-        "entityName": true,
-        "val": true
+        "exports.isExist": true
       },
       "packages": {
         "@metamask/snaps-utils>fast-xml-parser>strnum": true
