@@ -28722,7 +28722,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ******************************
 
 @metamask/claims-controller
-0.4.1 <https://github.com/MetaMask/core>
+0.4.2 <https://github.com/MetaMask/core>
 MIT License
 
 Copyright (c) 2025 MetaMask
@@ -34234,7 +34234,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ******************************
 
 @metamask/shield-controller
-5.0.0 <https://github.com/MetaMask/core>
+5.0.1 <https://github.com/MetaMask/core>
 MIT License
 
 Copyright (c) 2025 MetaMask
@@ -35184,7 +35184,7 @@ at your option.
 ******************************
 
 @metamask/subscription-controller
-5.3.1 <https://github.com/MetaMask/core>
+5.4.2 <https://github.com/MetaMask/core>
 MIT License
 
 Copyright (c) 2025 MetaMask

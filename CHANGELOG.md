@@ -54,6 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve name resolvers in send flow (#39410)
 - Fixed styling in edit accounts during snap requests. (#38357)
 - Fixed critical performance issue slowing down all user actions by fixing confirmations selector memoization (#39313)
+- Fixed an issue where cancelling a Shield subscription payment on Stripe's checkout page was incorrectly treated as an error (#39513)
+- Purge profile service on resetting wallet (#39665)
 
 ## [13.16.0]
 
