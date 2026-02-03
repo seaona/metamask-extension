@@ -3193,6 +3193,10 @@
       "Reselect: Input stability warnings": 1,
       "warn: ⚠️ React Router Future Flag": 2
     },
+    "ui/pages/remove-snap-account/snap-account-card.test.tsx": {
+      "Reselect: Identity function warnings": 1,
+      "warn: ⚠️ React Router Future Flag": 2
+    },
     "ui/pages/routes/routes.component.test.js": {
       "MetaMask: Background connection not initialized": 10,
       "MetaMask: Balance not found warnings": 18,
