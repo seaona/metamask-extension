@@ -457,6 +457,9 @@
   "alertActionBuyWithNativeCurrency": {
     "message": "Buy $1"
   },
+  "alertActionEditNetworkFee": {
+    "message": "Edit network fee"
+  },
   "alertActionUpdateGas": {
     "message": "Update gas limit"
   },
@@ -471,6 +474,16 @@
   },
   "alertDisableTooltip": {
     "message": "This can be changed in \"Settings > Alerts\""
+  },
+  "alertInsufficientPayTokenBalance": {
+    "message": "Insufficient funds"
+  },
+  "alertInsufficientPayTokenBalanceFeesNoTarget": {
+    "message": "Add less or use a different token."
+  },
+  "alertInsufficientPayTokenNative": {
+    "message": "Not enough $1 to cover fees. Use a token on another network or add more $1 to continue.",
+    "description": "$1 is the native currency symbol (e.g. ETH)"
   },
   "alertMessageAddressMismatchWarning": {
     "message": "Attackers sometimes mimic sites by making small changes to the site address. Make sure you're interacting with the intended site before you continue."
@@ -517,6 +530,9 @@
   "alertMessageSignInWrongAccount": {
     "message": "This site is asking you to sign in using the wrong account."
   },
+  "alertMessageSuggestedGasFeeHigh": {
+    "message": "This site is suggesting a higher network fee than necessary. Edit the network fee to pay less."
+  },
   "alertMessageTokenTrustSignalMalicious": {
     "message": "This token has been identified as malicious. Interacting with this token may result in a loss of funds."
   },
@@ -532,6 +548,18 @@
   "alertModalReviewAllAlerts": {
     "message": "Review all alerts"
   },
+  "alertNoPayTokenQuotesMessage": {
+    "message": "This payment route isn't available right now. Try changing the amount, network, or token and we'll find the best option."
+  },
+  "alertNoPayTokenQuotesTitle": {
+    "message": "No quotes"
+  },
+  "alertPayHardwareAccountMessage": {
+    "message": "Hardware wallets aren't supported.\nSwitch wallets to continue."
+  },
+  "alertPayHardwareAccountTitle": {
+    "message": "Wallet not supported"
+  },
   "alertReasonChangeInSimulationResults": {
     "message": "Results have changed"
   },
@@ -543,6 +571,9 @@
   },
   "alertReasonGasFeeLow": {
     "message": "Slow speed"
+  },
+  "alertReasonGasSponsorshipUnavailable": {
+    "message": "Gas sponsorship unavailable"
   },
   "alertReasonGasTooLow": {
     "message": "Low gas limit"
@@ -571,6 +602,9 @@
   "alertReasonSignIn": {
     "message": "Suspicious sign-in request"
   },
+  "alertReasonSuggestedGasFeeHigh": {
+    "message": "High site fee"
+  },
   "alertReasonTokenTrustSignalMalicious": {
     "message": "Malicious token"
   },
@@ -593,7 +627,7 @@
     "message": "All networks"
   },
   "allPermissions": {
-    "message": "All permissions"
+    "message": "Dapp connections"
   },
   "allPopularNetworks": {
     "message": "All popular networks"
@@ -1045,6 +1079,13 @@
   "bridgeQuoteExpired": {
     "message": "Your quote timed out."
   },
+  "bridgeReceive": {
+    "message": "Receive $1 on $2",
+    "description": "Summary line showing token received on destination chain. $1 is the token symbol, $2 is the network name."
+  },
+  "bridgeReceiveLoading": {
+    "message": "Receiving on destination chain"
+  },
   "bridgeSelectDestinationAccount": {
     "message": "Select a destination account"
   },
@@ -1059,6 +1100,13 @@
   },
   "bridgeSelectTokenAndAmount": {
     "message": "Select token and amount"
+  },
+  "bridgeSend": {
+    "message": "Send $1 from $2",
+    "description": "Summary line showing token sent from source chain. $1 is the token symbol, $2 is the network name."
+  },
+  "bridgeSendLoading": {
+    "message": "Sending from source chain"
   },
   "bridgeSolanaAccountCreated": {
     "message": "Solana account created"
@@ -1098,11 +1146,8 @@
   "bridgeTo": {
     "message": "Bridge to"
   },
-  "bridgeTokenCannotVerifyDescription": {
-    "message": "If you added this token manually, make sure you are aware of the risks to your funds before you bridge."
-  },
-  "bridgeTokenCannotVerifyTitle": {
-    "message": "We can't verify this token."
+  "bridgeTokenNotFound": {
+    "message": "No tokens match \"$1\""
   },
   "bridgeTransactionProgress": {
     "message": "Transaction $1 of 2"
@@ -1884,6 +1929,9 @@
   "customizeYourNotificationsText": {
     "message": "Turn on the types of notifications you want to receive:"
   },
+  "dappConnections": {
+    "message": "Dapp Connections"
+  },
   "dappSuggested": {
     "message": "Site suggested"
   },
@@ -1942,6 +1990,9 @@
   },
   "dataUnavailable": {
     "message": "data unavailable"
+  },
+  "date": {
+    "message": "Date"
   },
   "dateCreated": {
     "message": "Date created"
@@ -2033,6 +2084,9 @@
   "deepLink_theHomePage": {
     "message": "the home page"
   },
+  "deepLink_theNFTsPage": {
+    "message": "the NFTs page"
+  },
   "deepLink_theNotificationsPage": {
     "message": "the notifications page"
   },
@@ -2071,6 +2125,14 @@
   },
   "defiEmptyDescription": {
     "message": "Lend, borrow, and trade, right in your wallet."
+  },
+  "defiReferralCheckboxLabel": {
+    "message": "Allow MetaMask to add a referral code. This is permanent. The site offers discounts per their terms. MetaMask earns a fee.",
+    "description": "The text for the checkbox label in the DeFi referral confirmation screen"
+  },
+  "defiReferralTitle": {
+    "message": "MetaMask x $1",
+    "description": "The title of the DeFi referral confirmation screen. $1 is the name of the partner"
   },
   "defiTabErrorContent": {
     "message": "Try visiting again later."
@@ -2834,6 +2896,10 @@
   "gasPriceFetchFailed": {
     "message": "Gas price estimation failed due to network error."
   },
+  "gasSponsorshipReserveBalanceWarning": {
+    "message": "Gas sponsorship isn’t available for this transaction. You’ll need to keep at least $1 $2 in your account.",
+    "description": "$1 is the minimum required balance and $2 is the native currency symbol."
+  },
   "gasTimingHoursShort": {
     "message": "$1 hrs",
     "description": "$1 represents a number of hours"
@@ -2978,6 +3044,60 @@
   "hardwareWalletConnected": {
     "message": "Hardware wallet connected"
   },
+  "hardwareWalletErrorContinueButton": {
+    "message": "Continue"
+  },
+  "hardwareWalletErrorReconnectButton": {
+    "message": "Reconnect"
+  },
+  "hardwareWalletErrorRecoveryConnection1": {
+    "message": "Ensure your hardware wallet is properly connected via USB"
+  },
+  "hardwareWalletErrorRecoveryConnection2": {
+    "message": "Try using a different USB cable or port"
+  },
+  "hardwareWalletErrorRecoveryConnection3": {
+    "message": "Restart your device and try connecting again"
+  },
+  "hardwareWalletErrorRecoveryTitle": {
+    "message": "Continue to make sure:"
+  },
+  "hardwareWalletErrorRecoveryUnlock1": {
+    "message": "To continue, make sure:"
+  },
+  "hardwareWalletErrorRecoveryUnlock2": {
+    "message": "Your Ledger is unlocked"
+  },
+  "hardwareWalletErrorRecoveryUnlock3": {
+    "message": "The Ethereum app is open"
+  },
+  "hardwareWalletErrorTitleBlindSignNotSupportedInstruction1": {
+    "message": "To continue, make sure:"
+  },
+  "hardwareWalletErrorTitleBlindSignNotSupportedInstruction2": {
+    "message": "The Ethereum app is open on your Ledger"
+  },
+  "hardwareWalletErrorTitleBlindSignNotSupportedInstruction3": {
+    "message": "You’ve turned on Blind Signing in Settings"
+  },
+  "hardwareWalletErrorTitleConnectYourDevice": {
+    "message": "Connect your $1",
+    "description": "$1 is the hardware wallet type"
+  },
+  "hardwareWalletErrorTitleDeviceLocked": {
+    "message": "$1 locked",
+    "description": "$1 is the hardware wallet type"
+  },
+  "hardwareWalletErrorUnknownErrorDescription": {
+    "message": "Make sure your $1 device is set up with the Secret Recovery Phrase or passphrase for the selected account",
+    "description": "$1 is the hardware wallet type"
+  },
+  "hardwareWalletErrorUnknownErrorTitle": {
+    "message": "Something went wrong"
+  },
+  "hardwareWalletEthAppNotOpenDescription": {
+    "message": "Open the Ethereum app on your device to continue"
+  },
   "hardwareWalletLegacyDescription": {
     "message": "(legacy)",
     "description": "Text representing the MEW path"
@@ -2993,6 +3113,10 @@
   },
   "hardwareWalletSupportLinkConversion": {
     "message": "click here"
+  },
+  "hardwareWalletTypeConnected": {
+    "message": "$1 connected",
+    "description": "$1 is the hardware wallet type"
   },
   "hardwareWallets": {
     "message": "Connect a hardware wallet"
@@ -3112,17 +3236,9 @@
   "honeypotTitle": {
     "message": "Honey pot"
   },
-  "hyperliquidReferralCheckboxLabel": {
-    "message": "Allow MetaMask to add a referral code. This is permanent. The site offers discounts per their terms. MetaMask earns a fee.",
-    "description": "The text for the checkbox label in the Hyperliquid referral confirmation screen"
-  },
   "hyperliquidReferralSubtitle": {
     "message": "Save up to 4% on trades with a MetaMask referral code.",
     "description": "The subtitle of the Hyperliquid referral confirmation screen"
-  },
-  "hyperliquidReferralTitle": {
-    "message": "MetaMask x Hyperliquid",
-    "description": "The title of the Hyperliquid referral confirmation screen"
   },
   "id": {
     "message": "ID"
@@ -3369,6 +3485,9 @@
   "isSigningOrSubmitting": {
     "message": "A previous transaction is still being signed or submitted"
   },
+  "isSigningOrSubmittingPayToken": {
+    "message": "You have a pending transaction on this network. Wait for it to complete or select a token on another network."
+  },
   "jazzicons": {
     "message": "Jazzicons"
   },
@@ -3421,6 +3540,10 @@
   "lastSold": {
     "message": "Last sold"
   },
+  "lattice": {
+    "message": "Lattice",
+    "description": "Hardware device name"
+  },
   "lavaDomeCopyWarning": {
     "message": "For your safety, selecting this text is not available right now."
   },
@@ -3460,6 +3583,10 @@
   },
   "leaveMetaMaskDesc": {
     "message": "You're about to visit a site outside of MetaMask. Double-check the URL before continuing."
+  },
+  "ledger": {
+    "message": "Ledger",
+    "description": "Hardware device name"
   },
   "ledgerAccountRestriction": {
     "message": "You need to make use your last account before you can add a new one."
@@ -3861,6 +3988,10 @@
   "multichainAddressViewAll": {
     "message": "View all"
   },
+  "multichainProviderAccess": {
+    "message": "Grant Multichain provider access to $1",
+    "description": "The parameter is the name of the requesting origin"
+  },
   "multichainQuoteCardRateExplanation": {
     "message": "The best rate we found from providers, including provider fees and a $1% MetaMask fee."
   },
@@ -3870,6 +4001,12 @@
   "multipleSnapConnectionWarning": {
     "message": "$1 wants to use $2 Snaps",
     "description": "$1 is the dapp and $2 is the number of snaps it wants to connect to."
+  },
+  "musdConversionActivityTitle": {
+    "message": "mUSD Conversion"
+  },
+  "musdConversionTitle": {
+    "message": "mUSD Conversion"
   },
   "mustSelectOne": {
     "message": "Must select at least 1 token."
@@ -3958,6 +4095,9 @@
   },
   "nameResolutionFailedError": {
     "message": "No address resolution found for this name."
+  },
+  "nameResolutionZeroAddressError": {
+    "message": "Name resolver returned a zero address. This is likely an error."
   },
   "nameSetPlaceholder": {
     "message": "Choose a nickname...",
@@ -4246,7 +4386,7 @@
     "message": "Snaps, and most hardware wallets, will not work with your current browser version."
   },
   "noMMFeeSwapping": {
-    "message": "No MM fee swapping into $1."
+    "message": "No MetaMask fee"
   },
   "noNetworkFee": {
     "message": "No network fee"
@@ -4605,8 +4745,9 @@
   "onboardingSrpInputPlaceholder": {
     "message": "Add a space between each word and make sure no one is watching."
   },
-  "onekey": {
-    "message": "OneKey"
+  "oneKey": {
+    "message": "OneKey",
+    "description": "Hardware device name"
   },
   "only": {
     "message": "only"
@@ -4686,6 +4827,9 @@
   },
   "paidByMetaMask": {
     "message": "Paid by MetaMask"
+  },
+  "paidWith": {
+    "message": "Paid with"
   },
   "participateInMetaMetrics": {
     "message": "Participate in MetaMetrics"
@@ -4912,6 +5056,14 @@
     "message": "Allow $1 to store, update, and retrieve data securely with encryption. Other snaps cannot access this information.",
     "description": "An extended description for the `snap_manageState` permission. $1 is the snap name."
   },
+  "permission_multichainProvider": {
+    "message": "Access the Multichain provider.",
+    "description": "The description for the `endowment:multichain-provider` permission"
+  },
+  "permission_multichainProviderDescription": {
+    "message": "Allow $1 to communicate with MetaMask directly, in order for it to read data from the blockchain and suggest messages and transactions.",
+    "description": "An extended description for the `endowment:multichain-provider` permission. $1 is the snap name."
+  },
   "permission_nameLookup": {
     "message": "Provide domain and address lookups.",
     "description": "The description for the `endowment:name-lookup` permission."
@@ -5063,20 +5215,53 @@
     "message": "Auto close"
   },
   "perpsAvailable": {
-    "message": "$1 available",
-    "description": "$1 is the available balance amount"
+    "message": "available",
+    "description": "is the available balance amount"
   },
   "perpsBuy": {
     "message": "buy"
   },
+  "perpsClose": {
+    "message": "Close"
+  },
   "perpsCloseAll": {
     "message": "Close all"
+  },
+  "perpsCloseAmount": {
+    "message": "Close Amount"
+  },
+  "perpsCloseLong": {
+    "message": "Close Long"
+  },
+  "perpsCloseShort": {
+    "message": "Close Short"
   },
   "perpsClosedShort": {
     "message": "Closed short"
   },
+  "perpsConfirmCloseLong": {
+    "message": "Close Long"
+  },
+  "perpsConfirmCloseShort": {
+    "message": "Close Short"
+  },
   "perpsContactSupport": {
     "message": "Contact support"
+  },
+  "perpsDateToday": {
+    "message": "Today"
+  },
+  "perpsDateYesterday": {
+    "message": "Yesterday"
+  },
+  "perpsDepositActivityTitle": {
+    "message": "Funded Perps"
+  },
+  "perpsDepositTitle": {
+    "message": "Funded perps account"
+  },
+  "perpsDeposits": {
+    "message": "Deposits"
   },
   "perpsDetails": {
     "message": "Details"
@@ -5099,6 +5284,9 @@
   "perpsExploreStocksAndCommodities": {
     "message": "Explore stocks and commodities"
   },
+  "perpsFees": {
+    "message": "Fees"
+  },
   "perpsFilterAll": {
     "message": "All"
   },
@@ -5113,6 +5301,9 @@
   },
   "perpsFilterStocksOnly": {
     "message": "Stocks"
+  },
+  "perpsFunding": {
+    "message": "Funding"
   },
   "perpsFundingPayments": {
     "message": "Funding payments"
@@ -5129,11 +5320,17 @@
   "perpsLearnMore": {
     "message": "Learn more"
   },
+  "perpsLeverage": {
+    "message": "Leverage"
+  },
   "perpsLimit": {
     "message": "Limit"
   },
   "perpsLiquidationPrice": {
     "message": "Liquidation price"
+  },
+  "perpsLiquidationPriceEst": {
+    "message": "Liquidation Price Est."
   },
   "perpsLong": {
     "message": "Long"
@@ -5154,20 +5351,40 @@
   "perpsMarkets": {
     "message": "Markets"
   },
+  "perpsModify": {
+    "message": "Modify"
+  },
+  "perpsModifyPosition": {
+    "message": "Modify Position"
+  },
   "perpsMore": {
     "message": "More"
   },
   "perpsNoMarketsFound": {
     "message": "No markets found"
   },
+  "perpsNoTransactions": {
+    "message": "No transactions yet"
+  },
   "perpsOpenInterest": {
     "message": "Open Interest"
+  },
+  "perpsOpenLong": {
+    "message": "Open Long $1",
+    "description": "$1 is the asset symbol (e.g., BTC, ETH)"
   },
   "perpsOpenOrders": {
     "message": "Open Orders"
   },
+  "perpsOpenShort": {
+    "message": "Open Short $1",
+    "description": "$1 is the asset symbol (e.g., BTC, ETH)"
+  },
   "perpsOpenedLong": {
     "message": "Opened long"
+  },
+  "perpsOrderAmount": {
+    "message": "Order Amount"
   },
   "perpsOrders": {
     "message": "Orders"
@@ -5177,6 +5394,9 @@
   },
   "perpsPosition": {
     "message": "Position"
+  },
+  "perpsPositionSize": {
+    "message": "Position Size"
   },
   "perpsPositions": {
     "message": "Positions"
@@ -5189,6 +5409,9 @@
   },
   "perpsSearchMarkets": {
     "message": "Search markets"
+  },
+  "perpsSeeAll": {
+    "message": "See All"
   },
   "perpsSell": {
     "message": "sell"
@@ -5223,11 +5446,35 @@
   "perpsStats": {
     "message": "Stats"
   },
+  "perpsStatusCanceled": {
+    "message": "Canceled"
+  },
+  "perpsStatusCompleted": {
+    "message": "Completed"
+  },
+  "perpsStatusFilled": {
+    "message": "Filled"
+  },
+  "perpsStatusOpen": {
+    "message": "Open"
+  },
+  "perpsStatusQueued": {
+    "message": "Queued"
+  },
+  "perpsStatusRejected": {
+    "message": "Rejected"
+  },
+  "perpsStatusTriggered": {
+    "message": "Triggered"
+  },
   "perpsTotalBalance": {
     "message": "Total Balance"
   },
   "perpsTradePerps": {
     "message": "Trade perps"
+  },
+  "perpsTrades": {
+    "message": "Trades"
   },
   "perpsUnrealizedPnl": {
     "message": "Unrealized P&L"
@@ -5509,6 +5756,10 @@
   },
   "pushPlatformNotificationsSwapCompletedTitle": {
     "message": "Swap completed"
+  },
+  "qr": {
+    "message": "QR",
+    "description": "Hardware device name"
   },
   "queued": {
     "message": "Queued"
@@ -7725,6 +7976,9 @@
   "suggestedTokenName": {
     "message": "Suggested name:"
   },
+  "summary": {
+    "message": "Summary"
+  },
   "supplied": {
     "message": "Supplied"
   },
@@ -8421,6 +8675,10 @@
   "transferRequest": {
     "message": "Transfer request"
   },
+  "trezor": {
+    "message": "Trezor",
+    "description": "Hardware device name"
+  },
   "tronBandwidth": {
     "message": "Bandwidth"
   },
@@ -8892,9 +9150,6 @@
   },
   "yourNFTmayBeAtRisk": {
     "message": "Your NFT may be at risk"
-  },
-  "yourNetworks": {
-    "message": "Your networks"
   },
   "yourPrivateSeedPhrase": {
     "message": "Your Secret Recovery Phrase"
