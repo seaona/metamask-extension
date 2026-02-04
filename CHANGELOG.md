@@ -59,6 +59,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevented Snap crashing when clicking buttons without names (#39727)
 - Fixed details of the gas fee token (#39706)
 
+## [13.16.3]
+
+### Fixed
+
+- Enable workaround for "crash after update" Chromium bug on Chromium versions >=143 (#39790)
+
 ## [13.16.2]
 
 ### Fixed
@@ -1708,7 +1714,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All older changes can be found in [docs/CHANGELOG_older.md](https://github.com/MetaMask/metamask-extension/blob/main/docs/CHANGELOG_older.md)
 
 [Unreleased]: https://github.com/MetaMask/metamask-extension/compare/v13.17.0...HEAD
-[13.17.0]: https://github.com/MetaMask/metamask-extension/compare/v13.16.2...v13.17.0
+[13.17.0]: https://github.com/MetaMask/metamask-extension/compare/v13.16.3...v13.17.0
+[13.16.3]: https://github.com/MetaMask/metamask-extension/compare/v13.16.2...v13.16.3
 [13.16.2]: https://github.com/MetaMask/metamask-extension/compare/v13.16.1...v13.16.2
 [13.16.1]: https://github.com/MetaMask/metamask-extension/compare/v13.16.0...v13.16.1
 [13.16.0]: https://github.com/MetaMask/metamask-extension/compare/v13.15.0...v13.16.0
