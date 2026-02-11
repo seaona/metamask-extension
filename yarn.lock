@@ -6306,7 +6306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/bridge-controller@npm:^65.2.0":
+"@metamask/bridge-controller@npm:^65.3.0":
   version: 65.3.0
   resolution: "@metamask/bridge-controller@npm:65.3.0"
   dependencies:
@@ -33981,7 +33981,7 @@ __metadata:
     "@metamask/auto-changelog": "npm:^5.3.1"
     "@metamask/base-controller": "npm:^9.0.0"
     "@metamask/bitcoin-wallet-snap": "npm:^1.10.0"
-    "@metamask/bridge-controller": "npm:^65.2.0"
+    "@metamask/bridge-controller": "npm:^65.3.0"
     "@metamask/bridge-status-controller": "npm:^64.4.4"
     "@metamask/browser-passworder": "npm:^6.0.0"
     "@metamask/build-utils": "npm:^3.0.0"
