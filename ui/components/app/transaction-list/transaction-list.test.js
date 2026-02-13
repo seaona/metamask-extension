@@ -183,17 +183,11 @@ const solanaSwapState = {
 };
 
 const mockTrackEvent = jest.fn();
-const mockMetaMetricsContext = {
-  trackEvent: mockTrackEvent,
-  bufferedTrace: jest.fn(),
-  bufferedEndTrace: jest.fn(),
-  onboardingParentContext: { current: null },
-};
 
 const render = (state = defaultState) => {
   const store = configureStore(state);
   return renderWithProvider(
-    <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+    <MetaMetricsContext.Provider value={mockTrackEvent}>
       <TransactionList />
     </MetaMetricsContext.Provider>,
     store,
@@ -210,6 +204,17 @@ describe('TransactionList', () => {
     expect(container).toMatchSnapshot();
   });
 
+  it('renders TransactionList component with props hideNetworkFilter correctly', () => {
+    const store = configureStore(defaultState);
+    const { container } = renderWithProvider(
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
+        <TransactionList hideNetworkFilter />
+      </MetaMetricsContext.Provider>,
+      store,
+    );
+    expect(container).toMatchSnapshot();
+  });
+
   it('renders TransactionList component with props hideTokenTransactions correctly', () => {
     const defaultState2 = {
       ...defaultState,
@@ -220,7 +225,7 @@ describe('TransactionList', () => {
     };
     const store = configureStore(defaultState2);
     const { container } = renderWithProvider(
-      <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
         <TransactionList hideTokenTransactions />
       </MetaMetricsContext.Provider>,
       store,
@@ -272,7 +277,7 @@ describe('TransactionList', () => {
     const store = configureStore(defaultState);
 
     const { queryByText } = renderWithProvider(
-      <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
         <TransactionList tokenChainId="0x89" />
       </MetaMetricsContext.Provider>,
       store,
@@ -323,7 +328,7 @@ describe('TransactionList', () => {
     const store = configureStore(defaultState2);
 
     const { queryByText } = renderWithProvider(
-      <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
         <TransactionList tokenChainId="0xe708" />
       </MetaMetricsContext.Provider>,
       store,

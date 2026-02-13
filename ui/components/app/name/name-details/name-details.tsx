@@ -165,10 +165,6 @@ function useProposedNames(value: string, type: NameType, variation: string) {
   const dispatch = useDispatch();
   const { proposedNames } = useName(value, type, variation);
 
-  // Track latest proposed names without resetting polling interval.
-  const proposedNamesRef = useRef(proposedNames);
-  proposedNamesRef.current = proposedNames;
-
   // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31973
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateInterval = useRef<any>();
@@ -195,11 +191,11 @@ function useProposedNames(value: string, type: NameType, variation: string) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       )) as any as UpdateProposedNamesResult;
 
-      setInitialSources(
-        (previous) =>
-          previous ??
-          getInitialSources(result?.results ?? {}, proposedNamesRef.current),
-      );
+      if (!initialSources) {
+        setInitialSources(
+          getInitialSources(result?.results ?? {}, proposedNames),
+        );
+      }
     };
 
     reset();
@@ -209,7 +205,7 @@ function useProposedNames(value: string, type: NameType, variation: string) {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     updateInterval.current = setInterval(update, UPDATE_DELAY);
     return reset;
-  }, [value, type, variation, dispatch]);
+  }, [value, type, variation, dispatch, initialSources, setInitialSources]);
 
   return { proposedNames, initialSources };
 }
@@ -255,10 +251,7 @@ export default function NameDetails({
     variation,
   );
 
-  // useCopyToClipboard analysis: Copies the public address of the name
-  const [copiedAddress, handleCopyAddress] = useCopyToClipboard({
-    clearDelayMs: null,
-  });
+  const [copiedAddress, handleCopyAddress] = useCopyToClipboard();
 
   useEffect(() => {
     setName(savedPetname ?? '');
@@ -306,16 +299,7 @@ export default function NameDetails({
     );
 
     onClose();
-  }, [
-    dispatch,
-    name,
-    onClose,
-    selectedSourceId,
-    trackPetnamesSaveEvent,
-    type,
-    value,
-    variation,
-  ]);
+  }, [name, selectedSourceId, onClose, trackPetnamesSaveEvent, variation]);
 
   const handleClose = useCallback(() => {
     onClose();
@@ -330,7 +314,7 @@ export default function NameDetails({
         setSelectedSourceName(undefined);
       }
     },
-    [selectedSourceName],
+    [setName, selectedSourceId, setSelectedSourceId, setSelectedSourceName],
   );
 
   const handleProposedNameClick = useCallback(

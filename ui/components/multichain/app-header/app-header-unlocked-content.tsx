@@ -95,7 +95,7 @@ export const AppHeaderUnlockedContent = ({
   disableAccountPicker,
   menuRef,
 }: AppHeaderUnlockedContentProps) => {
-  const { trackEvent } = useContext(MetaMetricsContext);
+  const trackEvent = useContext(MetaMetricsContext);
   const t = useI18nContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -125,10 +125,8 @@ export const AppHeaderUnlockedContent = ({
 
   // Passing non-evm address to checksum function will throw an error
   const normalizedCurrentAddress = normalizeSafeAddress(currentAddress);
-
-  // useCopyToClipboard analysis: Copies a public address
-  const [copied, handleCopy, resetCopyState] = useCopyToClipboard({
-    clearDelayMs: null,
+  const [copied, handleCopy, resetCopyState] = useCopyToClipboard(2000, {
+    expireClipboard: false,
   });
 
   const showSupportDataConsentModal = useSelector(
@@ -289,7 +287,7 @@ export const AppHeaderUnlockedContent = ({
               />
               <Icon
                 name={IconName.Copy}
-                size={IconSize.Sm}
+                size={IconSize.Xs}
                 color={IconColor.IconAlternative}
               />
             </MultichainHoveredAddressRowsList>

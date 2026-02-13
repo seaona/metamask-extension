@@ -1,19 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {
   formatChainIdToCaip,
-  formatChainIdToHex,
   isNativeAddress,
-  isNonEvmChainId,
 } from '@metamask/bridge-controller';
 import { getAccountLink } from '@metamask/etherscan-link';
-import { parseCaipAssetType } from '@metamask/utils';
 import {
   Text,
   TextField,
   TextFieldType,
   ButtonLink,
+  Button,
+  ButtonSize,
 } from '../../../components/component-library';
+import { AssetPicker } from '../../../components/multichain/asset-picker-amount/asset-picker';
+import { TabName } from '../../../components/multichain/asset-picker-amount/asset-picker-modal/asset-picker-modal-tabs';
 import { useI18nContext } from '../../../hooks/useI18nContext';
 import { getCurrentCurrency } from '../../../ducks/metamask/metamask';
 import {
@@ -37,33 +38,37 @@ import {
 } from '../../../ducks/bridge/selectors';
 import { shortenString } from '../../../helpers/utils/util';
 import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard';
+import { MINUTE } from '../../../../shared/constants/time';
 import { getIntlLocale } from '../../../ducks/locale/locale';
-import { MULTICHAIN_NETWORK_BLOCK_EXPLORER_FORMAT_URLS_MAP } from '../../../../shared/constants/multichain/networks';
+import {
+  MULTICHAIN_NETWORK_BLOCK_EXPLORER_FORMAT_URLS_MAP,
+  MultichainNetworks,
+} from '../../../../shared/constants/multichain/networks';
 import { formatBlockExplorerAddressUrl } from '../../../../shared/lib/multichain/networks';
-import { CAIP_CHAINID_DEFAULT_BLOCK_EXPLORER_URL_MAP } from '../../../../shared/constants/common';
-import type { BridgeNetwork, BridgeToken } from '../../../ducks/bridge/types';
-import { SelectedAssetButton } from './components/bridge-asset-picker/selected-asset-button';
-import { BridgeAssetPicker } from './components/bridge-asset-picker';
+import type { BridgeToken } from '../../../ducks/bridge/types';
+import { getMultichainCurrentChainId } from '../../../selectors/multichain';
+import { BridgeAssetPickerButton } from './components/bridge-asset-picker-button';
 
 export const BridgeInputGroup = ({
   header,
   token,
   onAssetChange,
   onAmountChange,
-  networks,
+  networkProps,
+  isTokenListLoading,
+  customTokenListGenerator,
   amountFieldProps,
   amountInFiat,
   onMaxButtonClick,
+  isMultiselectEnabled,
   onBlockExplorerClick,
   buttonProps,
-  accountAddress,
-  disabledChainId,
   containerProps = {},
-  isDestination,
+  isDestinationToken = false,
 }: {
   amountInFiat?: string;
   onAmountChange?: (value: string) => void;
-  token: BridgeToken;
+  token: BridgeToken | null;
   buttonProps: { testId: string };
   amountFieldProps: Pick<
     React.ComponentProps<typeof TextField>,
@@ -71,15 +76,16 @@ export const BridgeInputGroup = ({
   >;
   onMaxButtonClick?: (value: string) => void;
   onBlockExplorerClick?: (token: BridgeToken) => void;
-  networks: BridgeNetwork[];
   containerProps?: React.ComponentProps<typeof Column>;
+  isDestinationToken?: boolean;
 } & Pick<
-  React.ComponentProps<typeof BridgeAssetPicker>,
+  React.ComponentProps<typeof AssetPicker>,
+  | 'networkProps'
   | 'header'
+  | 'customTokenListGenerator'
   | 'onAssetChange'
-  | 'accountAddress'
-  | 'disabledChainId'
-  | 'isDestination'
+  | 'isTokenListLoading'
+  | 'isMultiselectEnabled'
 >) => {
   const t = useI18nContext();
 
@@ -89,13 +95,13 @@ export const BridgeInputGroup = ({
   const currency = useSelector(getCurrentCurrency);
   const locale = useSelector(getIntlLocale);
 
-  const selectedChainId = token?.chainId;
+  const currentChainId = useSelector(getMultichainCurrentChainId);
+  const selectedChainId = networkProps?.network?.chainId ?? currentChainId;
 
-  // useCopyToClipboard analysis: Copies a public address
-  const [, handleCopy] = useCopyToClipboard({ clearDelayMs: null });
+  const [, handleCopy] = useCopyToClipboard(MINUTE);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { assetReference } = token ? parseCaipAssetType(token.assetId) : {};
+
   const balanceAmount = useSelector(getFromTokenBalance);
 
   const isAmountReadOnly =
@@ -117,28 +123,29 @@ export const BridgeInputGroup = ({
   }, []);
 
   const handleAddressClick = () => {
-    if (token && selectedChainId && assetReference) {
+    if (token && selectedChainId) {
       const caipChainId = formatChainIdToCaip(selectedChainId);
+      const isSolana = caipChainId === MultichainNetworks.SOLANA;
 
       let blockExplorerUrl = '';
-      if (isNonEvmChainId(selectedChainId)) {
+      if (isSolana) {
         const blockExplorerUrls =
           MULTICHAIN_NETWORK_BLOCK_EXPLORER_FORMAT_URLS_MAP[caipChainId];
         if (blockExplorerUrls) {
           blockExplorerUrl = formatBlockExplorerAddressUrl(
             blockExplorerUrls,
-            assetReference,
+            token.address,
           );
         }
       } else {
         const explorerUrl =
-          CAIP_CHAINID_DEFAULT_BLOCK_EXPLORER_URL_MAP[
-            formatChainIdToCaip(token.chainId)
+          networkProps?.network?.blockExplorerUrls?.[
+            networkProps?.network?.defaultBlockExplorerUrlIndex ?? 0
           ];
         if (explorerUrl) {
           blockExplorerUrl = getAccountLink(
-            assetReference,
-            formatChainIdToHex(selectedChainId),
+            token.address,
+            selectedChainId,
             {
               blockExplorerUrl: explorerUrl,
             },
@@ -153,7 +160,6 @@ export const BridgeInputGroup = ({
       }
     }
   };
-  const [isAssetPickerOpen, setIsAssetPickerOpen] = useState(false);
 
   return (
     <Column gap={1} {...containerProps}>
@@ -218,24 +224,41 @@ export const BridgeInputGroup = ({
           }}
           {...amountFieldProps}
         />
-        <BridgeAssetPicker
-          disabledChainId={disabledChainId}
-          selectedAsset={token}
+        <AssetPicker
           header={header}
-          isOpen={isAssetPickerOpen}
-          onClose={() => setIsAssetPickerOpen(false)}
-          onAssetChange={(asset) => {
-            onAssetChange?.(asset);
-          }}
-          chains={networks}
-          accountAddress={accountAddress}
-          isDestination={isDestination}
-        />
-        <SelectedAssetButton
-          onClick={() => setIsAssetPickerOpen(true)}
-          asset={token}
-          data-testid={buttonProps.testId}
-        />
+          visibleTabs={[TabName.TOKENS]}
+          asset={(token as never) ?? undefined}
+          onAssetChange={onAssetChange}
+          networkProps={networkProps}
+          customTokenListGenerator={customTokenListGenerator}
+          isTokenListLoading={isTokenListLoading}
+          isMultiselectEnabled={isMultiselectEnabled}
+          isDestinationToken={isDestinationToken}
+        >
+          {(onClickHandler, networkImageSrc) =>
+            isAmountReadOnly && !token ? (
+              <Button
+                data-testid={buttonProps.testId}
+                onClick={onClickHandler}
+                size={ButtonSize.Lg}
+                paddingLeft={6}
+                paddingRight={6}
+                fontWeight={FontWeight.Normal}
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                {t('swapSwapTo')}
+              </Button>
+            ) : (
+              <BridgeAssetPickerButton
+                onClick={onClickHandler}
+                networkImageSrc={networkImageSrc}
+                asset={(token as never) ?? undefined}
+                networkProps={networkProps}
+                data-testid={buttonProps.testId}
+              />
+            )
+          }
+        </AssetPicker>
       </Row>
 
       <Row justifyContent={JustifyContent.spaceBetween} style={{ height: 24 }}>
@@ -284,7 +307,7 @@ export const BridgeInputGroup = ({
         {isAmountReadOnly &&
           token &&
           selectedChainId &&
-          !isNativeAddress(assetReference) && (
+          !isNativeAddress(token.address) && (
             <Text
               display={Display.Flex}
               gap={1}
@@ -299,7 +322,7 @@ export const BridgeInputGroup = ({
                 textDecoration: isAmountReadOnly ? 'underline' : 'none',
               }}
             >
-              {shortenString(assetReference, {
+              {shortenString(token.address, {
                 truncatedCharLimit: 11,
                 truncatedStartChars: 4,
                 truncatedEndChars: 4,

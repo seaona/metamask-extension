@@ -1,4 +1,7 @@
-import { AssetType } from '@metamask/bridge-controller';
+import {
+  AssetType,
+  getNativeAssetForChainId,
+} from '@metamask/bridge-controller';
 import { CaipAssetType } from '@metamask/utils';
 import { useSelector } from 'react-redux';
 import { toChecksumHexAddress } from '../../../../shared/modules/hexstring-utils';
@@ -6,7 +9,6 @@ import { getCurrencyRates, getMarketData } from '../../../selectors';
 import { getAssetsRates } from '../../../selectors/assets';
 import { Asset } from '../types/asset';
 import { isEvmChainId } from '../../../../shared/lib/asset-utils';
-import { getNativeAssetForChainIdSafe } from '../../../ducks/bridge/utils';
 
 /**
  * Get the current price of an asset.
@@ -41,17 +43,10 @@ export const useCurrentPrice = (asset: Asset): { currentPrice?: number } => {
     return { currentPrice };
   }
 
-  // Format normalization in isEvmChainId should prevent most errors, but using safe wrapper as defensive fallback
   const assetId =
     type === AssetType.token
       ? asset.address
-      : getNativeAssetForChainIdSafe(chainId)?.assetId;
-
-  // If we can't get the assetId for a native token (unsupported chain), return undefined price
-  if (!assetId && type === AssetType.native) {
-    return { currentPrice: undefined };
-  }
-
+      : getNativeAssetForChainId(chainId).assetId;
   const currentPriceAsString =
     nonEvmConversionRates?.[assetId as CaipAssetType]?.rate;
 

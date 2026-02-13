@@ -38,9 +38,7 @@ function ViewContact({
   listRoute,
 }) {
   const t = useI18nContext();
-
-  // useCopyToClipboard analysis: Copies public address of a contact
-  const [copied, handleCopy] = useCopyToClipboard({ clearDelayMs: null });
+  const [copied, handleCopy] = useCopyToClipboard();
 
   if (!address) {
     return <Navigate to={{ pathname: listRoute }} />;

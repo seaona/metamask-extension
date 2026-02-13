@@ -27,8 +27,7 @@ const NicknamePopover = ({
     onAdd();
   }, [onAdd]);
 
-  // useCopyToClipboard analysis: Copies one of your public addresses
-  const [copied, handleCopy] = useCopyToClipboard({ clearDelayMs: null });
+  const [copied, handleCopy] = useCopyToClipboard();
   const tokenList = useSelector(getTokenList);
   const blockExplorerLinkText = useSelector(getBlockExplorerLinkText);
 

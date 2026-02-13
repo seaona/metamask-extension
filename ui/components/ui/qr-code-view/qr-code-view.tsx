@@ -18,6 +18,7 @@ import {
   TextVariant,
 } from '../../../helpers/constants/design-system';
 import { useI18nContext } from '../../../hooks/useI18nContext';
+import { MINUTE } from '../../../../shared/constants/time';
 import {
   MetaMetricsEventCategory,
   MetaMetricsEventName,
@@ -48,10 +49,8 @@ function QrCodeView({
   accountName?: string;
   location?: string;
 }) {
-  const { trackEvent } = useContext(MetaMetricsContext);
-
-  // useCopyToClipboard analysis: As of writing this, this is only used for public addresses
-  const [copied, handleCopy] = useCopyToClipboard({ clearDelayMs: null });
+  const trackEvent = useContext(MetaMetricsContext);
+  const [copied, handleCopy] = useCopyToClipboard(MINUTE);
   const t = useI18nContext();
   const { message, data } = Qr;
   const checksummedAddress = normalizeSafeAddress(data);

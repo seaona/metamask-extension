@@ -30,18 +30,6 @@ jest.mock('../../../../../ui/store/actions', () => ({
     .mockReturnValue(jest.fn().mockResolvedValue()),
 }));
 
-jest.mock('../../../../store/background-connection', () => ({
-  ...jest.requireActual('../../../../store/background-connection'),
-  submitRequestToBackground: jest.fn().mockImplementation((method, args) => {
-    if (method === 'isPublicEndpointUrl') {
-      const url = args[0];
-      // Return true for Infura URLs, false for everything else
-      return Promise.resolve(url?.includes('infura.io') ?? false);
-    }
-    return Promise.resolve();
-  }),
-}));
-
 const renderComponent = (props) => {
   const store = configureMockStore([thunk])({
     metamask: {
@@ -475,12 +463,6 @@ describe('NetworkForm Component', () => {
 
   it('should track RPC update event when trackRpcUpdateFromBanner is true', async () => {
     const mockTrackEvent = jest.fn();
-    const mockMetaMetricsContext = {
-      trackEvent: mockTrackEvent,
-      bufferedTrace: jest.fn(),
-      bufferedEndTrace: jest.fn(),
-      onboardingParentContext: { current: null },
-    };
     const store = configureMockStore([thunk])({
       metamask: {
         ...mockNetworkState({ chainId: CHAIN_IDS.MAINNET }),
@@ -497,7 +479,7 @@ describe('NetworkForm Component', () => {
     });
 
     const { getByText } = renderWithProvider(
-      <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
         <NetworksForm
           {...propNetworkDisplay}
           networkFormState={{
@@ -548,12 +530,6 @@ describe('NetworkForm Component', () => {
 
   it('should not track RPC update event when trackRpcUpdateFromBanner is not set', async () => {
     const mockTrackEvent = jest.fn();
-    const mockMetaMetricsContext = {
-      trackEvent: mockTrackEvent,
-      bufferedTrace: jest.fn(),
-      bufferedEndTrace: jest.fn(),
-      onboardingParentContext: { current: null },
-    };
     const store = configureMockStore([thunk])({
       metamask: {
         ...mockNetworkState({ chainId: CHAIN_IDS.MAINNET }),
@@ -570,7 +546,7 @@ describe('NetworkForm Component', () => {
     });
 
     const { getByText } = renderWithProvider(
-      <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
         <NetworksForm
           {...propNetworkDisplay}
           existingNetwork={{
@@ -606,12 +582,6 @@ describe('NetworkForm Component', () => {
 
   it('should track custom RPC URL when endpoint is not public', async () => {
     const mockTrackEvent = jest.fn();
-    const mockMetaMetricsContext = {
-      trackEvent: mockTrackEvent,
-      bufferedTrace: jest.fn(),
-      bufferedEndTrace: jest.fn(),
-      onboardingParentContext: { current: null },
-    };
     const store = configureMockStore([thunk])({
       metamask: {
         ...mockNetworkState({ chainId: CHAIN_IDS.MAINNET }),
@@ -628,7 +598,7 @@ describe('NetworkForm Component', () => {
     });
 
     const { getByText } = renderWithProvider(
-      <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
         <NetworksForm
           {...propNetworkDisplay}
           networkFormState={{
@@ -679,12 +649,6 @@ describe('NetworkForm Component', () => {
 
   it('should handle corrupted state with missing rpcEndpoints gracefully', async () => {
     const mockTrackEvent = jest.fn();
-    const mockMetaMetricsContext = {
-      trackEvent: mockTrackEvent,
-      bufferedTrace: jest.fn(),
-      bufferedEndTrace: jest.fn(),
-      onboardingParentContext: { current: null },
-    };
     const store = configureMockStore([thunk])({
       metamask: {
         ...mockNetworkState({ chainId: CHAIN_IDS.MAINNET }),
@@ -701,7 +665,7 @@ describe('NetworkForm Component', () => {
     });
 
     const { getByText } = renderWithProvider(
-      <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+      <MetaMetricsContext.Provider value={mockTrackEvent}>
         <NetworksForm
           {...propNetworkDisplay}
           networkFormState={{

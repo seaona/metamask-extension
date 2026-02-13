@@ -5,7 +5,6 @@ import {
   Display,
   TextAlign,
   TextVariant,
-  TextColor,
 } from '../../../helpers/constants/design-system';
 import { useI18nContext } from '../../../hooks/useI18nContext';
 import {
@@ -39,14 +38,8 @@ export default function SRPDetailsModal({ onClose }: { onClose: () => void }) {
           </Text>
         </ModalHeader>
         <Box paddingLeft={4} paddingRight={4}>
-          <Text variant={TextVariant.bodyMd} color={TextColor.textAlternative}>
-            {t('srpDetailsDescription')}
-          </Text>
-          <Text
-            variant={TextVariant.bodyMd}
-            marginTop={4}
-            color={TextColor.textAlternative}
-          >
+          <Text variant={TextVariant.bodyMd}>{t('srpDetailsDescription')}</Text>
+          <Text variant={TextVariant.bodyMd} marginTop={4}>
             {t('srpDetailsOwnsAccessListTitle')}
           </Text>
           <Box
@@ -55,25 +48,13 @@ export default function SRPDetailsModal({ onClose }: { onClose: () => void }) {
             paddingLeft={6}
             style={{ listStyleType: 'disc' }}
           >
-            <Text
-              as="li"
-              variant={TextVariant.bodyMd}
-              color={TextColor.textAlternative}
-            >
+            <Text as="li" variant={TextVariant.bodyMd}>
               {t('srpDetailsOwnsAccessListItemOne')}
             </Text>
-            <Text
-              as="li"
-              variant={TextVariant.bodyMd}
-              color={TextColor.textAlternative}
-            >
+            <Text as="li" variant={TextVariant.bodyMd}>
               {t('srpDetailsOwnsAccessListItemTwo')}
             </Text>
-            <Text
-              as="li"
-              variant={TextVariant.bodyMd}
-              color={TextColor.textAlternative}
-            >
+            <Text as="li" variant={TextVariant.bodyMd}>
               {t('srpDetailsOwnsAccessListItemThree')}
             </Text>
           </Box>

@@ -11,7 +11,6 @@ import { switchDirectionForPreferredLocale } from '../../../shared/lib/switch-di
 import getFirstPreferredLangCode from '../../../shared/lib/get-first-preferred-lang-code';
 import { METHOD_REPAIR_DATABASE } from '../../../shared/constants/state-corruption';
 import { t, updateCurrentLocale } from '../../../shared/lib/translate';
-import { displayCriticalErrorPage } from './display-critical-error';
 
 export async function getStateCorruptionErrorHtml(
   vaultRecoveryLink: string,
@@ -119,12 +118,9 @@ export async function displayStateCorruptionError(
     currentLocale,
     SUPPORT_LINK,
   );
-  const errorPageContainer = displayCriticalErrorPage(container, html);
-  if (!errorPageContainer) {
-    return;
-  }
+  container.innerHTML = html;
 
-  const button = errorPageContainer.querySelector<HTMLButtonElement>(
+  const button = container.querySelector<HTMLButtonElement>(
     '#critical-error-button',
   );
   if (button) {

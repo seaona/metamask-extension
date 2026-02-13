@@ -52,7 +52,6 @@ describe('Metrics', function () {
         const testDapp = new TestDapp(driver);
         await testDapp.openTestDappPage();
         await testDapp.clickPiggyBankContract();
-        await driver.switchToWindowWithTitle(WINDOW_TITLES.Dialog);
         const deploymentConfirmation = new ContractDeploymentConfirmation(
           driver,
         );
@@ -73,7 +72,6 @@ describe('Metrics', function () {
 
         // deposit contract
         await testDapp.createDepositTransaction();
-        await driver.switchToWindowWithTitle(WINDOW_TITLES.Dialog);
         const transactionConfirmation = new TransactionConfirmation(driver);
         // verify UI before clicking advanced details to give time for the Transaction Added event to be emitted without Advanced Details being displayed
         await transactionConfirmation.checkPageIsLoaded();

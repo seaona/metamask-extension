@@ -19,17 +19,10 @@
  *
  * @example Update baseline using dedicated scripts
  * ```bash
- * yarn test:unit:update-baseline                             # Ratchet mode (only increases baseline counts)
+ * yarn test:unit:update-baseline
  * yarn test:unit:update-baseline path/to/file
- *
- * yarn test:unit:update-baseline:strict                      # Strict mode (increases and decreases baseline counts)
- * yarn test:unit:update-baseline:strict path/to/file
- *
- * yarn test:integration:update-baseline                      # Ratchet mode (only increases baseline counts)
+ * yarn test:integration:update-baseline
  * yarn test:integration:update-baseline path/to/file
- *
- * yarn test:integration:update-baseline:strict               # Strict mode (increases and decreases baseline counts)
- * yarn test:integration:update-baseline:strict path/to/file
  * ```
  * @example jest.config.js
  * {
@@ -44,24 +37,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const prettier = require('prettier');
 const {
   categorizeUnitTestMessage,
   categorizeIntegrationTestMessage,
   createFallbackCategory,
 } = require('./console-categorizer');
-
-/**
- * UPDATE_BASELINE environment variable values.
- *
- * @enum {string}
- */
-const UpdateBaselineMode = {
-  /** Only increase counts, never decrease (default) */
-  RATCHET: 'ratchet',
-  /** Strictly match current test run, allows decreases */
-  STRICT: 'strict',
-};
 
 class ConsoleBaselineReporter {
   // Private fields
@@ -84,14 +64,13 @@ class ConsoleBaselineReporter {
     this.#globalConfig = globalConfig;
 
     // Mode is determined by UPDATE_BASELINE environment variable
-    // - UPDATE_BASELINE='ratchet' → Update baseline, but never decrease counts (default)
-    // - UPDATE_BASELINE='strict' → Update baseline, increase or decrease counts to strictly match current test run
-    // - Otherwise → Do not update baseline, just compare against baseline
-    const updateBaseline = process.env.UPDATE_BASELINE;
+    // - UPDATE_BASELINE=true → 'capture' (write baseline)
+    // - Otherwise → 'enforce' (compare against baseline)
+    const mode = process.env.UPDATE_BASELINE === 'true' ? 'capture' : 'enforce';
 
     this.#options = {
       testType: options.testType || 'unit',
-      updateBaseline,
+      mode,
       failOnViolation: options.failOnViolation !== false,
       showImprovements: options.showImprovements !== false,
     };
@@ -140,8 +119,7 @@ class ConsoleBaselineReporter {
 
     try {
       if (!fs.existsSync(baselinePath)) {
-        // Only warn if we're not updating baseline
-        if (!this.#options.updateBaseline) {
+        if (this.#options.mode === 'enforce') {
           const updateCmd = `yarn test:${this.#options.testType}:update-baseline`;
           console.warn(
             `\n⚠️  Baseline file not found: ${baselinePath}\n` +
@@ -174,50 +152,22 @@ class ConsoleBaselineReporter {
   /**
    * Write the baseline JSON file (capture mode).
    * Merges new results with existing baseline - only updates files that ran.
-   *
-   * In ratchet mode (default): only increases counts, never decreases.
-   * In strict mode: strictly matches current test run, allows decreases.
    */
-  async #writeBaseline() {
+  #writeBaseline() {
     const baselinePath = this.#resolveBaselinePath();
 
-    // Start with baseline files (to preserve files that didn't run)
-    const baselineFiles = this.baseline.files || {};
+    // Start with existing baseline files (to preserve files that didn't run)
+    const existingFiles = this.baseline.files || {};
 
     // Merge: update files that ran, keep files that didn't run
-    const mergedFiles = { ...baselineFiles };
-    for (const [filePath, currentTestRunWarnings] of Object.entries(
-      this.warningsByFile,
-    )) {
-      const baselineWarnings = baselineFiles[filePath] || {};
-
-      if (this.#options.updateBaseline === UpdateBaselineMode.STRICT) {
-        // Strict mode: sync exactly to current run
-        if (Object.keys(currentTestRunWarnings).length > 0) {
-          // File has warnings - update it
-          mergedFiles[filePath] = currentTestRunWarnings;
-        } else if (mergedFiles[filePath]) {
-          // File ran but has no warnings - remove from baseline
-          delete mergedFiles[filePath];
-        }
-      } else if (this.#options.updateBaseline === UpdateBaselineMode.RATCHET) {
-        // Ratchet mode: only increase, never decrease or remove
-        // Merge: take max of baseline and current for each category
-        const mergedWarnings = { ...baselineWarnings };
-        for (const [category, currentTestRunCount] of Object.entries(
-          currentTestRunWarnings,
-        )) {
-          const baselineCount = baselineWarnings[category] || 0;
-          // Only update if current is higher (ratchet up)
-          mergedWarnings[category] = Math.max(
-            baselineCount,
-            currentTestRunCount,
-          );
-        }
-        // Only keep file entry if it has warnings (either baseline or current test run)
-        if (Object.keys(mergedWarnings).length > 0) {
-          mergedFiles[filePath] = mergedWarnings;
-        }
+    const mergedFiles = { ...existingFiles };
+    for (const [filePath, warnings] of Object.entries(this.warningsByFile)) {
+      if (Object.keys(warnings).length > 0) {
+        // File has warnings - update it
+        mergedFiles[filePath] = warnings;
+      } else if (mergedFiles[filePath]) {
+        // File ran but has no warnings - remove from baseline
+        delete mergedFiles[filePath];
       }
       // Files that didn't run are preserved as-is
     }
@@ -235,22 +185,16 @@ class ConsoleBaselineReporter {
 
     const baseline = {
       files: mergedFiles,
+      generated: new Date().toISOString(),
+      nodeVersion: process.version,
     };
 
     if (JSON.stringify(mergedFiles) === JSON.stringify(this.baseline.files)) {
       console.log(`\n✅ Baseline is up-to-date, no changes needed.\n`);
     } else {
-      // Write JSON with Prettier formatting
-      const prettierOptions = await prettier.resolveConfig(baselinePath);
-      const formatted = await prettier.format(
-        `${JSON.stringify(baseline, null, 2)}\n`,
-        {
-          // get options from .prettierrc
-          ...prettierOptions,
-          filepath: baselinePath,
-        },
-      );
-      fs.writeFileSync(baselinePath, formatted);
+      // Write JSON with 2-space indentation and trailing newline (matches Prettier)
+      const jsonString = `${JSON.stringify(baseline, null, 2)}\n`;
+      fs.writeFileSync(baselinePath, jsonString);
 
       const filesUpdated = Object.keys(this.warningsByFile).length;
       const totalFilesInBaseline = Object.keys(mergedFiles).length;
@@ -347,21 +291,14 @@ class ConsoleBaselineReporter {
    * Called once after ALL tests complete.
    * Handles both capture and enforce modes.
    */
-  async onRunComplete() {
-    const { updateBaseline } = this.#options;
-
-    // Update baseline (ratchet or strict)
-    if (
-      updateBaseline === UpdateBaselineMode.RATCHET ||
-      updateBaseline === UpdateBaselineMode.STRICT
-    ) {
-      await this.#writeBaseline();
-    } else if (updateBaseline === undefined) {
-      // Do not update baseline, just compare against baseline
+  onRunComplete() {
+    if (this.#options.mode === 'capture') {
+      this.#writeBaseline();
+    } else if (this.#options.mode === 'enforce') {
       this.#enforceBaseline();
     } else {
       throw new Error(
-        `Invalid UPDATE_BASELINE value (${updateBaseline}): must be '${UpdateBaselineMode.RATCHET}', '${UpdateBaselineMode.STRICT}', or unset`,
+        `Invalid mode (${this.#options.mode}): must be 'capture' or 'enforce'`,
       );
     }
   }
@@ -425,50 +362,48 @@ class ConsoleBaselineReporter {
     const baselineFiles = this.baseline.files || {};
 
     // Check each file that was run
-    for (const [filePath, currentTestRunWarnings] of Object.entries(
+    for (const [filePath, currentWarnings] of Object.entries(
       this.warningsByFile,
     )) {
       const baselineForFile = baselineFiles[filePath] || {};
       const isNewFile = !baselineFiles[filePath];
 
       // Track if this is a new file (not in baseline)
-      if (isNewFile && Object.keys(currentTestRunWarnings).length > 0) {
+      if (isNewFile && Object.keys(currentWarnings).length > 0) {
         newFiles.push({
           filePath,
-          warnings: currentTestRunWarnings,
+          warnings: currentWarnings,
         });
       }
 
       // Check for violations (increased counts or new categories)
       // Skip violations for new files - they're already tracked in newFiles
-      for (const [category, currentTestRunCount] of Object.entries(
-        currentTestRunWarnings,
-      )) {
+      for (const [category, currentCount] of Object.entries(currentWarnings)) {
         const baselineCount = baselineForFile[category] || 0;
 
-        if (currentTestRunCount > baselineCount && !isNewFile) {
+        if (currentCount > baselineCount && !isNewFile) {
           violations.push({
             filePath,
             category,
             baseline: baselineCount,
-            current: currentTestRunCount,
-            increase: currentTestRunCount - baselineCount,
+            current: currentCount,
+            increase: currentCount - baselineCount,
             isNew: baselineCount === 0,
           });
-        } else if (currentTestRunCount < baselineCount) {
+        } else if (currentCount < baselineCount) {
           improvements.push({
             filePath,
             category,
             baseline: baselineCount,
-            current: currentTestRunCount,
-            decrease: baselineCount - currentTestRunCount,
+            current: currentCount,
+            decrease: baselineCount - currentCount,
           });
         }
       }
 
       // Check for categories that disappeared from this file
       for (const [category, baselineCount] of Object.entries(baselineForFile)) {
-        if (!currentTestRunWarnings[category]) {
+        if (!currentWarnings[category]) {
           improvements.push({
             filePath,
             category,
@@ -618,12 +553,9 @@ class ConsoleBaselineReporter {
       console.log('');
     }
 
-    const strictCmd = `yarn test:${this.#options.testType}:update-baseline:strict`;
-    console.log('  💡 To lock in improvements:');
-    console.log('     - Edit baseline manually, OR');
-    console.log(
-      `     - Run ${strictCmd} (allows decreases - use with caution)\n`,
-    );
+    const updateCmd = `yarn test:${this.#options.testType}:update-baseline`;
+    console.log('  💡 Lock in improvements:');
+    console.log(`     ${updateCmd}\n`);
   }
 
   /**

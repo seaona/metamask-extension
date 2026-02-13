@@ -9,7 +9,6 @@ import SnapSimpleKeyringPage from '../../page-objects/pages/snap-simple-keyring-
 import TestDapp from '../../page-objects/pages/test-dapp';
 import { installSnapSimpleKeyring } from '../../page-objects/flows/snap-simple-keyring.flow';
 import { loginWithBalanceValidation } from '../../page-objects/flows/login.flow';
-import { connectAccountToTestDapp } from '../../page-objects/flows/test-dapp.flow';
 import {
   signTypedDataV3WithSnapAccount,
   signTypedDataV4WithSnapAccount,
@@ -51,16 +50,14 @@ describe('Snap Account Signatures and Disconnects', function (this: Suite) {
         // Open the Test Dapp and connect
         const testDapp = new TestDapp(driver);
         await testDapp.openTestDappPage();
-        await connectAccountToTestDapp(driver, {
-          publicAddress: newPublicKey,
-        });
+        await testDapp.connectAccount({ publicAddress: newPublicKey });
 
         // SignedTypedDataV3 with Test Dapp
         await signTypedDataV3WithSnapAccount(driver, newPublicKey, false, true);
 
         // Disconnect from Test Dapp and reconnect to Test Dapp
         await testDapp.disconnectAccount(newPublicKey);
-        await connectAccountToTestDapp(driver, {
+        await testDapp.connectAccount({
           publicAddress: newPublicKey,
         });
 

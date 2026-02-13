@@ -1,7 +1,5 @@
-import type { CaipChainId, CaipAssetType } from '@metamask/utils';
 import type { BridgeToken } from '../../../ducks/bridge/types';
 import { MultichainNetworks } from '../../../../shared/constants/multichain/networks';
-import { toAssetId } from '../../../../shared/lib/asset-utils';
 import {
   calculateSlippage,
   getSlippageReason,
@@ -11,65 +9,51 @@ import {
 
 describe('Slippage Service', () => {
   // Mock tokens
-  const mockUSDC = (chainId: CaipChainId = 'eip155:1') => ({
-    chainId,
+  const mockUSDC: BridgeToken = {
+    chainId: '0x1',
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    assetId: toAssetId(
-      '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-      chainId,
-    ) as CaipAssetType,
     symbol: 'USDC',
     decimals: 6,
-    iconUrl: '',
+    image: '',
     balance: '0',
-    name: 'USDC',
-  });
+  };
 
-  const mockUSDT = (chainId: CaipChainId = 'eip155:1') => ({
-    chainId,
+  const mockUSDT: BridgeToken = {
+    chainId: '0x1',
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    assetId: toAssetId(
-      '0xdac17f958d2ee523a2206206994597c13d831ec7',
-      chainId,
-    ) as CaipAssetType,
     symbol: 'USDT',
     decimals: 6,
-    iconUrl: '',
+    image: '',
     balance: '0',
-    name: 'USDT',
-  });
+  };
 
-  const mockWETH = (
-    chainId: CaipChainId = 'eip155:1',
-    address: string = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-  ) => ({
-    chainId,
-    address,
-    assetId: toAssetId(address, chainId) as CaipAssetType,
+  const mockWETH: BridgeToken = {
+    chainId: '0x1',
+    address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
     symbol: 'WETH',
     decimals: 18,
-    iconUrl: '',
+    image: '',
     balance: '0',
-    name: 'WETH',
-  });
+  };
 
   const mockSolanaToken: BridgeToken = {
     chainId: MultichainNetworks.SOLANA,
-    assetId:
-      'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp/token:So11111111111111111111111111111111111111112',
+    address: 'So11111111111111111111111111111111111111112',
     symbol: 'SOL',
     decimals: 9,
-    iconUrl: '',
+    image: '',
     balance: '0',
-    name: 'SOL',
   };
 
   describe('calculateSlippage', () => {
     describe('Bridge transactions', () => {
       it('returns 0.5% for all bridge routes', () => {
         const context: SlippageContext = {
-          fromToken: mockWETH(),
-          toToken: mockWETH('eip155:10'),
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0xa' },
+          fromToken: mockWETH,
+          toToken: mockWETH,
+          isSwap: false,
         };
 
         const result = calculateSlippage(context);
@@ -78,8 +62,11 @@ describe('Slippage Service', () => {
 
       it('returns 0.5% for bridge even with stablecoins', () => {
         const context: SlippageContext = {
-          fromToken: mockUSDC(),
-          toToken: mockUSDC('eip155:10'),
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0xa' },
+          fromToken: mockUSDC,
+          toToken: mockUSDC,
+          isSwap: false,
         };
 
         const result = calculateSlippage(context);
@@ -90,8 +77,11 @@ describe('Slippage Service', () => {
     describe('Solana swaps', () => {
       it('returns undefined (AUTO mode) for Solana to Solana swaps', () => {
         const context: SlippageContext = {
+          fromChain: { chainId: MultichainNetworks.SOLANA },
+          toChain: { chainId: MultichainNetworks.SOLANA },
           fromToken: mockSolanaToken,
           toToken: mockSolanaToken,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -102,8 +92,11 @@ describe('Slippage Service', () => {
     describe('EVM swaps', () => {
       it('returns 0.5% for EVM stablecoin pairs', () => {
         const context: SlippageContext = {
-          fromToken: mockUSDC(),
-          toToken: mockUSDT('eip155:1'),
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0x1' },
+          fromToken: mockUSDC,
+          toToken: mockUSDT,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -112,8 +105,11 @@ describe('Slippage Service', () => {
 
       it('returns 2% for non-stablecoin EVM swaps', () => {
         const context: SlippageContext = {
-          fromToken: mockWETH(),
-          toToken: mockUSDC(),
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0x1' },
+          fromToken: mockWETH,
+          toToken: mockUSDC,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -121,11 +117,17 @@ describe('Slippage Service', () => {
       });
 
       it('returns 2% for unknown token addresses', () => {
-        const unknownToken: BridgeToken = mockWETH('eip155:1', '0xunknown');
+        const unknownToken: BridgeToken = {
+          ...mockWETH,
+          address: '0xunknown',
+        };
 
         const context: SlippageContext = {
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0x1' },
           fromToken: unknownToken,
           toToken: unknownToken,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -136,8 +138,11 @@ describe('Slippage Service', () => {
     describe('Cross-chain swaps', () => {
       it('returns 0.5% for cross-chain swaps (treated as bridges)', () => {
         const context: SlippageContext = {
-          fromToken: mockWETH(),
-          toToken: mockWETH('eip155:10'),
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0xa' },
+          fromToken: mockWETH,
+          toToken: mockWETH,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -146,8 +151,11 @@ describe('Slippage Service', () => {
 
       it('returns 0.5% for cross-chain stablecoin swaps (treated as bridges)', () => {
         const context: SlippageContext = {
-          fromToken: mockUSDC(),
-          toToken: mockUSDT('eip155:89'),
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0x89' }, // Polygon
+          fromToken: mockUSDC,
+          toToken: mockUSDT,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -158,8 +166,11 @@ describe('Slippage Service', () => {
     describe('Edge cases', () => {
       it('returns bridge default when fromChain is null', () => {
         const context: SlippageContext = {
-          fromToken: null as never,
-          toToken: mockWETH(),
+          fromChain: null,
+          toChain: { chainId: '0x1' },
+          fromToken: mockWETH,
+          toToken: mockWETH,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -168,8 +179,11 @@ describe('Slippage Service', () => {
 
       it('returns bridge default when fromChain is undefined', () => {
         const context: SlippageContext = {
-          fromToken: null as never,
-          toToken: mockWETH(),
+          fromChain: undefined,
+          toChain: { chainId: '0x1' },
+          fromToken: mockWETH,
+          toToken: mockWETH,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -178,8 +192,11 @@ describe('Slippage Service', () => {
 
       it('returns bridge default when toChain is missing', () => {
         const context: SlippageContext = {
-          fromToken: mockWETH(),
-          toToken: null as never,
+          fromChain: { chainId: '0x1' },
+          toChain: null,
+          fromToken: mockWETH,
+          toToken: mockWETH,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -187,15 +204,17 @@ describe('Slippage Service', () => {
       });
 
       it('handles case-insensitive stablecoin addresses', () => {
-        const token = mockUSDC();
         const uppercaseUSDC: BridgeToken = {
-          ...token,
-          assetId: token.assetId.toUpperCase() as CaipAssetType,
+          ...mockUSDC,
+          address: '0xA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48', // Uppercase
         };
 
         const context: SlippageContext = {
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0x1' },
           fromToken: uppercaseUSDC,
-          toToken: mockUSDT(),
+          toToken: mockUSDT,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -204,8 +223,11 @@ describe('Slippage Service', () => {
 
       it('returns EVM default when only one token is stablecoin', () => {
         const context: SlippageContext = {
-          fromToken: mockUSDC(),
-          toToken: mockWETH(),
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0x1' },
+          fromToken: mockUSDC,
+          toToken: mockWETH,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -214,8 +236,11 @@ describe('Slippage Service', () => {
 
       it('handles missing tokens gracefully', () => {
         const context: SlippageContext = {
-          fromToken: null as never,
-          toToken: null as never,
+          fromChain: { chainId: '0x1' },
+          toChain: { chainId: '0x1' },
+          fromToken: null,
+          toToken: null,
+          isSwap: true,
         };
 
         const result = calculateSlippage(context);
@@ -227,8 +252,11 @@ describe('Slippage Service', () => {
   describe('getSlippageReason', () => {
     it('returns correct reason for bridge', () => {
       const context: SlippageContext = {
-        fromToken: mockWETH(),
-        toToken: mockWETH('eip155:10'),
+        fromChain: { chainId: '0x1' },
+        toChain: { chainId: '0xa' },
+        fromToken: mockWETH,
+        toToken: mockWETH,
+        isSwap: false,
       };
 
       const reason = getSlippageReason(context);
@@ -237,8 +265,11 @@ describe('Slippage Service', () => {
 
     it('returns correct reason for incomplete swap', () => {
       const context: SlippageContext = {
-        fromToken: mockWETH(),
-        toToken: null as never,
+        fromChain: { chainId: '0x1' },
+        toChain: null,
+        fromToken: mockWETH,
+        toToken: mockWETH,
+        isSwap: true,
       };
 
       const reason = getSlippageReason(context);
@@ -247,8 +278,11 @@ describe('Slippage Service', () => {
 
     it('returns correct reason for Solana swap', () => {
       const context: SlippageContext = {
+        fromChain: { chainId: MultichainNetworks.SOLANA },
+        toChain: { chainId: MultichainNetworks.SOLANA },
         fromToken: mockSolanaToken,
         toToken: mockSolanaToken,
+        isSwap: true,
       };
 
       const reason = getSlippageReason(context);
@@ -257,8 +291,11 @@ describe('Slippage Service', () => {
 
     it('returns correct reason for stablecoin pair', () => {
       const context: SlippageContext = {
-        fromToken: mockUSDC(),
-        toToken: mockUSDT(),
+        fromChain: { chainId: '0x1' },
+        toChain: { chainId: '0x1' },
+        fromToken: mockUSDC,
+        toToken: mockUSDT,
+        isSwap: true,
       };
 
       const reason = getSlippageReason(context);
@@ -267,8 +304,11 @@ describe('Slippage Service', () => {
 
     it('returns correct reason for EVM swap', () => {
       const context: SlippageContext = {
-        fromToken: mockWETH(),
-        toToken: mockUSDC(),
+        fromChain: { chainId: '0x1' },
+        toChain: { chainId: '0x1' },
+        fromToken: mockWETH,
+        toToken: mockUSDC,
+        isSwap: true,
       };
 
       const reason = getSlippageReason(context);
@@ -277,8 +317,11 @@ describe('Slippage Service', () => {
 
     it('returns correct reason for cross-chain swap', () => {
       const context: SlippageContext = {
-        fromToken: mockWETH(),
-        toToken: mockWETH('eip155:10'),
+        fromChain: { chainId: '0x1' },
+        toChain: { chainId: '0xa' },
+        fromToken: mockWETH,
+        toToken: mockWETH,
+        isSwap: true,
       };
 
       const reason = getSlippageReason(context);
@@ -287,8 +330,11 @@ describe('Slippage Service', () => {
 
     it('returns correct reason when no chain', () => {
       const context: SlippageContext = {
-        fromToken: null as never,
-        toToken: null as never,
+        fromChain: null,
+        toChain: null,
+        fromToken: mockWETH,
+        toToken: mockWETH,
+        isSwap: true,
       };
 
       const reason = getSlippageReason(context);

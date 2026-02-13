@@ -5,21 +5,12 @@ import type {
   NetworkControllerStateChangeEvent,
 } from '@metamask/network-controller';
 import {
-  StorageServiceGetAllKeysAction,
-  StorageServiceGetItemAction,
-  StorageServiceSetItemAction,
-} from '@metamask/storage-service';
-import {
   PreferencesControllerGetStateAction,
   PreferencesControllerStateChangeEvent,
 } from '../../controllers/preferences-controller';
 import { RootMessenger } from '../../lib/messenger';
 
-type AllowedActions =
-  | NetworkControllerGetNetworkClientByIdAction
-  | StorageServiceGetAllKeysAction
-  | StorageServiceSetItemAction
-  | StorageServiceGetItemAction;
+type AllowedActions = NetworkControllerGetNetworkClientByIdAction;
 
 type AllowedEvents = NetworkControllerStateChangeEvent;
 
@@ -48,12 +39,7 @@ export function getTokenListControllerMessenger(
   });
   messenger.delegate({
     messenger: controllerMessenger,
-    actions: [
-      'NetworkController:getNetworkClientById',
-      'StorageService:getAllKeys',
-      'StorageService:setItem',
-      'StorageService:getItem',
-    ],
+    actions: ['NetworkController:getNetworkClientById'],
     events: ['NetworkController:stateChange'],
   });
   return controllerMessenger;

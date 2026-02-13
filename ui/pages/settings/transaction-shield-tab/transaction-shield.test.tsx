@@ -2,7 +2,6 @@ import React from 'react';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
-  CANCEL_TYPES,
   PAYMENT_TYPES,
   PRODUCT_TYPES,
   RECURRING_INTERVALS,
@@ -62,7 +61,6 @@ describe('Transaction Shield Page', () => {
             },
           },
           isEligibleForSupport: true,
-          cancelType: CANCEL_TYPES.ALLOWED_AT_PERIOD_END,
         } satisfies Subscription,
       ],
     },

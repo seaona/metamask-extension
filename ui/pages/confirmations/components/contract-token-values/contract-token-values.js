@@ -29,9 +29,7 @@ export default function ContractTokenValues({
   blockExplorerUrl,
 }) {
   const t = useI18nContext();
-
-  // useCopyToClipboard analysis: Copies a public address
-  const [copied, handleCopy] = useCopyToClipboard({ clearDelayMs: null });
+  const [copied, handleCopy] = useCopyToClipboard();
 
   return (
     <Box

@@ -66,6 +66,14 @@ export async function completeSnapInstallSwitchToTestSnap(driver: Driver) {
 export async function approveAccount(driver: Driver) {
   await driver.switchToWindowWithTitle(WINDOW_TITLES.Dialog);
 
+  await driver.waitForSelector({
+    text: 'Connect with MetaMask',
+  });
+
+  await driver.clickElement({
+    text: 'Account 1',
+  });
+
   await driver.clickElement({
     text: 'Connect',
     tag: 'button',
@@ -83,7 +91,7 @@ export async function approveAccount(driver: Driver) {
 export async function approvePersonalSignMessage(driver: Driver) {
   await driver.switchToWindowWithTitle(WINDOW_TITLES.Dialog);
   await driver.waitForSelector({
-    text: 'Sign',
+    text: 'Signature request',
     tag: 'h2',
   });
 

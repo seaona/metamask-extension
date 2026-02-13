@@ -1,7 +1,6 @@
-import { isCrossChain, isSolanaChainId } from '@metamask/bridge-controller';
-import type { CaipAssetType } from '@metamask/utils';
+import { isSolanaChainId } from '@metamask/bridge-controller';
 import type { BridgeToken } from '../../../ducks/bridge/types';
-import { STABLECOIN_ASSET_IDS } from './stablecoins';
+import { STABLECOINS_BY_CHAIN_ID } from './stablecoins';
 
 /**
  * Slippage values for different scenarios
@@ -16,34 +15,55 @@ export enum SlippageValue {
  * Context for calculating slippage
  */
 export type SlippageContext = {
-  fromToken?: BridgeToken;
-  toToken?: BridgeToken;
+  fromChain: { chainId: string } | null | undefined;
+  toChain: { chainId: string } | null | undefined;
+  fromToken: BridgeToken | null;
+  toToken: BridgeToken | null;
+  isSwap: boolean;
 };
 
 /**
  * Checks if a token address is a stablecoin on the given chain
  *
- * @param assetId
+ * @param chainId
+ * @param tokenAddress
  */
-function isStablecoin(assetId: CaipAssetType): boolean {
-  return STABLECOIN_ASSET_IDS.has(assetId.toLowerCase());
+function isStablecoin(
+  chainId: string,
+  tokenAddress: string | undefined,
+): boolean {
+  if (!tokenAddress) {
+    return false;
+  }
+
+  const stablecoins = STABLECOINS_BY_CHAIN_ID[chainId];
+  if (!stablecoins) {
+    return false;
+  }
+
+  return stablecoins.has(tokenAddress.toLowerCase());
 }
 
 /**
  * Checks if both tokens in a pair are stablecoins
  *
+ * @param chainId
  * @param fromToken
  * @param toToken
  */
 function isStablecoinPair(
+  chainId: string,
   fromToken: BridgeToken | null,
   toToken: BridgeToken | null,
 ): boolean {
-  if (!fromToken?.assetId || !toToken?.assetId) {
+  if (!fromToken || !toToken) {
     return false;
   }
 
-  return isStablecoin(fromToken.assetId) && isStablecoin(toToken.assetId);
+  return (
+    isStablecoin(chainId, fromToken.address) &&
+    isStablecoin(chainId, toToken.address)
+  );
 }
 
 /**
@@ -60,25 +80,25 @@ function isStablecoinPair(
 export function calculateSlippage(
   context: SlippageContext,
 ): number | undefined {
-  const { fromToken, toToken } = context;
+  const { fromChain, toChain, fromToken, toToken, isSwap } = context;
 
   // If no source chain, we can't determine the type
-  if (!fromToken?.chainId || !toToken?.chainId) {
+  if (!fromChain?.chainId || !toChain?.chainId) {
     return SlippageValue.BridgeDefault;
   }
 
   // 1. Cross-chain (bridge) → 2%
-  if (isCrossChain(fromToken.chainId, toToken.chainId)) {
+  if (!isSwap || fromChain.chainId !== toChain.chainId) {
     return SlippageValue.BridgeDefault;
   }
 
   // 2. Solana swap → undefined (AUTO mode)
-  if (isSolanaChainId(fromToken.chainId)) {
+  if (isSolanaChainId(fromChain.chainId)) {
     return undefined;
   }
 
   // 3. EVM swap → check for stablecoin pair
-  if (isStablecoinPair(fromToken, toToken)) {
+  if (isStablecoinPair(fromChain.chainId, fromToken, toToken)) {
     return SlippageValue.EvmStablecoin; // 0.5%
   }
 
@@ -93,21 +113,21 @@ export function calculateSlippage(
  * @param context
  */
 export function getSlippageReason(context: SlippageContext): string {
-  const { fromToken, toToken } = context;
+  const { fromChain, toChain, fromToken, toToken, isSwap } = context;
 
-  if (!fromToken?.chainId || !toToken?.chainId) {
+  if (!fromChain?.chainId || !toChain?.chainId) {
     return 'Incomplete chain setup - using bridge default';
   }
 
-  if (isCrossChain(fromToken.chainId, toToken.chainId)) {
+  if (!isSwap || fromChain.chainId !== toChain.chainId) {
     return 'Cross-chain transaction';
   }
 
-  if (isSolanaChainId(fromToken.chainId)) {
+  if (isSolanaChainId(fromChain.chainId)) {
     return 'Solana swap (AUTO mode)';
   }
 
-  if (isStablecoinPair(fromToken, toToken)) {
+  if (isStablecoinPair(fromChain.chainId, fromToken, toToken)) {
     return 'EVM stablecoin pair';
   }
 

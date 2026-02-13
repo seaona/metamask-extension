@@ -29,11 +29,10 @@ import { StreamProvider } from '@metamask/providers';
 import { createIdRemapMiddleware } from '@metamask/json-rpc-engine';
 import log from 'loglevel';
 import { ExtensionPortStream } from 'extension-port-stream';
-import {
-  launchMetamaskUi,
+import launchMetaMaskUi, {
   CriticalStartupErrorHandler,
   connectToBackground,
-  displayCriticalErrorMessage,
+  displayCriticalError,
   CriticalErrorTranslationKey,
   // TODO: Remove restricted import
   // eslint-disable-next-line import/no-restricted-paths
@@ -116,9 +115,8 @@ async function start() {
   const backgroundConnection = metaRPCClientFactory(subStreams.controller);
   connectToBackground(backgroundConnection, handleStartUISync);
 
-  async function handleStartUISync(initialState) {
+  async function handleStartUISync() {
     endTrace({ name: TraceName.BackgroundConnect });
-    criticalErrorHandler.startUiSyncReceived();
 
     // this means we've received a message from the background, and so
     // background startup has succeed, so we don't need to listen for error
@@ -137,7 +135,6 @@ async function start() {
       backgroundConnection,
       windowType,
       traceContext,
-      initialState,
     );
 
     if (isManifestV3) {
@@ -236,20 +233,13 @@ async function loadPhishingWarningPage() {
 }
 
 async function initializeUiWithTab(
-  activeTab,
-  backgroundConnection,
+  tab,
+  connectionStream,
   windowType,
   traceContext,
-  initialState,
 ) {
   try {
-    const store = await launchMetamaskUi({
-      activeTab,
-      container,
-      backgroundConnection,
-      traceContext,
-      initialState,
-    });
+    const store = await initializeUi(tab, connectionStream, traceContext);
 
     endTrace({ name: TraceName.UIStartup });
 
@@ -264,7 +254,7 @@ async function initializeUiWithTab(
       global.platform.openExtensionInBrowser();
     }
   } catch (error) {
-    await displayCriticalErrorMessage(
+    await displayCriticalError(
       container,
       CriticalErrorTranslationKey.TroubleStarting,
       error,
@@ -315,6 +305,15 @@ async function queryCurrentActiveTab(windowType) {
   }
 
   return { id, title, origin, protocol, url };
+}
+
+async function initializeUi(activeTab, backgroundConnection, traceContext) {
+  return await launchMetaMaskUi({
+    activeTab,
+    container,
+    backgroundConnection,
+    traceContext,
+  });
 }
 
 /**

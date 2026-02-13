@@ -19,8 +19,7 @@ const DEBOUNCE_DELAY = 500;
 
 export function useTransactionCustomAmount({
   currency,
-  disableUpdate = false,
-}: { currency?: string; disableUpdate?: boolean } = {}) {
+}: { currency?: string } = {}) {
   const [amountFiatState, setAmountFiat] = useState('0');
   const [isInputChanged, setInputChanged] = useState(false);
   const [hasInput, setHasInput] = useState(false);
@@ -49,14 +48,12 @@ export function useTransactionCustomAmount({
 
     const debouncedFn = debounce((value: string) => {
       setAmountHumanDebounced(value);
-      if (!disableUpdate) {
-        updateTokenAmountCallback(value);
-      }
+      updateTokenAmountCallback(value);
     }, DEBOUNCE_DELAY);
 
     debounceRef.current = debouncedFn;
     return debouncedFn;
-  }, [disableUpdate, updateTokenAmountCallback]);
+  }, [updateTokenAmountCallback]);
 
   const primaryRequiredToken = useMemo(
     () => requiredTokens?.find((t) => !t.skipIfBalance),
@@ -158,13 +155,10 @@ export function useTransactionCustomAmount({
         .toString(10);
 
       setAmountHumanDebounced(newAmountHuman);
-      if (!disableUpdate) {
-        updateTokenAmountCallback(newAmountHuman);
-      }
+      updateTokenAmountCallback(newAmountHuman);
     },
     [
       balanceUsd,
-      disableUpdate,
       isMaxAmount,
       setIsMax,
       tokenFiatRate,

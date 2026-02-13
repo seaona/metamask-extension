@@ -15,7 +15,6 @@ import { useTransactionDisplayData } from '../../../hooks/useTransactionDisplayD
 import { useI18nContext } from '../../../hooks/useI18nContext';
 import CancelSpeedupPopover from '../cancel-speedup-popover';
 import TransactionListItemDetails from '../transaction-list-item-details';
-import { TransactionDetailsModal } from '../../../pages/confirmations/components/activity';
 import { CONFIRM_TRANSACTION_ROUTE } from '../../../helpers/constants/routes';
 import { useShouldShowSpeedUp } from '../../../hooks/useShouldShowSpeedUp';
 import TransactionStatusLabel from '../transaction-status-label/transaction-status-label';
@@ -68,7 +67,6 @@ import {
   CHAIN_ID_TO_NETWORK_IMAGE_URL_MAP,
   NETWORK_TO_NAME_MAP,
 } from '../../../../shared/constants/network';
-import { PAY_TRANSACTION_TYPES } from '../../../pages/confirmations/constants/pay';
 import { mapTransactionTypeToCategory } from './helpers';
 
 function TransactionListItemInner({
@@ -117,18 +115,13 @@ function TransactionListItemInner({
   };
 
   const {
-    initialTransaction: { id, txParams, type, metamaskPay },
+    initialTransaction: { id, txParams },
     primaryTransaction: { error, status },
   } = transactionGroup;
 
-  const badgeChainId =
-    type === TransactionType.perpsDeposit && metamaskPay?.chainId
-      ? metamaskPay.chainId
-      : chainId;
-
   const senderAddress = txParams?.from;
 
-  const { trackEvent } = useContext(MetaMetricsContext);
+  const trackEvent = useContext(MetaMetricsContext);
 
   const retryTransaction = useCallback(
     async (event) => {
@@ -312,11 +305,11 @@ function TransactionListItemInner({
                 className="activity-tx__network-badge"
                 data-testid="activity-tx-network-badge"
                 size={AvatarNetworkSize.Xs}
-                name={NETWORK_TO_NAME_MAP[badgeChainId]}
-                src={CHAIN_ID_TO_NETWORK_IMAGE_URL_MAP[badgeChainId]}
+                name={NETWORK_TO_NAME_MAP[chainId]}
+                src={CHAIN_ID_TO_NETWORK_IMAGE_URL_MAP[chainId]}
                 borderColor={BackgroundColor.backgroundDefault}
                 borderWidth={2}
-                backgroundColor={getTestNetworkBackgroundColor(badgeChainId)}
+                backgroundColor={getTestNetworkBackgroundColor(chainId)}
               />
             }
             style={{ alignSelf: 'center' }}
@@ -392,40 +385,32 @@ function TransactionListItemInner({
           </Box>
         )}
       </ActivityListItem>
-      {showDetails &&
-        (PAY_TRANSACTION_TYPES.includes(
-          transactionGroup.initialTransaction.type,
-        ) ? (
-          <TransactionDetailsModal
-            transactionMeta={transactionGroup.initialTransaction}
-            onClose={toggleShowDetails}
-          />
-        ) : (
-          <TransactionListItemDetails
-            title={title}
-            onClose={toggleShowDetails}
-            transactionGroup={transactionGroup}
-            primaryCurrency={primaryCurrency}
-            senderAddress={senderAddress}
-            recipientAddress={recipientAddress}
-            onRetry={retryTransaction}
-            // showRetry={showRetry}
-            showSpeedUp={isSpeedUpButtonVisible}
-            isEarliestNonce={isEarliestNonce}
-            onCancel={cancelTransaction}
-            transactionStatus={() => (
-              <TransactionStatusLabel
-                isPending={isPending}
-                isEarliestNonce={isEarliestNonce}
-                error={error}
-                date={date}
-                status={displayedStatusKey}
-                statusOnly
-              />
-            )}
-            chainId={chainId}
-          />
-        ))}
+      {showDetails && (
+        <TransactionListItemDetails
+          title={title}
+          onClose={toggleShowDetails}
+          transactionGroup={transactionGroup}
+          primaryCurrency={primaryCurrency}
+          senderAddress={senderAddress}
+          recipientAddress={recipientAddress}
+          onRetry={retryTransaction}
+          // showRetry={showRetry}
+          showSpeedUp={isSpeedUpButtonVisible}
+          isEarliestNonce={isEarliestNonce}
+          onCancel={cancelTransaction}
+          transactionStatus={() => (
+            <TransactionStatusLabel
+              isPending={isPending}
+              isEarliestNonce={isEarliestNonce}
+              error={error}
+              date={date}
+              status={displayedStatusKey}
+              statusOnly
+            />
+          )}
+          chainId={chainId}
+        />
+      )}
       {!supportsEIP1559 && showRetryEditGasPopover && (
         <EditGasPopover
           onClose={() => setShowRetryEditGasPopover(false)}

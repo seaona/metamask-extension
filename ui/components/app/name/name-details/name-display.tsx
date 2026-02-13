@@ -22,10 +22,6 @@ export type NameDisplayProps = {
    * The fallback value to display if the name is not found or cannot be resolved.
    */
   fallbackName?: string;
-  /**
-   * Whether to disable the onClick handler.
-   */
-  disableNameClick?: boolean;
 };
 
 const NameDisplay = memo(
@@ -37,7 +33,6 @@ const NameDisplay = memo(
     handleClick,
     showFullName = false,
     fallbackName,
-    disableNameClick,
     ...props
   }: NameDisplayProps) => {
     const { name, image, icon, displayState, isAccount } = useDisplayName({
@@ -96,8 +91,7 @@ const NameDisplay = memo(
           name: true,
           // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          name__clickable:
-            Boolean(handleClick) && !isAccount && !disableNameClick,
+          name__clickable: Boolean(handleClick) && !isAccount,
           // TODO: Fix in https://github.com/MetaMask/metamask-extension/issues/31860
           // eslint-disable-next-line @typescript-eslint/naming-convention
           name__saved: displayState === TrustSignalDisplayState.Petname,

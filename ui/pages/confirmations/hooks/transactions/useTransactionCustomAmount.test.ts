@@ -28,20 +28,16 @@ const DEFAULT_MOCK_STATE = getMockConfirmStateForTransaction(
 
 function runHook({
   currency,
-  disableUpdate = false,
   tokenFiatRate = 1,
   payTokenBalanceUsd = 100,
   isMaxAmount = false,
   requiredTokens = [],
-  updateTokenAmountMock = jest.fn(),
 }: {
   currency?: string;
-  disableUpdate?: boolean;
   tokenFiatRate?: number;
   payTokenBalanceUsd?: number;
   isMaxAmount?: boolean;
   requiredTokens?: { amountUsd?: string; skipIfBalance?: boolean }[];
-  updateTokenAmountMock?: jest.Mock;
 } = {}) {
   jest
     .mocked(useTokenFiatRatesModule.useTokenFiatRate)
@@ -68,12 +64,12 @@ function runHook({
       isNative: false,
     });
   jest.mocked(useUpdateTokenAmountModule.useUpdateTokenAmount).mockReturnValue({
-    updateTokenAmount: updateTokenAmountMock,
+    updateTokenAmount: jest.fn(),
     isUpdating: false,
   });
 
   return renderHookWithConfirmContextProvider(
-    () => useTransactionCustomAmount({ currency, disableUpdate }),
+    () => useTransactionCustomAmount({ currency }),
     DEFAULT_MOCK_STATE,
   );
 }
@@ -318,87 +314,6 @@ describe('useTransactionCustomAmount', () => {
 
       // Should use the second token (first without skipIfBalance)
       expect(result.current.amountFiat).toBe('100');
-    });
-  });
-
-  describe('disableUpdate', () => {
-    it('does not call updateTokenAmount when disableUpdate is true and amount changes via debounce', () => {
-      const updateTokenAmountMock = jest.fn();
-      const { result } = runHook({
-        disableUpdate: true,
-        updateTokenAmountMock,
-      });
-
-      act(() => {
-        result.current.updatePendingAmount('50');
-      });
-
-      act(() => {
-        jest.advanceTimersByTime(500);
-      });
-
-      expect(updateTokenAmountMock).not.toHaveBeenCalled();
-    });
-
-    it('calls updateTokenAmount when disableUpdate is false and amount changes via debounce', () => {
-      const updateTokenAmountMock = jest.fn();
-      const { result } = runHook({
-        disableUpdate: false,
-        updateTokenAmountMock,
-      });
-
-      act(() => {
-        result.current.updatePendingAmount('50');
-      });
-
-      act(() => {
-        jest.advanceTimersByTime(500);
-      });
-
-      expect(updateTokenAmountMock).toHaveBeenCalledWith('50');
-    });
-
-    it('does not call updateTokenAmount when disableUpdate is true and percentage button is clicked', () => {
-      const updateTokenAmountMock = jest.fn();
-      const { result } = runHook({
-        disableUpdate: true,
-        payTokenBalanceUsd: 100,
-        updateTokenAmountMock,
-      });
-
-      act(() => {
-        result.current.updatePendingAmountPercentage(50);
-      });
-
-      expect(updateTokenAmountMock).not.toHaveBeenCalled();
-    });
-
-    it('calls updateTokenAmount when disableUpdate is false and percentage button is clicked', () => {
-      const updateTokenAmountMock = jest.fn();
-      const { result } = runHook({
-        disableUpdate: false,
-        payTokenBalanceUsd: 100,
-        updateTokenAmountMock,
-      });
-
-      act(() => {
-        result.current.updatePendingAmountPercentage(50);
-      });
-
-      expect(updateTokenAmountMock).toHaveBeenCalledWith('50');
-    });
-
-    it('still updates local state when disableUpdate is true', () => {
-      const { result } = runHook({
-        disableUpdate: true,
-        payTokenBalanceUsd: 100,
-      });
-
-      act(() => {
-        result.current.updatePendingAmountPercentage(50);
-      });
-
-      expect(result.current.amountFiat).toBe('50');
     });
   });
 });

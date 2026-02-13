@@ -25,13 +25,18 @@ export const ConnectionState = {
     status: ConnectionStatus.AwaitingConfirmation,
   }),
 
-  awaitingApp: (appName?: string): HardwareWalletConnectionState => ({
+  awaitingApp: (
+    reason: string,
+    appName?: string,
+  ): HardwareWalletConnectionState => ({
     status: ConnectionStatus.AwaitingApp,
+    reason,
     appName,
   }),
 
-  error: (error: Error): HardwareWalletConnectionState => ({
+  error: (reason: string, error: Error): HardwareWalletConnectionState => ({
     status: ConnectionStatus.ErrorState,
+    reason,
     error,
   }),
 };

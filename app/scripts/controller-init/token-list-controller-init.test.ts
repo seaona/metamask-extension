@@ -20,15 +20,7 @@ import {
 } from './messengers';
 import { TokenListControllerInit } from './token-list-controller-init';
 
-jest.mock('@metamask/assets-controllers', () => {
-  return {
-    TokenListController: jest.fn().mockImplementation(function (this: {
-      initialize: jest.Mock;
-    }) {
-      this.initialize = jest.fn().mockResolvedValue(undefined);
-    }),
-  };
-});
+jest.mock('@metamask/assets-controllers');
 
 function getInitRequestMock(): jest.Mocked<
   ControllerInitRequest<
@@ -98,6 +90,7 @@ describe('TokenListControllerInit', () => {
       messenger: expect.any(Object),
       state: undefined,
       chainId: '0x1',
+      preventPollingOnNetworkRestart: false,
     });
   });
 });

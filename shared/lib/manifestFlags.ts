@@ -96,10 +96,9 @@ export type ManifestFlags = {
      */
     disableSync?: boolean;
     /**
-     * Simulate a delay to how quickly the background responds to the UI. Set this to `true` to
-     * make the background completely unresponsive.
+     * Whether to simulate an unresponsive background by ignoring connections from the UI
      */
-    simulateDelayedBackgroundResponse?: number | true;
+    simulateUnresponsiveBackground?: boolean;
     /**
      * Number of milliseconds to wait before resolving the simulated slow
      * background loading promise.

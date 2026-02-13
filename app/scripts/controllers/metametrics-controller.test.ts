@@ -1610,8 +1610,6 @@ describe('MetaMetricsController', function () {
           [MetaMetricsUserTrait.TokenSortPreference]: 'token-sort-key',
           [MetaMetricsUserTrait.PrivacyModeEnabled]: true,
           [MetaMetricsUserTrait.NetworkFilterPreference]: [],
-          [MetaMetricsUserTrait.Platform]: 'Chrome',
-          [MetaMetricsUserTrait.InstallType]: 'unknown',
         });
       });
     });
@@ -2269,7 +2267,6 @@ async function withController<ReturnValue>(
       'PreferencesController:getState',
       jest.fn().mockReturnValue({
         currentLocale,
-        useExternalServices: true,
       }),
     );
 

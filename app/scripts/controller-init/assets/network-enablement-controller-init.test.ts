@@ -123,7 +123,6 @@ describe('NetworkEnablementControllerInit', () => {
       enabledNetworkMap: {
         solana: { [SolScope.Mainnet]: true },
       },
-      nativeAssetIdentifiers: {},
     };
 
     expect(controller.enableNetwork).not.toHaveBeenCalled();
@@ -158,7 +157,6 @@ describe('NetworkEnablementControllerInit', () => {
       enabledNetworkMap: {
         bitcoin: { [BtcScope.Mainnet]: true },
       },
-      nativeAssetIdentifiers: {},
     };
 
     expect(controller.enableNetwork).not.toHaveBeenCalled();
@@ -192,7 +190,6 @@ describe('NetworkEnablementControllerInit', () => {
       enabledNetworkMap: {
         solana: { [SolScope.Mainnet]: true },
       },
-      nativeAssetIdentifiers: {},
     };
 
     expect(controller.enableNetwork).not.toHaveBeenCalled();
@@ -226,7 +223,6 @@ describe('NetworkEnablementControllerInit', () => {
         solana: { [SolScope.Mainnet]: true },
         bitcoin: { [BtcScope.Mainnet]: true },
       },
-      nativeAssetIdentifiers: {},
     };
 
     expect(controller.enableNetwork).not.toHaveBeenCalled();
@@ -265,7 +261,6 @@ describe('NetworkEnablementControllerInit', () => {
             [BtcScope.Mainnet]: true,
           },
         },
-        nativeAssetIdentifiers: {},
       },
     });
   });
@@ -293,7 +288,6 @@ describe('NetworkEnablementControllerInit', () => {
             [BtcScope.Mainnet]: false,
           },
         },
-        nativeAssetIdentifiers: {},
       },
     });
   });
@@ -323,7 +317,6 @@ describe('NetworkEnablementControllerInit', () => {
             [BtcScope.Mainnet]: false,
           },
         },
-        nativeAssetIdentifiers: {},
       },
     });
   });
@@ -353,7 +346,6 @@ describe('NetworkEnablementControllerInit', () => {
             [BtcScope.Mainnet]: false,
           },
         },
-        nativeAssetIdentifiers: {},
       },
     });
   });

@@ -8,8 +8,6 @@ import {
 } from '@metamask/metamask-eth-abis';
 import log from 'loglevel';
 import {
-  GasFeeEstimates,
-  GasFeeEstimateType,
   TransactionMeta,
   TransactionType,
 } from '@metamask/transaction-controller';
@@ -18,7 +16,6 @@ import type { Provider } from '@metamask/network-controller';
 
 import { Hex, JsonRpcParams } from '@metamask/utils';
 import { BigNumber } from 'bignumber.js';
-import { ERC20 } from '@metamask/controller-utils';
 import {
   APPROVAL_METHOD_NAMES,
   AssetType,
@@ -121,32 +118,6 @@ export function txParamsAreDappSuggested(
           maxPriorityFeePerGas &&
         transactionMeta?.dappSuggestedGasFees?.maxFeePerGas === maxFeePerGas),
   );
-}
-
-/**
- * Get the market fee (medium level) from gas fee estimates.
- * Returns the fee as a hex WEI string, or undefined if not available.
- *
- * @param gasFeeEstimates - The gas fee estimates from transactionMeta
- * @returns The medium-level fee as a hex string, or undefined
- */
-export function getMarketFeeFromEstimates(
-  gasFeeEstimates: GasFeeEstimates | undefined,
-): Hex | undefined {
-  if (!gasFeeEstimates) {
-    return undefined;
-  }
-
-  switch (gasFeeEstimates.type) {
-    case GasFeeEstimateType.FeeMarket:
-      return gasFeeEstimates.medium?.maxFeePerGas;
-    case GasFeeEstimateType.Legacy:
-      return gasFeeEstimates.medium;
-    case GasFeeEstimateType.GasPrice:
-      return gasFeeEstimates.gasPrice;
-    default:
-      return undefined;
-  }
 }
 
 /**
@@ -305,7 +276,9 @@ export async function determineTransactionAssetType(
       if (details.standard) {
         return {
           assetType:
-            details.standard === ERC20 ? AssetType.token : AssetType.NFT,
+            details.standard === TokenStandard.ERC20
+              ? AssetType.token
+              : AssetType.NFT,
           tokenStandard: details.standard,
         };
       }

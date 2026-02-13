@@ -524,7 +524,7 @@ describe('NameDetails', () => {
     });
   });
 
-  it('updates proposed names on regular interval', async () => {
+  it('updates proposed names on regular interval', () => {
     renderWithProvider(
       <NameDetails
         type={NameType.ETHEREUM_ADDRESS}
@@ -536,48 +536,12 @@ describe('NameDetails', () => {
     );
 
     expect(updateProposedNamesMock).toHaveBeenCalledTimes(1);
-    await act(async () => {
-      jest.advanceTimersByTime(1999);
-    });
+    jest.advanceTimersByTime(1999);
     expect(updateProposedNamesMock).toHaveBeenCalledTimes(1);
-    await act(async () => {
-      jest.advanceTimersByTime(1);
-    });
+    jest.advanceTimersByTime(1);
     expect(updateProposedNamesMock).toHaveBeenCalledTimes(2);
-    await act(async () => {
-      jest.advanceTimersByTime(2000);
-    });
+    jest.advanceTimersByTime(2000);
     expect(updateProposedNamesMock).toHaveBeenCalledTimes(3);
-  });
-
-  it('does not reset polling interval during rerenders', () => {
-    const nameDetails = (
-      <NameDetails
-        type={NameType.ETHEREUM_ADDRESS}
-        value={ADDRESS_NO_NAME_MOCK}
-        variation={VARIATION_MOCK}
-        onClose={() => undefined}
-      />
-    );
-
-    const component = renderWithProvider(nameDetails, store);
-
-    expect(updateProposedNamesMock).toHaveBeenCalledTimes(1);
-
-    // Simulate frequent rerenders (e.g. redux updates) before the polling delay elapses.
-    act(() => {
-      for (let index = 0; index < 50; index++) {
-        component.rerender(nameDetails);
-      }
-    });
-
-    expect(updateProposedNamesMock).toHaveBeenCalledTimes(1);
-
-    act(() => {
-      jest.advanceTimersByTime(2000);
-    });
-
-    expect(updateProposedNamesMock).toHaveBeenCalledTimes(2);
   });
 
   describe('metrics', () => {
@@ -604,16 +568,9 @@ describe('NameDetails', () => {
         isAccount: false,
       });
 
-      const mockMetaMetricsContext = {
-        trackEvent: trackEventMock,
-        bufferedTrace: jest.fn(),
-        bufferedEndTrace: jest.fn(),
-        onboardingParentContext: { current: null },
-      };
-
       await act(async () => {
         renderWithProvider(
-          <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+          <MetaMetricsContext.Provider value={trackEventMock}>
             <NameDetails
               type={NameType.ETHEREUM_ADDRESS}
               value={ADDRESS_SAVED_NAME_MOCK}
@@ -695,15 +652,9 @@ describe('NameDetails', () => {
       });
 
       const trackEventMock = jest.fn();
-      const mockMetaMetricsContext = {
-        trackEvent: trackEventMock,
-        bufferedTrace: jest.fn(),
-        bufferedEndTrace: jest.fn(),
-        onboardingParentContext: { current: null },
-      };
 
       const component = renderWithProvider(
-        <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+        <MetaMetricsContext.Provider value={trackEventMock}>
           <NameDetails
             type={NameType.ETHEREUM_ADDRESS}
             value={ADDRESS_NO_NAME_MOCK}
@@ -805,15 +756,9 @@ describe('NameDetails', () => {
       });
 
       const trackEventMock = jest.fn();
-      const mockMetaMetricsContext = {
-        trackEvent: trackEventMock,
-        bufferedTrace: jest.fn(),
-        bufferedEndTrace: jest.fn(),
-        onboardingParentContext: { current: null },
-      };
 
       const component = renderWithProvider(
-        <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+        <MetaMetricsContext.Provider value={trackEventMock}>
           <NameDetails
             type={NameType.ETHEREUM_ADDRESS}
             value={ADDRESS_SAVED_NAME_MOCK}
@@ -922,15 +867,9 @@ describe('NameDetails', () => {
       });
 
       const trackEventMock = jest.fn();
-      const mockMetaMetricsContext = {
-        trackEvent: trackEventMock,
-        bufferedTrace: jest.fn(),
-        bufferedEndTrace: jest.fn(),
-        onboardingParentContext: { current: null },
-      };
 
       const component = renderWithProvider(
-        <MetaMetricsContext.Provider value={mockMetaMetricsContext}>
+        <MetaMetricsContext.Provider value={trackEventMock}>
           <NameDetails
             type={NameType.ETHEREUM_ADDRESS}
             value={ADDRESS_SAVED_NAME_MOCK}

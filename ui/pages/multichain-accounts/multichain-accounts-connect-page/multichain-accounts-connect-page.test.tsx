@@ -465,10 +465,15 @@ describe('MultichainConnectPage', () => {
   });
 
   it('renders image icon correctly', () => {
-    const { getByAltText } = render();
+    const { getAllByAltText } = render();
 
-    const image = getByAltText('metamask.github.io logo');
-    expect(image).toHaveAttribute(
+    const images = getAllByAltText('metamask.github.io logo');
+    expect(images.length).toBe(2);
+    expect(images[0]).toHaveAttribute(
+      'src',
+      'https://metamask.github.io/test-dapp/metamask-fox.svg',
+    );
+    expect(images[1]).toHaveAttribute(
       'src',
       'https://metamask.github.io/test-dapp/metamask-fox.svg',
     );

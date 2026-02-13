@@ -46,7 +46,6 @@ import { PermissionDoesNotExistError } from '@metamask/permission-controller';
 import { KeyringInternalSnapClient } from '@metamask/keyring-internal-snap-client';
 
 import log from 'loglevel';
-import browser from 'webextension-polyfill';
 import { parseCaipAccountId } from '@metamask/utils';
 import { KeyringTypes } from '@metamask/keyring-controller';
 import { createTestProviderTools } from '../../test/stub/provider';
@@ -84,7 +83,14 @@ import {
 } from './controllers/permissions';
 import MetaMaskController from './metamask-controller';
 
-jest.mock('webextension-polyfill', () => ({
+const HYPERLIQUID_ORIGIN =
+  DEFI_REFERRAL_PARTNERS[DefiReferralPartner.Hyperliquid].origin;
+
+const { Ganache } = require('../../test/e2e/seeder/ganache');
+
+const ganacheServer = new Ganache();
+
+const browserPolyfillMock = {
   runtime: {
     id: 'fake-extension-id',
     onInstalled: {
@@ -96,11 +102,6 @@ jest.mock('webextension-polyfill', () => ({
     getPlatformInfo: jest.fn().mockResolvedValue({ os: 'mac' }),
   },
   storage: {
-    local: {
-      get: jest.fn().mockResolvedValue({}),
-      set: jest.fn().mockResolvedValue(undefined),
-      remove: jest.fn().mockResolvedValue(undefined),
-    },
     session: {
       set: jest.fn(),
     },
@@ -113,15 +114,7 @@ jest.mock('webextension-polyfill', () => ({
       addListener: jest.fn(),
     },
   },
-}));
-
-// Use the actual mocked module so all code importing webextension-polyfill
-// shares the same mock instance
-const browserPolyfillMock = jest.mocked(browser);
-
-const { Ganache } = require('../../test/e2e/seeder/ganache');
-
-const ganacheServer = new Ganache();
+};
 
 const mockULIDs = [
   '01JKAF3DSGM3AB87EM9N0K41AJ',
@@ -499,6 +492,7 @@ describe('MetaMaskController', () => {
       jest.spyOn(Messenger.prototype, 'subscribe');
       jest.spyOn(TokenListController.prototype, 'start');
       jest.spyOn(TokenListController.prototype, 'stop');
+      jest.spyOn(TokenListController.prototype, 'clearingTokenListData');
 
       metamaskController = new MetaMaskController({
         showUserConfirmation: noop,
@@ -1694,6 +1688,14 @@ describe('MetaMaskController', () => {
         expect(
           metamaskController.removeAllScopePermissions,
         ).toHaveBeenCalledWith('eip155:10');
+      });
+    });
+
+    describe('#getApi', () => {
+      it('getState', () => {
+        const getApi = metamaskController.getApi();
+        const state = getApi.getState();
+        expect(state).toStrictEqual(metamaskController.getState());
       });
     });
 
@@ -4524,12 +4526,6 @@ describe('MetaMaskController', () => {
     });
 
     describe('handleDefiReferral', () => {
-      const HYPERLIQUID_LEARN_MORE_URL =
-        DEFI_REFERRAL_PARTNERS[DefiReferralPartner.Hyperliquid].learnMoreUrl;
-      const HYPERLIQUID_ORIGIN =
-        DEFI_REFERRAL_PARTNERS[DefiReferralPartner.Hyperliquid].origin;
-      const HYPERLIQUID_NAME =
-        DEFI_REFERRAL_PARTNERS[DefiReferralPartner.Hyperliquid].name;
       const mockTabId = 140;
       const mockNewConnectionTriggerType = 'new_connection';
       const mockOnNavigateTriggerType = 'on_navigate_connected_tab';
@@ -4672,12 +4668,7 @@ describe('MetaMaskController', () => {
         expect(metamaskController.approvalController.add).toHaveBeenCalledWith({
           origin: HYPERLIQUID_ORIGIN,
           type: HYPERLIQUID_APPROVAL_TYPE,
-          requestData: {
-            learnMoreUrl: HYPERLIQUID_LEARN_MORE_URL,
-            partnerId: DefiReferralPartner.Hyperliquid,
-            partnerName: HYPERLIQUID_NAME,
-            selectedAddress: mockPermittedAccount,
-          },
+          requestData: { selectedAddress: mockPermittedAccount },
           shouldShowRequest: true, // pop-up = true because triggerType is new connection
         });
       });
@@ -4698,12 +4689,7 @@ describe('MetaMaskController', () => {
         expect(metamaskController.approvalController.add).toHaveBeenCalledWith({
           origin: HYPERLIQUID_ORIGIN,
           type: HYPERLIQUID_APPROVAL_TYPE,
-          requestData: {
-            learnMoreUrl: HYPERLIQUID_LEARN_MORE_URL,
-            partnerId: DefiReferralPartner.Hyperliquid,
-            partnerName: HYPERLIQUID_NAME,
-            selectedAddress: mockPermittedAccount,
-          },
+          requestData: { selectedAddress: mockPermittedAccount },
           shouldShowRequest: false, // false because triggerType is navigate to connected tab
         });
       });

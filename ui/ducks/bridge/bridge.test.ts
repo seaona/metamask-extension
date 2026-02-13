@@ -6,7 +6,6 @@ import {
   BridgeUserAction,
   RequestStatus,
 } from '@metamask/bridge-controller';
-import { CHAIN_IDS } from '../../../shared/constants/network';
 import { createBridgeMockStore } from '../../../test/data/bridge/mock-bridge-store';
 import { setBackgroundConnection } from '../../store/background-connection';
 import { MultichainNetworks } from '../../../shared/constants/multichain/networks';
@@ -51,37 +50,19 @@ describe('Ducks - Bridge', () => {
 
   describe('setFromToken', () => {
     it('calls the "bridge/setFromToken" action', () => {
-      setBackgroundConnection({
-        setActiveNetwork: jest.fn(),
-        setEnabledAllPopularNetworks: jest.fn(),
-        getStatePatches: jest.fn(),
-      } as never);
       const state = store.getState().bridge;
       const actionPayload = {
         symbol: 'SYMBOL',
+        address: '0x13341432',
         chainId: MultichainNetworks.SOLANA,
-        assetId:
-          'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp/token:So11111111111111111111111111111111111111112',
-        decimals: 9,
       };
       store.dispatch(setFromToken(actionPayload as never) as never);
       const actions = store.getActions();
       expect(actions[0].type).toStrictEqual('bridge/setFromToken');
       const newState = bridgeReducer(state, actions[0]);
-      expect(newState.fromToken).toMatchInlineSnapshot(`
-        {
-          "accountType": undefined,
-          "assetId": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp/token:So11111111111111111111111111111111111111112",
-          "balance": "0",
-          "chainId": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
-          "decimals": 9,
-          "iconUrl": "https://static.cx.metamask.io/api/v2/tokenIcons/assets/solana/5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp/token/So11111111111111111111111111111111111111112.png",
-          "name": "SYMBOL",
-          "rwaData": undefined,
-          "symbol": "SYMBOL",
-          "tokenFiatAmount": undefined,
-        }
-      `);
+      expect(newState.fromToken).toStrictEqual(
+        expect.objectContaining(actionPayload),
+      );
     });
   });
 
@@ -91,27 +72,23 @@ describe('Ducks - Bridge', () => {
       const actionPayload = {
         symbol: 'SYMBOL',
         address: '0x13341431',
-        chainId: CHAIN_IDS.LINEA_MAINNET,
-        assetId: 'eip155:10/erc20:0x13341431',
-        name: 'SYMBOL',
-        decimals: 18,
+        chainId: '0xa',
       };
 
       store.dispatch(setToToken(actionPayload as never) as never);
       const actions = store.getActions();
       expect(actions[0].type).toStrictEqual('bridge/setToToken');
       const newState = bridgeReducer(state, actions[0]);
-      const { address, ...expected } = actionPayload;
-      expect(newState.toToken).toStrictEqual({
-        ...expected,
-        accountType: undefined,
-        tokenFiatAmount: undefined,
-        balance: '0',
-        chainId: 'eip155:10',
-        rwaData: undefined,
-        iconUrl:
-          'https://static.cx.metamask.io/api/v2/tokenIcons/assets/eip155/10/erc20/0x13341431.png',
-      });
+      expect(newState.toToken).toStrictEqual(
+        expect.objectContaining({
+          ...actionPayload,
+          balance: '0',
+          assetId: 'eip155:10/erc20:0x13341431',
+          chainId: '0xa',
+          image:
+            'https://static.cx.metamask.io/api/v2/tokenIcons/assets/eip155/10/erc20/0x13341431.png',
+        }),
+      );
     });
   });
 
@@ -157,7 +134,6 @@ describe('Ducks - Bridge', () => {
       const mockUpdateParams = jest.fn();
       setBackgroundConnection({
         [BridgeUserAction.UPDATE_QUOTE_PARAMS]: mockUpdateParams,
-        getStatePatches: jest.fn(),
       } as never);
 
       store.dispatch(
@@ -230,7 +206,6 @@ describe('Ducks - Bridge', () => {
       const mockResetBridgeState = jest.fn();
       setBackgroundConnection({
         [BridgeBackgroundAction.RESET_STATE]: mockResetBridgeState,
-        getStatePatches: jest.fn(),
       } as never);
 
       mockStore.dispatch(resetBridgeState() as never);

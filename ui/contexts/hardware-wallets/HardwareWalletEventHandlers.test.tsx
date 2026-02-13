@@ -16,7 +16,6 @@ import { ConnectionState } from './connectionState';
 describe('useDeviceEventHandlers', () => {
   let mockRefs: {
     abortControllerRef: { current: AbortController | null };
-    connectingPromiseRef: { current: Promise<void> | null };
     isConnectingRef: { current: boolean };
     adapterRef: { current: HardwareWalletAdapter | null };
     currentConnectionIdRef: { current: number | null };
@@ -26,8 +25,6 @@ describe('useDeviceEventHandlers', () => {
     deviceIdRef: { current: string | null };
     walletTypeRef: { current: HardwareWalletType | null };
     previousWalletTypeRef: { current: HardwareWalletType | null };
-    ensureDeviceReadyPromiseRef: { current: Promise<boolean> | null };
-    ensureDeviceReadyDeviceIdRef: { current: string | null };
   };
   let mockSetters: {
     setConnectionState: jest.Mock;
@@ -41,7 +38,6 @@ describe('useDeviceEventHandlers', () => {
 
     mockRefs = {
       abortControllerRef: { current: new AbortController() },
-      connectingPromiseRef: { current: null },
       isConnectingRef: { current: false },
       adapterRef: { current: null },
       currentConnectionIdRef: { current: null },
@@ -51,8 +47,6 @@ describe('useDeviceEventHandlers', () => {
       deviceIdRef: { current: null },
       walletTypeRef: { current: null },
       previousWalletTypeRef: { current: null },
-      ensureDeviceReadyPromiseRef: { current: null },
-      ensureDeviceReadyDeviceIdRef: { current: null },
     };
 
     mockSetters = {
@@ -76,7 +70,7 @@ describe('useDeviceEventHandlers', () => {
     it('updates state when status changes', () => {
       const { result } = setupHook();
 
-      const newState = ConnectionState.error(new Error('Test'));
+      const newState = ConnectionState.error('test_error', new Error('Test'));
       result.current.updateConnectionState(newState);
 
       expect(mockSetters.setConnectionState).toHaveBeenCalledWith(
@@ -108,27 +102,27 @@ describe('useDeviceEventHandlers', () => {
       expect(resultState).toBe(prevState);
     });
 
-    it('updates when ErrorState changes', () => {
+    it('updates when ErrorState reason changes', () => {
       const { result } = setupHook();
 
-      const newState = ConnectionState.error(new Error('New'));
+      const newState = ConnectionState.error('new_reason', new Error('New'));
       result.current.updateConnectionState(newState);
 
       const updater = mockSetters.setConnectionState.mock.calls[0][0];
-      const prevState = ConnectionState.error(new Error('Old'));
+      const prevState = ConnectionState.error('old_reason', new Error('Old'));
       const resultState = updater(prevState);
 
       expect(resultState).toEqual(newState);
     });
 
-    it('updates when AwaitingApp appName changes', () => {
+    it('updates when AwaitingApp reason or appName changes', () => {
       const { result } = setupHook();
 
-      const newState = ConnectionState.awaitingApp('NewApp');
+      const newState = ConnectionState.awaitingApp('new_reason', 'NewApp');
       result.current.updateConnectionState(newState);
 
       const updater = mockSetters.setConnectionState.mock.calls[0][0];
-      const prevState = ConnectionState.awaitingApp('OldApp');
+      const prevState = ConnectionState.awaitingApp('old_reason', 'OldApp');
       const resultState = updater(prevState);
 
       expect(resultState).toEqual(newState);
@@ -158,7 +152,9 @@ describe('useDeviceEventHandlers', () => {
       const prevState = ConnectionState.disconnected();
       const resultState = updater(prevState);
 
-      expect(resultState).toEqual(ConnectionState.error(error));
+      expect(resultState).toEqual(
+        ConnectionState.error(DeviceEvent.DeviceLocked, error),
+      );
     });
 
     it('handles DeviceLocked event without error payload', () => {
@@ -178,6 +174,7 @@ describe('useDeviceEventHandlers', () => {
 
       expect(resultState).toEqual(
         ConnectionState.error(
+          DeviceEvent.DeviceLocked,
           new HardwareWalletError('Device is locked', {
             code: ErrorCode.AuthenticationDeviceLocked,
             severity: Severity.Err,
@@ -210,7 +207,9 @@ describe('useDeviceEventHandlers', () => {
       const prevState = ConnectionState.disconnected();
       const resultState = updater(prevState);
 
-      expect(resultState).toEqual(ConnectionState.error(error));
+      expect(resultState).toEqual(
+        ConnectionState.error(DeviceEvent.AppNotOpen, error),
+      );
     });
 
     it('handles AppNotOpen event without error', () => {
@@ -228,7 +227,9 @@ describe('useDeviceEventHandlers', () => {
       const prevState = ConnectionState.disconnected();
       const resultState = updater(prevState);
 
-      expect(resultState).toEqual(ConnectionState.awaitingApp());
+      expect(resultState).toEqual(
+        ConnectionState.awaitingApp(DeviceEvent.AppNotOpen),
+      );
     });
 
     it('handles Disconnected event when not connecting', () => {
@@ -267,7 +268,9 @@ describe('useDeviceEventHandlers', () => {
       const prevState = ConnectionState.disconnected();
       const resultState = updater(prevState);
 
-      expect(resultState).toEqual(ConnectionState.awaitingApp('Bitcoin'));
+      expect(resultState).toEqual(
+        ConnectionState.awaitingApp(DeviceEvent.AppNotOpen, 'Bitcoin'),
+      );
     });
 
     it('handles AppChanged event with correct app', () => {
@@ -310,7 +313,9 @@ describe('useDeviceEventHandlers', () => {
       const resultState = updater(prevState);
 
       // BOLOS is not the correct app for Ledger, so it should await app
-      expect(resultState).toEqual(ConnectionState.awaitingApp('BOLOS'));
+      expect(resultState).toEqual(
+        ConnectionState.awaitingApp(DeviceEvent.AppNotOpen, 'BOLOS'),
+      );
     });
 
     it('handles ConnectionFailed event', () => {
@@ -335,7 +340,9 @@ describe('useDeviceEventHandlers', () => {
       const prevState = ConnectionState.disconnected();
       const resultState = updater(prevState);
 
-      expect(resultState).toEqual(ConnectionState.error(error));
+      expect(resultState).toEqual(
+        ConnectionState.error(DeviceEvent.ConnectionFailed, error),
+      );
     });
 
     it('handles ConnectionFailed event without error using default HardwareWalletError', () => {
@@ -355,6 +362,7 @@ describe('useDeviceEventHandlers', () => {
 
       expect(resultState).toEqual(
         ConnectionState.error(
+          DeviceEvent.ConnectionFailed,
           new HardwareWalletError('Hardware wallet connection failed', {
             code: ErrorCode.ConnectionTransportMissing,
             severity: Severity.Err,
@@ -387,7 +395,9 @@ describe('useDeviceEventHandlers', () => {
       const prevState = ConnectionState.disconnected();
       const resultState = updater(prevState);
 
-      expect(resultState).toEqual(ConnectionState.error(error));
+      expect(resultState).toEqual(
+        ConnectionState.error(DeviceEvent.OperationTimeout, error),
+      );
     });
 
     it('handles OperationTimeout event without error', () => {
@@ -407,6 +417,7 @@ describe('useDeviceEventHandlers', () => {
 
       expect(resultState).toStrictEqual(
         ConnectionState.error(
+          DeviceEvent.OperationTimeout,
           new HardwareWalletError('Operation timed out', {
             code: ErrorCode.ConnectionTimeout,
             severity: Severity.Err,
@@ -544,6 +555,7 @@ describe('useDeviceEventHandlers', () => {
       const resultState = updater(prevState);
 
       expect(resultState.status).toBe('error');
+      expect(resultState.reason).toBe('Device locked');
       expect(resultState.error).toBe(error);
     });
 

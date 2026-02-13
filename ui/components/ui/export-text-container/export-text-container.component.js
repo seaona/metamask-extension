@@ -1,6 +1,7 @@
-import PropTypes from 'prop-types';
 import React from 'react';
-import { MINUTE } from '../../../../shared/constants/time';
+import PropTypes from 'prop-types';
+import { useI18nContext } from '../../../hooks/useI18nContext';
+import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard';
 import {
   AlignItems,
   BorderColor,
@@ -10,15 +11,12 @@ import {
   JustifyContent,
   TextVariant,
 } from '../../../helpers/constants/design-system';
-import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard';
-import { useI18nContext } from '../../../hooks/useI18nContext';
-import { Box, ButtonSecondary, Text } from '../../component-library';
+import { ButtonSecondary, Text, Box } from '../../component-library';
 
 function ExportTextContainer({ text = '', onClickCopy = null }) {
+  const ONE_MINUTE = 1000 * 60;
   const t = useI18nContext();
-
-  // useCopyToClipboard analysis: As of writing this, this is only used in RevealSeedPage, which is the sensitive SRP
-  const [copied, handleCopy] = useCopyToClipboard({ clearDelayMs: MINUTE });
+  const [copied, handleCopy] = useCopyToClipboard(ONE_MINUTE);
 
   return (
     <Box

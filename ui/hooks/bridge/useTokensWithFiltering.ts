@@ -37,6 +37,7 @@ import type {
 } from '../../components/multichain/asset-picker-amount/asset-picker-modal/types';
 import { getAssetImageUrl, toAssetId } from '../../../shared/lib/asset-utils';
 import { MULTICHAIN_TOKEN_IMAGE_MAP } from '../../../shared/constants/multichain/networks';
+import type { BridgeToken } from '../../ducks/bridge/types';
 import { isTronEnergyOrBandwidthResource } from '../../ducks/bridge/utils';
 
 // This transforms the token object from the bridge-api into the format expected by the AssetPicker
@@ -109,7 +110,6 @@ type FilterPredicate = (
  * - popularity
  * - all other tokens
  *
- * @deprecated Use usePopularTokens or other token list hooks instead
  * @param chainId - the selected src/dest chainId
  * @param tokenToExclude - a token to exclude from the token list, usually the token being swapped from
  * @param tokenToExclude.symbol
@@ -119,7 +119,7 @@ type FilterPredicate = (
  */
 export const useTokensWithFiltering = (
   chainId?: ChainId | Hex | CaipChainId,
-  tokenToExclude?: null | { address: string; chainId: string; symbol: string },
+  tokenToExclude?: null | Pick<BridgeToken, 'symbol' | 'address' | 'chainId'>,
   accountAddress?: string,
 ) => {
   const topAssetsFromFeatureFlags = useSelector((state: BridgeAppState) =>
@@ -292,10 +292,6 @@ export const useTokensWithFiltering = (
                 accountType: token.accountType,
               };
             } else {
-              const assetId = toAssetId(
-                token.address,
-                formatChainIdToCaip(token.chainId),
-              );
               yield {
                 ...token,
                 symbol: token.symbol,
@@ -310,9 +306,10 @@ export const useTokensWithFiltering = (
                   (token.image ||
                     (token.address &&
                       tokenList?.[token.address.toLowerCase()]?.iconUrl)) ??
-                  (assetId
-                    ? getAssetImageUrl(assetId, token.chainId)
-                    : undefined) ??
+                  getAssetImageUrl(
+                    token.address,
+                    formatChainIdToCaip(token.chainId),
+                  ) ??
                   '',
               };
             }

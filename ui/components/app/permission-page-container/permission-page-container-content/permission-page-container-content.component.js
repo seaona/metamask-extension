@@ -35,15 +35,12 @@ export default class PermissionPageContainerContent extends PureComponent {
     selectedPermissions: PropTypes.object.isRequired,
     selectedAccounts: PropTypes.array,
     requestedChainIds: PropTypes.array,
-    /** CAIP chain IDs for multichain permission display (e.g., 'solana:...') */
-    selectedCaipChainIds: PropTypes.array,
   };
 
   static defaultProps = {
     request: {},
     selectedAccounts: [],
     requestedChainIds: [],
-    selectedCaipChainIds: null,
   };
 
   static contextTypes = {
@@ -58,7 +55,6 @@ export default class PermissionPageContainerContent extends PureComponent {
       selectedAccounts,
       subjectMetadata,
       requestedChainIds,
-      selectedCaipChainIds,
       request,
     } = this.props;
 
@@ -146,7 +142,6 @@ export default class PermissionPageContainerContent extends PureComponent {
                 ? permissionDiffRequestedChainIds
                 : requestedChainIds
             }
-            caipChainIds={selectedCaipChainIds}
           />
         </Box>
       </Box>
