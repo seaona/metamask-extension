@@ -8718,6 +8718,9 @@
   "unapproved": {
     "message": "Unapproved"
   },
+  "unavailable": {
+    "message": "Unavailable"
+  },
   "unexpectedBehavior": {
     "message": "This behavior is unexpected and should be reported as a bug, even if your accounts are restored."
   },
