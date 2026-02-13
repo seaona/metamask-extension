@@ -41,6 +41,7 @@ import {
   TextFieldSearchSize,
 } from '../../../components/component-library';
 import {
+  Content,
   Footer,
   Header,
   Page,
@@ -48,7 +49,6 @@ import {
 import { useAssetsUpdateAllAccountBalances } from '../../../hooks/useAssetsUpdateAllAccountBalances';
 import { useSyncSRPs } from '../../../hooks/social-sync/useSyncSRPs';
 import { getAllPermittedAccountsForCurrentTab } from '../../../selectors';
-import { ScrollContainer } from '../../../contexts/scroll-container';
 import { filterWalletsByGroupNameOrAddress } from './utils';
 
 export const AccountList = () => {
@@ -133,7 +133,7 @@ export const AccountList = () => {
       >
         {t('accounts')}
       </Header>
-      <div className="account-list-page__content flex flex-col min-h-0 overflow-auto">
+      <Content className="account-list-page__content" paddingInline={0}>
         <Box
           flexDirection={FlexDirection.Column}
           paddingTop={1}
@@ -154,7 +154,12 @@ export const AccountList = () => {
             data-testid="multichain-account-list-search"
           />
         </Box>
-        <ScrollContainer className="multichain-account-menu-popover__list flex flex-col overflow-auto">
+        <Box
+          display={Display.Flex}
+          height={BlockSize.Full}
+          flexDirection={FlexDirection.Column}
+          className="multichain-account-menu-popover__list"
+        >
           {hasFilteredWallets ? (
             <MultichainAccountList
               wallets={filteredWallets}
@@ -179,8 +184,8 @@ export const AccountList = () => {
               </Text>
             </Box>
           )}
-        </ScrollContainer>
-      </div>
+        </Box>
+      </Content>
       <Footer className="shadow-sm">
         <Button
           variant={ButtonVariant.Secondary}

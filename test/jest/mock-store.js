@@ -135,7 +135,6 @@ export const createSwapsMockStore = () => {
       swapsSTXLoading: false,
     },
     metamask: {
-      accountTree: {},
       remoteFeatureFlags: {
         bridgeConfig: {
           support: false,

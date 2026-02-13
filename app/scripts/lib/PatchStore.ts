@@ -25,14 +25,9 @@ export class PatchStore {
     this.observableStore = observableStore;
     this.listener = this._onStateChange.bind(this);
 
-    log('Created', this.id);
-  }
-
-  /**
-   * Start listening for state changes and generating patches.
-   */
-  init() {
     this.observableStore.on('stateChange', this.listener);
+
+    log('Created', this.id);
   }
 
   flushPendingPatches(): Patch[] {

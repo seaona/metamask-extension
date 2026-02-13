@@ -13,7 +13,6 @@ import {
   getTokenTransferPermissionsByOrigin,
   getPermissionMetaDataByOrigin,
 } from '../../../../selectors/gator-permissions/gator-permissions';
-import { getCaip25AccountIdsFromAccountGroupAndScope } from '../../../../../shared/lib/multichain/scope-utils';
 import { MultichainReviewPermissions } from './multichain-review-permissions-page';
 
 const mockUseNavigate = jest.fn();
@@ -58,11 +57,6 @@ jest.mock('../../../../../shared/modules/environment');
 jest.mock('../../../../selectors/gator-permissions/gator-permissions', () => ({
   getPermissionMetaDataByOrigin: jest.fn(),
   getTokenTransferPermissionsByOrigin: jest.fn(),
-}));
-
-jest.mock('../../../../../shared/lib/multichain/scope-utils', () => ({
-  ...jest.requireActual('../../../../../shared/lib/multichain/scope-utils'),
-  getCaip25AccountIdsFromAccountGroupAndScope: jest.fn(),
 }));
 
 const mockAccountGroups = [
@@ -268,37 +262,8 @@ describe('MultichainReviewPermissions', () => {
       });
     });
 
-    it('dispatches setPermittedAccounts when deselecting some account groups', async () => {
-      const useAccountGroupsForPermissionsSpy = jest.spyOn(
-        hooks,
-        'useAccountGroupsForPermissions',
-      );
-      useAccountGroupsForPermissionsSpy.mockReturnValue({
-        supportedAccountGroups: mockAccountGroups,
-        connectedAccountGroups: mockAccountGroups,
-        existingConnectedCaipAccountIds:
-          generateCaipAccountIds(mockAccountGroups),
-        connectedAccountGroupWithRequested: mockAccountGroups,
-        caipAccountIdsOfConnectedAndRequestedAccountGroups:
-          generateCaipAccountIds(mockAccountGroups),
-        selectedAndRequestedAccountGroups: mockAccountGroups,
-      });
-
-      const remainingCaipAccountIds = generateCaipAccountIds([
-        mockAccountGroups[0],
-      ]);
-
-      const mockGetCaip25AccountIds =
-        getCaip25AccountIdsFromAccountGroupAndScope as jest.MockedFunction<
-          typeof getCaip25AccountIdsFromAccountGroupAndScope
-        >;
-      mockGetCaip25AccountIds.mockReturnValue(remainingCaipAccountIds);
-
+    it('allows deselecting account groups', async () => {
       const { getAllByTestId, getByTestId } = render();
-      const setPermittedAccountsSpy = jest.spyOn(
-        actions,
-        'setPermittedAccounts',
-      );
 
       const editButtons = getAllByTestId(TEST_IDS.EDIT_BUTTON);
       const accountsEditButton = editButtons[0];
@@ -308,19 +273,15 @@ describe('MultichainReviewPermissions', () => {
         expect(getByTestId(TEST_IDS.MODAL_PAGE)).toBeInTheDocument();
       });
 
-      const secondAccountCell = getByTestId(
-        TEST_IDS.MULTICHAIN_ACCOUNT_CELL(mockAccountGroups[1].id),
+      const firstAccountCell = getByTestId(
+        TEST_IDS.MULTICHAIN_ACCOUNT_CELL(mockAccountGroups[0].id),
       );
-      fireEvent.click(secondAccountCell);
+      fireEvent.click(firstAccountCell);
 
       const submitButton = getByTestId(TEST_IDS.CONNECT_MORE_ACCOUNTS_BUTTON);
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(setPermittedAccountsSpy).toHaveBeenCalledWith(
-          'https://test.dapp',
-          remainingCaipAccountIds,
-        );
         expect(getByTestId(TEST_IDS.CONNECTIONS_PAGE)).toBeInTheDocument();
       });
     });
@@ -339,8 +300,8 @@ describe('MultichainReviewPermissions', () => {
       expect(getByText('Edit accounts')).toBeInTheDocument();
     });
 
-    it('returns to connections page and triggers disconnect flow when deselecting all accounts', async () => {
-      const { getAllByTestId, getByTestId, getAllByRole } = render();
+    it('handles deselecting all accounts', async () => {
+      const { getAllByTestId, getByTestId } = render();
 
       const editButtons = getAllByTestId(TEST_IDS.EDIT_BUTTON);
       const accountsEditButton = editButtons[0];
@@ -350,17 +311,10 @@ describe('MultichainReviewPermissions', () => {
         expect(getByTestId(TEST_IDS.MODAL_PAGE)).toBeInTheDocument();
       });
 
-      const checkboxes = getAllByRole('checkbox');
-      const firstCheckbox = checkboxes[0] as HTMLInputElement;
-
-      expect(firstCheckbox).toBeChecked();
-
-      // To deselect all accounts.
-      fireEvent.change(firstCheckbox, { target: { checked: false } });
-
-      await waitFor(() => {
-        expect(firstCheckbox).not.toBeChecked();
-      });
+      const firstAccountCell = getByTestId(
+        TEST_IDS.MULTICHAIN_ACCOUNT_CELL(mockAccountGroups[0].id),
+      );
+      fireEvent.click(firstAccountCell);
 
       const submitButton = getByTestId(TEST_IDS.CONNECT_MORE_ACCOUNTS_BUTTON);
       fireEvent.click(submitButton);

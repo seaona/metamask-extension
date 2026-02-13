@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useI18nContext } from '../../../../hooks/useI18nContext';
 import {
   ButtonIcon,
@@ -12,9 +11,6 @@ import {
   TextVariant,
   TextColor,
 } from '../../../../helpers/constants/design-system';
-import { SHIELD_CAROUSEL_ID } from '../../../../../shared/modules/shield/constants';
-import { SETTINGS_ROUTE } from '../../../../helpers/constants/routes';
-import { SHIELD_QUERY_PARAMS } from '../../../../../shared/lib/deep-links/routes/shield';
 import type { StackCardProps } from './stack-card.types';
 
 export const StackCard: React.FC<StackCardProps> = ({
@@ -37,8 +33,6 @@ export const StackCard: React.FC<StackCardProps> = ({
     }
   };
 
-  const navigate = useNavigate();
-
   const handleCardClick = () => {
     if (!isCurrentCard) {
       return;
@@ -50,22 +44,7 @@ export const StackCard: React.FC<StackCardProps> = ({
     };
 
     if (slide.href) {
-      const key = slide.id;
-      if (key === SHIELD_CAROUSEL_ID) {
-        // in app navigation for shield carousel
-        // TODO: clean this once we have better control of how deeplink are opened
-        try {
-          const url = new URL(slide.href);
-          const params = url.searchParams.toString();
-          navigate(
-            `${SETTINGS_ROUTE}?${SHIELD_QUERY_PARAMS.showShieldEntryModal}=true${params ? `&${params}` : ''}`,
-          );
-        } catch (error) {
-          console.error('[StackCard] error parsing slide.href', error);
-        }
-      } else {
-        global.platform.openTab({ url: slide.href });
-      }
+      global.platform.openTab({ url: slide.href });
     }
 
     onSlideClick?.(slide.id, navigation);

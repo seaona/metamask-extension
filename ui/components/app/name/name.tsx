@@ -55,11 +55,6 @@ export type NameProps = {
    * The class name to apply to the box.
    */
   className?: string;
-
-  /**
-   * Whether to disable the onClick handler.
-   */
-  disableNameClick?: boolean;
 };
 
 const Name = memo(
@@ -69,7 +64,6 @@ const Name = memo(
     preferContractSymbol = false,
     variation,
     className,
-    disableNameClick = false,
     ...props
   }: NameProps) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -99,11 +93,11 @@ const Name = memo(
     }, []);
 
     const handleClick = useCallback(() => {
-      if (isAccount || disableNameClick) {
+      if (isAccount) {
         return;
       }
       setModalOpen(true);
-    }, [disableNameClick, isAccount, setModalOpen]);
+    }, [isAccount, setModalOpen]);
 
     const handleModalClose = useCallback(() => {
       setModalOpen(false);
@@ -129,7 +123,6 @@ const Name = memo(
           preferContractSymbol={preferContractSymbol}
           variation={variation}
           handleClick={handleClick}
-          disableNameClick={disableNameClick}
           {...props}
         />
         {subtitle && (

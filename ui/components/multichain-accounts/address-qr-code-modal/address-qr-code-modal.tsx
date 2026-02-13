@@ -76,9 +76,7 @@ export const AddressQRCodeModal: React.FC<AddressQRCodeModalProps> = ({
   networkImageSrc,
 }) => {
   const t = useI18nContext();
-
-  // useCopyToClipboard analysis: Copies one of your public addresses
-  const [, handleCopy] = useCopyToClipboard({ clearDelayMs: null });
+  const [, handleCopy] = useCopyToClipboard();
   const trackEvent = useContext(MetaMetricsContext);
 
   const [addressCopied, setAddressCopied] = useState(false);

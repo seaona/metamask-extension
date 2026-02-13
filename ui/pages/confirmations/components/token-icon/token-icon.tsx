@@ -12,30 +12,13 @@ import {
 import { selectNetworkConfigurationByChainId } from '../../../../selectors';
 import { useSendTokens } from '../../hooks/send/useSendTokens';
 
-export type TokenIconSize = 'sm' | 'md';
-
 export type TokenIconProps = {
   chainId: Hex;
   tokenAddress: Hex;
-  size?: TokenIconSize;
-};
-
-const TOKEN_ICON_SIZE_MAP: Record<TokenIconSize, AvatarTokenSize> = {
-  sm: AvatarTokenSize.Sm,
-  md: AvatarTokenSize.Md,
-};
-
-const NETWORK_BADGE_SIZE_MAP: Record<TokenIconSize, AvatarNetworkSize> = {
-  sm: AvatarNetworkSize.Xs,
-  md: AvatarNetworkSize.Xs,
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export function TokenIcon({
-  chainId,
-  tokenAddress,
-  size = 'md',
-}: TokenIconProps) {
+export function TokenIcon({ chainId, tokenAddress }: TokenIconProps) {
   const sendTokens = useSendTokens({ includeNoBalance: true });
 
   const networkConfiguration = useSelector((state) =>
@@ -54,14 +37,14 @@ export function TokenIcon({
     <BadgeWrapper
       badge={
         <AvatarNetwork
-          size={NETWORK_BADGE_SIZE_MAP[size]}
+          size={AvatarNetworkSize.Xs}
           name={networkConfiguration?.name ?? ''}
           src={CHAIN_ID_TO_NETWORK_IMAGE_URL_MAP[chainId]}
         />
       }
     >
       <AvatarToken
-        size={TOKEN_ICON_SIZE_MAP[size]}
+        size={AvatarTokenSize.Md}
         src={matchedToken?.image}
         name={matchedToken?.symbol}
         showHalo={false}

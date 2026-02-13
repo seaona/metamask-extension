@@ -230,14 +230,12 @@ export default class TransactionBreakdown extends PureComponent {
                   numberOfDecimals={6}
                   value={hexGasTotal}
                   type={PRIMARY}
-                  chainId={chainId}
                 />
                 {showFiat && (
                   <UserPreferencedCurrencyDisplay
                     className="transaction-breakdown__value"
                     type={SECONDARY}
                     value={hexGasTotal}
-                    chainId={chainId}
                   />
                 )}
               </TransactionBreakdownRow>
@@ -255,14 +253,12 @@ export default class TransactionBreakdown extends PureComponent {
                   numberOfDecimals={9}
                   value={maxFeePerGas}
                   type={PRIMARY}
-                  chainId={chainId}
                 />
                 {showFiat && (
                   <UserPreferencedCurrencyDisplay
                     className="transaction-breakdown__value"
                     type={SECONDARY}
                     value={maxFeePerGas}
-                    chainId={chainId}
                   />
                 )}
               </TransactionBreakdownRow>
@@ -278,14 +274,12 @@ export default class TransactionBreakdown extends PureComponent {
                   numberOfDecimals={18}
                   value={l1HexGasTotal}
                   type={PRIMARY}
-                  chainId={chainId}
                 />
                 {showFiat && (
                   <UserPreferencedCurrencyDisplay
                     className="transaction-breakdown__value"
                     type={SECONDARY}
                     value={l1HexGasTotal}
-                    chainId={chainId}
                   />
                 )}
               </TransactionBreakdownRow>

@@ -124,10 +124,8 @@
     align-items: center;
 
     &-icon {
-      display: flex;
-      align-items: center;
-      font-size: 16px;
       margin-right: 8px;
+      padding-top: 8px;
       color: var(--color-success-default);
     }
 
@@ -147,10 +145,8 @@
     margin-right: 8px;
 
     &-icon {
-      display: flex;
-      align-items: center;
-      font-size: 16px;
-      margin-right: 8px;
+      margin-right: 10px;
+      padding-top: 6px;
       color: var(--color-success-default);
     }
 

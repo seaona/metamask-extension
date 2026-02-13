@@ -24,8 +24,6 @@ const inputLocator = {
   backgroundEventDateInput: '#backgroundEventDate',
   backgroundEventDurationInput: '#backgroundEventDuration',
   cancelBackgroundEventInput: '#backgroundEventId',
-  signMessageMultichainInput: '#signMessageMultichain',
-  signTypedDataMultichainInput: '#signTypedDataMultichain',
 } satisfies Record<string, string>;
 
 export const buttonLocator = {
@@ -55,7 +53,6 @@ export const buttonLocator = {
   connectUpdateNewButton: '#connectUpdateNew',
   connectWasmButton: '#connectwasm',
   connectNotificationButton: '#connectnotifications',
-  connectMultichainProviderButton: '#connectmultichain-provider',
   confirmationButton: '#sendConfirmationButton',
   createDialogButton: '#createDialogButton',
   createDialogDisabledButton: '#createDisabledDialogButton',
@@ -74,10 +71,6 @@ export const buttonLocator = {
   personalSignButton: '#signPersonalSignMessage',
   publicKeyBip44Button: '#sendBip44Test',
   connectNetworkAccessButton: '#connectnetwork-access',
-  sendCreateSessionButton: '#sendCreateSession',
-  sendMultichainChainIdButton: '#sendMultichainChainId',
-  sendMultichainGetGenesisHashButton: '#sendMultichainGetGenesisHash',
-  sendMultichainGetAccountsButton: '#sendMultichainAccounts',
   sendErrorButton: '#sendError',
   sendExpandedViewNotificationButton: '#sendExpandedViewNotification',
   sendInAppNotificationButton: '#sendInAppNotification',
@@ -98,8 +91,6 @@ export const buttonLocator = {
   signEd25519Bip32MessageButton: '#sendBip32-ed25519Bip32',
   signEd25519MessageButton: '#sendBip32-ed25519',
   signEntropyMessageButton: '#signEntropyMessage',
-  signMessageMultichainButton: '#signMessageMultichainButton',
-  signTypedDataMultichainButton: '#signTypedDataMultichainButton',
   signTypedDataButton: '#signTypedDataButton',
   submitClientStatusButton: '#sendClientStatusTest',
   trackErrorButton: '#trackError',
@@ -145,12 +136,9 @@ const spanLocator = {
   personalSignResultSpan: '#personalSignResult',
   preferencesResultSpan: '#preferencesResult',
   providerVersionResultSpan: '#ethproviderResult',
-  multichainProviderResultSpan: '#multichainProviderResult',
   sendManageStateResultSpan: '#sendManageStateResult',
   snapUIRenderer: '.snap-ui-renderer__content',
   sendUnencryptedManageStateResultSpan: '#sendUnencryptedManageStateResult',
-  signMessageMultichainResultSpan: '#signMessageMultichainResult',
-  signTypedDataMultichainResultSpan: '#signTypedDataMultichainResult',
   signTypedDataResultSpan: '#signTypedDataResult',
   retrieveManageStateResultSpan: '#retrieveManageStateResult',
   retrieveManageStateUnencryptedResultSpan:
@@ -169,7 +157,6 @@ const dropDownLocator = {
   bip44EntropyDropDown: '#bip44-entropy-selector',
   getEntropyDropDown: '#get-entropy-entropy-selector',
   networkDropDown: '#select-chain',
-  multichainNetworkDropdown: '#select-multichain-chain',
 } satisfies Record<string, string>;
 
 export class TestSnaps {
@@ -387,7 +374,7 @@ export class TestSnaps {
    */
   async scrollAndSelectNetwork(
     dropDownName: keyof typeof dropDownLocator,
-    name: 'Ethereum' | 'Linea' | 'Sepolia' | 'Solana',
+    name: 'Ethereum' | 'Linea' | 'Sepolia',
   ) {
     const locator = dropDownLocator[dropDownName];
     console.log(`Select ${name} network`);

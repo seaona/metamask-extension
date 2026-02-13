@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Container,
   ContainerProps,
-  PolymorphicRef,
 } from '../../../components/component-library';
 import {
   BlockSize,
@@ -10,19 +9,15 @@ import {
   FlexDirection,
 } from '../../../helpers/constants/design-system';
 
-const Column = React.forwardRef(
-  <Element extends React.ElementType = 'div'>(
-    props: ContainerProps<Element>,
-    ref?: PolymorphicRef<Element>,
-  ) => (
+const Column = (props: ContainerProps<'div'>) => {
+  return (
     <Container
-      ref={ref}
       display={Display.Flex}
       flexDirection={FlexDirection.Column}
       width={BlockSize.Full}
       {...props}
     />
-  ),
-);
+  );
+};
 
 export default Column;

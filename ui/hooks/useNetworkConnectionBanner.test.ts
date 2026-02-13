@@ -65,13 +65,6 @@ jest.mock('../../shared/modules/selectors/networks', () => {
   };
 });
 
-jest.mock('../store/background-connection', () => {
-  return {
-    ...jest.requireActual('../store/background-connection'),
-    submitRequestToBackground: jest.fn().mockResolvedValue(true),
-  };
-});
-
 const mockSelectFirstUnavailableEvmNetwork = jest.mocked(
   selectFirstUnavailableEvmNetwork,
 );
@@ -193,7 +186,7 @@ describe('useNetworkConnectionBanner', () => {
           });
         });
 
-        it('creates a MetaMetrics event to capture that the status changed', async () => {
+        it('creates a MetaMetrics event to capture that the status changed', () => {
           mockSelectFirstUnavailableEvmNetwork.mockReturnValue({
             networkName: 'Ethereum Mainnet',
             networkClientId: 'mainnet',
@@ -211,10 +204,8 @@ describe('useNetworkConnectionBanner', () => {
             undefined,
             () => mockTrackEvent,
           );
-          await act(async () => {
+          act(() => {
             jest.advanceTimersByTime(5000);
-            // Flush microtask queue to allow async trackNetworkBannerEvent to complete
-            await Promise.resolve();
           });
 
           expect(mockTrackEvent).toHaveBeenCalledWith({
@@ -302,7 +293,7 @@ describe('useNetworkConnectionBanner', () => {
         });
       });
 
-      it('creates a MetaMetrics event to capture that the status changed', async () => {
+      it('creates a MetaMetrics event to capture that the status changed', () => {
         mockSelectFirstUnavailableEvmNetwork.mockReturnValue({
           networkName: 'Ethereum Mainnet',
           networkClientId: 'mainnet',
@@ -327,10 +318,8 @@ describe('useNetworkConnectionBanner', () => {
           undefined,
           () => mockTrackEvent,
         );
-        await act(async () => {
+        act(() => {
           jest.advanceTimersByTime(25000);
-          // Flush microtask queue to allow async trackNetworkBannerEvent to complete
-          await Promise.resolve();
         });
 
         expect(mockTrackEvent).toHaveBeenCalledWith({

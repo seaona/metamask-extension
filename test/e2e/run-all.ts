@@ -19,9 +19,6 @@ import {
 // These tests should only be run on Flask for now.
 const FLASK_ONLY_TESTS: string[] = [];
 
-// This test should only be run manually or via specific workflow update-onboarding-fixture.yml
-const DIST_EXCLUDED_TESTS: string[] = ['wallet-fixture-export.spec.ts'];
-
 const getTestPathsForTestDir = async (testDir: string): Promise<string[]> => {
   const testFilenames = await fs.promises.readdir(testDir, {
     withFileTypes: true,
@@ -158,10 +155,6 @@ async function main(): Promise<void> {
             description: `run multi injected provider e2e tests`,
             type: 'boolean',
           })
-          .option('performance', {
-            description: `run performance e2e tests`,
-            type: 'boolean',
-          })
           .option('build-type', {
             description: `Sets the build-type to test for. This may filter out tests.`,
             type: 'string',
@@ -198,7 +191,6 @@ async function main(): Promise<void> {
     updateSnapshot,
     updatePrivacySnapshot,
     multiProvider,
-    performance: runPerformanceTests,
   } = argv as {
     browser?: 'chrome' | 'firefox';
     debug?: boolean;
@@ -209,7 +201,6 @@ async function main(): Promise<void> {
     updateSnapshot?: boolean;
     updatePrivacySnapshot?: boolean;
     multiProvider?: boolean;
-    performance?: boolean;
   };
 
   let testPaths: string[];
@@ -230,12 +221,7 @@ async function main(): Promise<void> {
     ];
   } else if (dist) {
     const testDir = path.join(__dirname, 'dist');
-    const allDistTests = await getTestPathsForTestDir(testDir);
-    testPaths = allDistTests.filter((p) =>
-      DIST_EXCLUDED_TESTS.every(
-        (excludedTest) => path.basename(p) !== excludedTest,
-      ),
-    );
+    testPaths = await getTestPathsForTestDir(testDir);
   } else if (rpc) {
     const testDir = path.join(__dirname, 'json-rpc');
     testPaths = await getTestPathsForTestDir(testDir);
@@ -253,9 +239,6 @@ async function main(): Promise<void> {
     );
 
     const testDir = path.join(__dirname, 'multi-injected-provider');
-    testPaths = await getTestPathsForTestDir(testDir);
-  } else if (runPerformanceTests) {
-    const testDir = path.join(__dirname, '../performance-tests');
     testPaths = await getTestPathsForTestDir(testDir);
   } else {
     const testDir = path.join(__dirname, 'tests');

@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getIsSmartTransaction } from '../../../../shared/modules/selectors';
 import { isRelaySupported } from '../../../store/actions';
-import { getMaybeHexChainId } from '../../../ducks/bridge/utils';
 
 type Chain = {
   chainId: string;
@@ -42,10 +41,7 @@ export function useGasIncluded7702({
   const [isGasIncluded7702Supported, setIsGasIncluded7702Supported] =
     useState(false);
   const isSmartTransaction = useSelector((state) =>
-    getIsSmartTransaction(
-      state as never,
-      getMaybeHexChainId(fromChain?.chainId) ?? fromChain?.chainId,
-    ),
+    getIsSmartTransaction(state as never, fromChain?.chainId),
   );
 
   useEffect(() => {

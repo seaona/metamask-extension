@@ -103,10 +103,6 @@ describe('MetaMask onboarding ', function () {
         await homePage.checkPageIsLoaded();
 
         for (const m of mockedEndpoint) {
-          const mockUrl = m.toString();
-          if (mockUrl.includes('chainid.network')) {
-            continue;
-          }
           const requests = await m.getSeenRequests();
           assert.ok(
             requests.length === 0,

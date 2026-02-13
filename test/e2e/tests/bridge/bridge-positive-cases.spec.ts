@@ -78,8 +78,7 @@ describe('Bridge tests', function (this: Suite) {
             toChain: 'Linea',
             unapproved: true,
           },
-          // TODO fix approval transaction failure
-          expectedTransactionsCount: 5,
+          expectedTransactionsCount: 6,
           expectedDestAmount: '9.9',
         });
       },
@@ -121,7 +120,6 @@ describe('Bridge tests', function (this: Suite) {
       },
     );
   });
-
   it('updates recommended bridge quote incrementally when SSE events are received', async function () {
     await withFixtures(
       getBridgeFixtures(
@@ -148,8 +146,7 @@ describe('Bridge tests', function (this: Suite) {
             toChain: 'Linea',
             unapproved: true,
           },
-          // TODO fix approval transaction failure
-          expectedTransactionsCount: 1,
+          expectedTransactionsCount: 2,
           expectedDestAmount: '9.9',
         });
       },

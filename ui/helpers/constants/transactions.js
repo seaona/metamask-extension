@@ -34,5 +34,4 @@ export const TOKEN_CATEGORY_HASH = {
 export const EXCLUDED_TRANSACTION_TYPES = new Set([
   TransactionType.incoming,
   TransactionType.gasPayment,
-  TransactionType.relayDeposit,
 ]);

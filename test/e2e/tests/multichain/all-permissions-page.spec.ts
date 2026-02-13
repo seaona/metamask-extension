@@ -12,7 +12,6 @@ import PermissionListPage from '../../page-objects/pages/permission/permission-l
 import SettingsPage from '../../page-objects/pages/settings/settings-page';
 import TestDapp from '../../page-objects/pages/test-dapp';
 import { loginWithoutBalanceValidation } from '../../page-objects/flows/login.flow';
-import { connectAccountToTestDapp } from '../../page-objects/flows/test-dapp.flow';
 
 describe('Permissions Page', function () {
   it('should show connected site permissions when a single dapp is connected', async function () {
@@ -26,7 +25,7 @@ describe('Permissions Page', function () {
         await loginWithoutBalanceValidation(driver);
         const testDapp = new TestDapp(driver);
         await testDapp.openTestDappPage();
-        await connectAccountToTestDapp(driver, {
+        await testDapp.connectAccount({
           publicAddress: DEFAULT_FIXTURE_ACCOUNT,
         });
 

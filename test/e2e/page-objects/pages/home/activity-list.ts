@@ -37,11 +37,6 @@ class ActivityListPage {
     tag: 'button',
   };
 
-  private readonly copyTransactionHashButton = {
-    text: 'Copy transaction ID',
-    tag: 'button',
-  };
-
   private readonly failedTransactions = {
     text: 'Failed',
     css: '.transaction-status-label--failed',
@@ -149,11 +144,6 @@ class ActivityListPage {
     console.log(
       `${expectedNumber} confirmed transactions found in activity list on homepage`,
     );
-  }
-
-  async clickConfirmedTransaction(): Promise<void> {
-    console.log('Clicking on confirmed transaction');
-    await this.driver.clickElement(this.confirmedTransactions);
   }
 
   /**
@@ -477,14 +467,6 @@ class ActivityListPage {
       state: 'detached',
       timeout: 30000,
     });
-  }
-
-  /**
-   * Clicks the copy transaction hash button.
-   */
-  async clickCopyTransactionHashButton(): Promise<void> {
-    console.log('Clicking copy transaction hash button');
-    await this.driver.clickElement(this.copyTransactionHashButton);
   }
 }
 

@@ -75,12 +75,6 @@ class ChromeDriver {
     options.setAcceptInsecureCerts(true);
     options.setUserPreferences({
       'download.default_directory': `${process.cwd()}/test-artifacts/downloads`,
-      'profile.content_settings.exceptions.clipboard': {
-        '[*.]': {
-          last_modified: Date.now(),
-          setting: 1, // 1 = allow
-        },
-      },
     });
 
     // Temporarily lock to version 126

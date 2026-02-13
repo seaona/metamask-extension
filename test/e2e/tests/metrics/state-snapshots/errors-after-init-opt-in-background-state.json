@@ -204,8 +204,7 @@
       "eip155": "object",
       "solana": "object",
       "tron": "object"
-    },
-    "nativeAssetIdentifiers": "object"
+    }
   },
   "NetworkOrderController": {
     "orderedNetworkList": {

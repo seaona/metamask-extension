@@ -22,7 +22,6 @@ import TestDapp from '../page-objects/pages/test-dapp';
 import { mockSnapAccountAbstractionKeyRingAndSite } from '../mock-response-data/snaps/snap-local-sites/account-abstraction-keyring-site-mocks';
 import { createInternalTransaction } from '../page-objects/flows/transaction';
 import { loginWithoutBalanceValidation } from '../page-objects/flows/login.flow';
-import { connectAccountToTestDapp } from '../page-objects/flows/test-dapp.flow';
 
 enum TransactionDetailRowIndex {
   Nonce = 0,
@@ -238,9 +237,7 @@ async function withAccountSnap(
 
       const testDapp = new TestDapp(driver);
       await testDapp.openTestDappPage();
-      await connectAccountToTestDapp(driver, {
-        publicAddress: ERC_4337_ACCOUNT,
-      });
+      await testDapp.connectAccount({ publicAddress: ERC_4337_ACCOUNT });
 
       await driver.switchToWindowWithTitle(
         WINDOW_TITLES.ExtensionInFullScreenView,

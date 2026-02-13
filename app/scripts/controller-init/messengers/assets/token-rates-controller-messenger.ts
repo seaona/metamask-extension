@@ -3,7 +3,6 @@ import {
   NetworkControllerGetStateAction,
   NetworkControllerStateChangeEvent,
 } from '@metamask/network-controller';
-import { NetworkEnablementControllerGetStateAction } from '@metamask/network-enablement-controller';
 import {
   TokensControllerGetStateAction,
   TokensControllerStateChangeEvent,
@@ -14,10 +13,7 @@ import {
 } from '../../../controllers/preferences-controller';
 import { RootMessenger } from '../../../lib/messenger';
 
-type Actions =
-  | TokensControllerGetStateAction
-  | NetworkControllerGetStateAction
-  | NetworkEnablementControllerGetStateAction;
+type Actions = TokensControllerGetStateAction | NetworkControllerGetStateAction;
 
 type Events =
   | TokensControllerStateChangeEvent
@@ -48,11 +44,7 @@ export function getTokenRatesControllerMessenger(
   });
   messenger.delegate({
     messenger: controllerMessenger,
-    actions: [
-      'TokensController:getState',
-      'NetworkController:getState',
-      'NetworkEnablementController:getState',
-    ],
+    actions: ['TokensController:getState', 'NetworkController:getState'],
     events: ['TokensController:stateChange', 'NetworkController:stateChange'],
   });
   return controllerMessenger;

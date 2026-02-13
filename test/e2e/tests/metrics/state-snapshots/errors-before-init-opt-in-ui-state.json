@@ -148,8 +148,7 @@
         "eip155": "object",
         "solana": "object",
         "tron": "object"
-      },
-      "nativeAssetIdentifiers": "object"
+      }
     },
     "NetworkOrderController": {
       "orderedNetworkList": {
@@ -291,7 +290,8 @@
     "SwapsController": {},
     "TokenBalancesController": { "tokenBalances": "object" },
     "TokenListController": {
-      "preventPollingOnNetworkRestart": false
+      "preventPollingOnNetworkRestart": false,
+      "tokensChainsCache": {}
     },
     "TokenRatesController": { "marketData": "object" },
     "TokensController": {
@@ -316,5 +316,5 @@
     "config": "object",
     "firstTimeInfo": "object"
   },
-  "meta": { "version": 190 }
+  "meta": { "version": 189 }
 }

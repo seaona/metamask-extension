@@ -31,13 +31,13 @@ export const container: UIComponentFactory<ContainerElement> = ({
     ? children
     : [Box({ children: children[0] as JSXElement }), ...children.slice(1)];
 
-  const templateChildren = containerChildren.map((child, index) =>
+  const templateChildren = containerChildren.map((child) =>
     mapToTemplate({
       useFooter,
       onCancel,
       t,
       ...params,
-      isScrollableContainer: index === 0,
+
       element: child as JSXElement,
     }),
   );

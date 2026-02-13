@@ -3435,6 +3435,11 @@
         "define": true
       }
     },
+    "qrcode-generator": {
+      "globals": {
+        "define": true
+      }
+    },
     "qrcode.react": {
       "globals": {
         "Path2D": true,

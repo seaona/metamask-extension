@@ -18,12 +18,7 @@ const NftDetailDescription = ({ value }: { value: string | null }) => {
   const { contentRef, isOverflowing } = useIsOverflowing();
   const [isOpen, setIsOpen] = useState(false);
 
-  // TEMPORARY MOCK - Remove this before committing
-  const mockDescription =
-    'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.';
-  const displayValue = value || mockDescription;
-
-  const shouldDisplayButton = isOverflowing;
+  const shouldDisplayButton = !isOpen && isOverflowing;
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -32,33 +27,46 @@ const NftDetailDescription = ({ value }: { value: string | null }) => {
 
   return (
     <>
-      <Box marginTop={2}>
+      <Box
+        marginTop={2}
+        className="nft-details__show-more"
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          maxHeight: isOpen ? 'none' : undefined,
+        }}
+        ref={contentRef}
+      >
         <Text
-          variant={TextVariant.bodyMd}
+          variant={TextVariant.bodySm}
           fontWeight={FontWeight.Medium}
           color={TextColor.textAlternative}
           data-testid="nft-details__description"
-          ref={contentRef}
-          style={{
-            display: '-webkit-box',
-            WebkitLineClamp: isOpen ? 'unset' : 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
         >
-          {displayValue}
+          {value}
         </Text>
+        {shouldDisplayButton && (
+          <Box className="buttonDescriptionContainer">
+            <Button
+              className="nft-details__show-more__button"
+              padding={0}
+              paddingLeft={9}
+              variant={ButtonVariant.Link}
+              onClick={handleClick}
+            >
+              <Text color={TextColor.infoDefault}>{t('showMore')}</Text>
+            </Button>
+          </Box>
+        )}
       </Box>
-      {shouldDisplayButton && (
-        <Box marginTop={2}>
+      {isOpen && (
+        <Box>
           <Button
             padding={0}
             variant={ButtonVariant.Link}
             onClick={handleClick}
           >
-            <Text color={TextColor.infoDefault}>
-              {isOpen ? t('showLess') : t('showMore')}
-            </Text>
+            <Text color={TextColor.infoDefault}>{t('showLess')}</Text>
           </Button>
         </Box>
       )}

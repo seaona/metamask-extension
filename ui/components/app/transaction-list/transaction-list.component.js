@@ -29,6 +29,8 @@ import { getCurrentChainId } from '../../../../shared/modules/selectors/networks
 import {
   getIsTokenNetworkFilterEqualCurrentNetwork,
   getSelectedAccount,
+  getEnabledNetworksByNamespace,
+  getSelectedMultichainNetworkChainId,
 } from '../../../selectors';
 ///: BEGIN:ONLY_INCLUDE_IF(multichain)
 import MultichainBridgeTransactionListItem from '../multichain-bridge-transaction-list-item/multichain-bridge-transaction-list-item';
@@ -51,9 +53,12 @@ import {
   getSelectedAccountMultichainTransactions,
 } from '../../../selectors/multichain';
 ///: END:ONLY_INCLUDE_IF
-///: BEGIN:ONLY_INCLUDE_IF(multichain)
-import { getSelectedMultichainNetworkConfiguration } from '../../../selectors/multichain/networks';
-///: END:ONLY_INCLUDE_IF
+import {
+  getIsEvmMultichainNetworkSelected,
+  ///: BEGIN:ONLY_INCLUDE_IF(multichain)
+  getSelectedMultichainNetworkConfiguration,
+  ///: END:ONLY_INCLUDE_IF
+} from '../../../selectors/multichain/networks';
 
 import {
   Box,
@@ -99,6 +104,7 @@ import { endTrace, TraceName } from '../../../../shared/lib/trace';
 ///: BEGIN:ONLY_INCLUDE_IF(multichain)
 import { MULTICHAIN_TOKEN_IMAGE_MAP } from '../../../../shared/constants/multichain/networks';
 ///: END:ONLY_INCLUDE_IF
+import AssetListControlBar from '../assets/asset-list/asset-list-control-bar';
 import {
   startIncomingTransactionPolling,
   stopIncomingTransactionPolling,
@@ -293,6 +299,7 @@ export default function TransactionList({
   hideTokenTransactions,
   tokenAddress,
   boxProps,
+  hideNetworkFilter,
   overrideFilterForCurrentChain = false,
 }) {
   const [limit, setLimit] = useState(PAGE_INCREMENT);
@@ -345,11 +352,49 @@ export default function TransactionList({
 
   const chainId = useSelector(getCurrentChainId);
 
-  // Always show all transactions from all networks (no filtering)
-  const completedTransactions =
-    isTokenNetworkFilterEqualCurrentNetwork || overrideFilterForCurrentChain
+  const isEvmNetwork = useSelector(getIsEvmMultichainNetworkSelected);
+
+  const enabledNetworksByNamespace = useSelector(getEnabledNetworksByNamespace);
+  const currentMultichainChainId = useSelector(
+    getSelectedMultichainNetworkChainId,
+  );
+
+  const enabledNetworksFilteredCompletedTransactions = useMemo(() => {
+    if (!enabledNetworksByNamespace || !currentMultichainChainId) {
+      return unfilteredCompletedTransactionsAllChains;
+    }
+
+    // If no networks are enabled for this namespace, return empty array
+    if (Object.keys(enabledNetworksByNamespace).length === 0) {
+      return [];
+    }
+
+    // Get the list of enabled chain IDs for this namespace
+    const enabledChainIds = Object.keys(enabledNetworksByNamespace).filter(
+      (enabledChainId) => enabledNetworksByNamespace[enabledChainId],
+    );
+
+    const transactionsToFilter = isTokenNetworkFilterEqualCurrentNetwork
       ? unfilteredCompletedTransactionsCurrentChain
       : unfilteredCompletedTransactionsAllChains;
+
+    // Filter transactions to only include those from enabled networks
+    const filteredTransactions = transactionsToFilter.filter(
+      (transactionGroup) => {
+        const transactionChainId = transactionGroup.initialTransaction?.chainId;
+        const isIncluded = enabledChainIds.includes(transactionChainId);
+        return isIncluded;
+      },
+    );
+
+    return filteredTransactions;
+  }, [
+    enabledNetworksByNamespace,
+    currentMultichainChainId,
+    isTokenNetworkFilterEqualCurrentNetwork,
+    unfilteredCompletedTransactionsCurrentChain,
+    unfilteredCompletedTransactionsAllChains,
+  ]);
 
   useEffect(() => {
     stopIncomingTransactionPolling();
@@ -398,16 +443,20 @@ export default function TransactionList({
     [pendingTransactions],
   );
 
-  const groupedCompletedTransactions = useMemo(
+  const completedTransactions = useMemo(
     () =>
       groupEvmTransactionsByDate(
         getFilteredTransactionGroupsAllChains(
-          completedTransactions,
+          enabledNetworksFilteredCompletedTransactions,
           hideTokenTransactions,
           tokenAddress,
         ),
       ),
-    [hideTokenTransactions, tokenAddress, completedTransactions],
+    [
+      hideTokenTransactions,
+      tokenAddress,
+      enabledNetworksFilteredCompletedTransactions,
+    ],
   );
 
   const viewMore = useCallback(
@@ -435,6 +484,22 @@ export default function TransactionList({
 
     return dateGroup;
   };
+
+  const renderFilterButton = useCallback(() => {
+    if (hideNetworkFilter) {
+      return null;
+    }
+    if (isEvmNetwork) {
+      return (
+        <AssetListControlBar
+          showSortControl={false}
+          showTokenFiatBalance={false}
+          showImportTokenButton={false}
+        />
+      );
+    }
+    return null;
+  }, [hideNetworkFilter, isEvmNetwork]);
 
   // Remove date groups with no transaction groups
   const dateGroupsWithTransactionGroups = (dateGroup) =>
@@ -592,8 +657,9 @@ export default function TransactionList({
   return (
     <>
       <Box className="transaction-list" {...boxProps}>
+        {renderFilterButton()}
         {groupedPendingTransactions.length === 0 &&
-        groupedCompletedTransactions.length === 0 ? (
+        completedTransactions.length === 0 ? (
           <TransactionActivityEmptyState
             className="mx-auto mt-5 mb-6"
             account={selectedAccount}
@@ -650,8 +716,8 @@ export default function TransactionList({
               </Box>
             )}
             <Box className="transaction-list__completed-transactions">
-              {groupedCompletedTransactions.length > 0
-                ? groupedCompletedTransactions
+              {completedTransactions.length > 0
+                ? completedTransactions
                     .map(removeIncomingTxsButToAnotherAddress)
                     .map(removeTxGroupsWithNoTx)
                     .filter(dateGroupsWithTransactionGroups)
@@ -693,7 +759,7 @@ export default function TransactionList({
                       );
                     })
                 : null}
-              {groupedCompletedTransactions.length > limit && (
+              {completedTransactions.length > limit && (
                 <Button
                   className="transaction-list__view-more"
                   variant={ButtonVariant.Secondary}
@@ -838,6 +904,7 @@ TransactionList.propTypes = {
   tokenAddress: PropTypes.string,
   boxProps: PropTypes.object,
   tokenChainId: PropTypes.string,
+  hideNetworkFilter: PropTypes.bool,
   overrideFilterForCurrentChain: PropTypes.bool,
 };
 

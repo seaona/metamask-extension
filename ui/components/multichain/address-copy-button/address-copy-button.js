@@ -15,6 +15,7 @@ import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard';
 import { shortenAddress } from '../../../helpers/utils/util';
 import Tooltip from '../../ui/tooltip/tooltip';
 import { useI18nContext } from '../../../hooks/useI18nContext';
+import { MINUTE } from '../../../../shared/constants/time';
 // TODO: Remove restricted import
 // eslint-disable-next-line import/no-restricted-paths
 import { normalizeSafeAddress } from '../../../../app/scripts/lib/multichain/address';
@@ -24,9 +25,7 @@ function AddressCopyButton({ address, shorten = false, wrap = false }) {
   const displayAddress = shorten
     ? shortenAddress(checksummedAddress)
     : checksummedAddress;
-
-  // useCopyToClipboard analysis: Copies a public address
-  const [copied, handleCopy] = useCopyToClipboard({ clearDelayMs: null });
+  const [copied, handleCopy] = useCopyToClipboard(MINUTE);
   const t = useI18nContext();
 
   const tooltipText = copied ? t('copiedExclamation') : t('copyToClipboard');

@@ -14,7 +14,8 @@ import {
   getTokenValueFromRecord,
 } from '../../../utils/token';
 import { useConfirmContext } from '../../../context/confirm';
-import { POLYGON_NATIVE_TOKEN_ADDRESS } from '../../../../../../shared/constants/transaction';
+
+const POLYGON_NATIVE_ASSET = '0x0000000000000000000000000000000000001010';
 
 export function useDappSwapUSDValues({
   tokenAddresses = [],
@@ -43,8 +44,7 @@ export function useDappSwapUSDValues({
 
     if (chainId === CHAIN_IDS.POLYGON) {
       const nativeAddress = getNativeAssetForChainId(chainId).address;
-      exchangeRates[nativeAddress] =
-        exchangeRates[POLYGON_NATIVE_TOKEN_ADDRESS];
+      exchangeRates[nativeAddress] = exchangeRates[POLYGON_NATIVE_ASSET];
     }
 
     return exchangeRates;

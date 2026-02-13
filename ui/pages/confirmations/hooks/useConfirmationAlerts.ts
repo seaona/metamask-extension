@@ -7,15 +7,11 @@ import { useFirstTimeInteractionAlert } from './alerts/transactions/useFirstTime
 import { useGasEstimateFailedAlerts } from './alerts/transactions/useGasEstimateFailedAlerts';
 import { useGasFeeLowAlerts } from './alerts/transactions/useGasFeeLowAlerts';
 import { useGasTooLowAlerts } from './alerts/transactions/useGasTooLowAlerts';
-import { useSuggestedGasFeeHighAlert } from './alerts/transactions/useSuggestedGasFeeHighAlert';
 import { useInsufficientBalanceAlerts } from './alerts/transactions/useInsufficientBalanceAlerts';
-import { useInsufficientPayTokenBalanceAlert } from './alerts/transactions/useInsufficientPayTokenBalanceAlert';
 import { useMultipleApprovalsAlerts } from './alerts/transactions/useMultipleApprovalsAlerts';
 import { useNoGasPriceAlerts } from './alerts/transactions/useNoGasPriceAlerts';
-import { useNoPayTokenQuotesAlert } from './alerts/transactions/useNoPayTokenQuotesAlert';
 import { useNonContractAddressAlerts } from './alerts/transactions/useNonContractAddressAlerts';
 import { usePendingTransactionAlerts } from './alerts/transactions/usePendingTransactionAlerts';
-import { usePayHardwareAccountAlert } from './alerts/transactions/usePayHardwareAccountAlert';
 import { useResimulationAlert } from './alerts/transactions/useResimulationAlert';
 import { useSigningOrSubmittingAlerts } from './alerts/transactions/useSigningOrSubmittingAlerts';
 import useBlockaidAlerts from './alerts/useBlockaidAlerts';
@@ -48,18 +44,13 @@ function useTransactionAlerts(): Alert[] {
   const gasFeeLowAlerts = useGasFeeLowAlerts();
   const gasTooLowAlerts = useGasTooLowAlerts();
   const insufficientBalanceAlerts = useInsufficientBalanceAlerts();
-  const insufficientPayTokenBalanceAlerts =
-    useInsufficientPayTokenBalanceAlert();
   const multipleApprovalAlerts = useMultipleApprovalsAlerts();
   const noGasPriceAlerts = useNoGasPriceAlerts();
-  const noPayTokenQuotesAlerts = useNoPayTokenQuotesAlert();
   const nonContractAddressAlerts = useNonContractAddressAlerts();
   const pendingTransactionAlerts = usePendingTransactionAlerts();
-  const payHardwareAccountAlerts = usePayHardwareAccountAlert();
   const resimulationAlert = useResimulationAlert();
   const shieldCoverageAlert = useShieldCoverageAlert();
   const signingOrSubmittingAlerts = useSigningOrSubmittingAlerts();
-  const suggestedGasFeeHighAlert = useSuggestedGasFeeHighAlert();
   const tokenTrustSignalAlerts = useTokenTrustSignalAlerts();
 
   return useMemo(
@@ -71,17 +62,13 @@ function useTransactionAlerts(): Alert[] {
       ...gasFeeLowAlerts,
       ...gasTooLowAlerts,
       ...insufficientBalanceAlerts,
-      ...insufficientPayTokenBalanceAlerts,
       ...multipleApprovalAlerts,
       ...noGasPriceAlerts,
-      ...noPayTokenQuotesAlerts,
       ...nonContractAddressAlerts,
       ...pendingTransactionAlerts,
-      ...payHardwareAccountAlerts,
       ...resimulationAlert,
       ...shieldCoverageAlert,
       ...signingOrSubmittingAlerts,
-      ...suggestedGasFeeHighAlert,
       ...tokenTrustSignalAlerts,
     ],
     [
@@ -92,17 +79,13 @@ function useTransactionAlerts(): Alert[] {
       gasFeeLowAlerts,
       gasTooLowAlerts,
       insufficientBalanceAlerts,
-      insufficientPayTokenBalanceAlerts,
       multipleApprovalAlerts,
       noGasPriceAlerts,
-      noPayTokenQuotesAlerts,
       nonContractAddressAlerts,
       pendingTransactionAlerts,
-      payHardwareAccountAlerts,
       resimulationAlert,
       shieldCoverageAlert,
       signingOrSubmittingAlerts,
-      suggestedGasFeeHighAlert,
       tokenTrustSignalAlerts,
     ],
   );

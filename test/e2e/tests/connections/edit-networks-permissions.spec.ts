@@ -11,7 +11,6 @@ import TestDapp from '../../page-objects/pages/test-dapp';
 import PermissionListPage from '../../page-objects/pages/permission/permission-list-page';
 import SitePermissionPage from '../../page-objects/pages/permission/site-permission-page';
 import { loginWithBalanceValidation } from '../../page-objects/flows/login.flow';
-import { connectAccountToTestDapp } from '../../page-objects/flows/test-dapp.flow';
 
 describe('Edit Networks Permissions', function () {
   it('should be able to edit networks', async function () {
@@ -27,7 +26,7 @@ describe('Edit Networks Permissions', function () {
         await testDapp.openTestDappPage();
         await testDapp.checkPageIsLoaded();
 
-        await connectAccountToTestDapp(driver, {
+        await testDapp.connectAccount({
           publicAddress: DEFAULT_FIXTURE_ACCOUNT,
         });
         await driver.switchToWindowWithTitle(

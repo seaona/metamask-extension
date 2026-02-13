@@ -35,7 +35,6 @@ import {
   TraceName,
   TraceOperation,
 } from '../../../../shared/lib/trace';
-import { MINUTE } from '../../../../shared/constants/time';
 
 /**
  * Check if the account has the private key available according to its keyring type.
@@ -85,8 +84,7 @@ const MultichainPrivateKeyList = ({
     [cleanStateVariables],
   );
 
-  // useCopyToClipboard analysis: Copies one of your private keys
-  const [, handleCopy] = useCopyToClipboard({ clearDelayMs: MINUTE });
+  const [, handleCopy] = useCopyToClipboard();
 
   const accountsSpreadByNetworkByGroupId = useSelector((state) =>
     getInternalAccountListSpreadByScopesByGroupId(state, groupId),

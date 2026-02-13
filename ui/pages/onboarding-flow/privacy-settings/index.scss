@@ -33,6 +33,12 @@
   }
 
   &__setting {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+    max-width: 430px;
+
     &__toggle {
       margin-left: 42px;
     }

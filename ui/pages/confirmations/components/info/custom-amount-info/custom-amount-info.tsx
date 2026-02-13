@@ -1,14 +1,11 @@
 import React, { ReactNode, useCallback } from 'react';
 import type { TransactionMeta } from '@metamask/transaction-controller';
-import { Box, Text } from '../../../../../components/component-library';
+import { Box } from '../../../../../components/component-library';
 import {
   Display,
   FlexDirection,
   AlignItems,
   JustifyContent,
-  TextAlign,
-  TextColor,
-  TextVariant,
 } from '../../../../../helpers/constants/design-system';
 import {
   CustomAmount,
@@ -30,7 +27,6 @@ import {
   PercentageButtonsSkeleton,
 } from '../../percentage-buttons';
 import { useTransactionCustomAmount } from '../../../hooks/transactions/useTransactionCustomAmount';
-import { useTransactionCustomAmountAlerts } from '../../../hooks/transactions/useTransactionCustomAmountAlerts';
 import { useAutomaticTransactionPayToken } from '../../../hooks/pay/useAutomaticTransactionPayToken';
 import type { SetPayTokenRequest } from '../../../hooks/pay/types';
 import {
@@ -39,7 +35,6 @@ import {
 } from '../../../hooks/pay/useTransactionPayData';
 import { useTransactionPayMetrics } from '../../../hooks/pay/useTransactionPayMetrics';
 import { useTransactionPayAvailableTokens } from '../../../hooks/pay/useTransactionPayAvailableTokens';
-import { useTransactionPayToken } from '../../../hooks/pay/useTransactionPayToken';
 import { useConfirmContext } from '../../../context/confirm';
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -69,18 +64,17 @@ export const CustomAmountInfo: React.FC<CustomAmountInfoProps> = React.memo(
     useTransactionPayMetrics();
 
     const { currentConfirmation } = useConfirmContext<TransactionMeta>();
-    const { isNative: isNativePayToken } = useTransactionPayToken();
     const availableTokens = useTransactionPayAvailableTokens();
     const hasTokens = availableTokens.length > 0;
 
-    const { disableUpdate } = useTransactionCustomAmountAlerts();
+    const isResultReady = useIsResultReady();
 
     const {
       amountFiat,
       amountHuman,
       updatePendingAmount,
       updatePendingAmountPercentage,
-    } = useTransactionCustomAmount({ currency, disableUpdate });
+    } = useTransactionCustomAmount({ currency });
 
     const handleAmountChange = useCallback(
       (value: string) => {
@@ -112,7 +106,7 @@ export const CustomAmountInfo: React.FC<CustomAmountInfoProps> = React.memo(
           amountHuman={amountHuman}
           currency={currency}
           disablePay={disablePay}
-          hasMax={hasMax && !isNativePayToken}
+          hasMax={hasMax}
           hasTokens={hasTokens}
           onAmountChange={handleAmountChange}
           onPercentageClick={handlePercentageClick}
@@ -120,7 +114,8 @@ export const CustomAmountInfo: React.FC<CustomAmountInfoProps> = React.memo(
         >
           {children}
         </CenterContainer>
-        <BottomContainer />
+
+        {isResultReady && <BottomContainer />}
       </Box>
     );
   },
@@ -200,8 +195,6 @@ function CenterContainer({
       {hasTokens && hasMax && (
         <PercentageButtons onPercentageClick={onPercentageClick} />
       )}
-
-      <AlertMessage />
     </Box>
   );
 }
@@ -232,13 +225,6 @@ function CenterContainerSkeleton() {
 }
 
 function BottomContainer() {
-  const isResultReady = useIsResultReady();
-  const { hideResults } = useTransactionCustomAmountAlerts();
-
-  if (!isResultReady || hideResults) {
-    return null;
-  }
-
   return (
     <Box
       display={Display.Flex}
@@ -258,22 +244,4 @@ function useIsResultReady() {
   const isQuotesLoading = useIsTransactionPayLoading();
 
   return isQuotesLoading || Boolean(quotes?.length);
-}
-
-function AlertMessage() {
-  const { alertMessage } = useTransactionCustomAmountAlerts();
-
-  if (!alertMessage) {
-    return null;
-  }
-
-  return (
-    <Text
-      variant={TextVariant.bodySm}
-      color={TextColor.errorDefault}
-      textAlign={TextAlign.Center}
-    >
-      {alertMessage}
-    </Text>
-  );
 }

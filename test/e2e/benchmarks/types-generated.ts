@@ -11,6 +11,7 @@ export type Metrics = {
   'UI Startup': number;
   'Background Connect': number;
   'First Render': number;
+  'Get State': number;
   'Initial Actions': number;
   'Load Scripts': number;
   'Setup Store': number;

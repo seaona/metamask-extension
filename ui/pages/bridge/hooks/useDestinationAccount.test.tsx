@@ -52,10 +52,16 @@ describe('useDestinationAccount', () => {
     const { result } = renderUseDestinationAccount({
       featureFlagOverrides: {
         bridgeConfig: {
-          chainRanking: [
-            { chainId: 'eip155:1' },
-            { chainId: MultichainNetworks.SOLANA },
-          ],
+          chains: {
+            [ChainId.ETH]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+            [MultichainNetworks.SOLANA]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+          },
         },
       },
       bridgeSliceOverrides: {
@@ -86,10 +92,16 @@ describe('useDestinationAccount', () => {
     const { result } = renderUseDestinationAccount({
       featureFlagOverrides: {
         bridgeConfig: {
-          chainRanking: [
-            { chainId: MultichainNetworks.SOLANA },
-            { chainId: 'eip155:1' },
-          ],
+          chains: {
+            [MultichainNetworks.SOLANA]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+            [ChainId.ETH]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+          },
         },
       },
       bridgeSliceOverrides: {
@@ -117,7 +129,16 @@ describe('useDestinationAccount', () => {
     const { result, store } = renderUseDestinationAccount({
       featureFlagOverrides: {
         bridgeConfig: {
-          chainRanking: [{ chainId: 'eip155:1' }, { chainId: 'eip155:59144' }],
+          chains: {
+            [ChainId.ETH]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+            [ChainId.LINEA]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+          },
         },
       },
       bridgeSliceOverrides: {
@@ -132,8 +153,8 @@ describe('useDestinationAccount', () => {
         },
       },
     });
-    expect(getFromChain(store?.getState())?.chainId).toBe('eip155:1');
-    expect(getToChain(store?.getState())?.chainId).toBe('eip155:59144');
+    expect(getFromChain(store?.getState())?.chainId).toBe('0x1');
+    expect(getToChain(store?.getState())?.chainId).toBe('0xe708');
     expect(result.current.selectedDestinationAccount).toStrictEqual({
       ...getFromAccount(store?.getState()),
       isExternal: false,
@@ -222,10 +243,16 @@ describe('useDestinationAccount', () => {
     const { result } = renderUseDestinationAccount({
       featureFlagOverrides: {
         bridgeConfig: {
-          chainRanking: [
-            { chainId: 'eip155:1' },
-            { chainId: MultichainNetworks.SOLANA },
-          ],
+          chains: {
+            [ChainId.ETH]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+            [MultichainNetworks.SOLANA]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+          },
         },
       },
       bridgeSliceOverrides: {
@@ -263,10 +290,16 @@ describe('useDestinationAccount', () => {
     const { result } = renderUseDestinationAccount({
       featureFlagOverrides: {
         bridgeConfig: {
-          chainRanking: [
-            { chainId: MultichainNetworks.SOLANA },
-            { chainId: 'eip155:1' },
-          ],
+          chains: {
+            [MultichainNetworks.SOLANA]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+            [ChainId.ETH]: {
+              isActiveSrc: true,
+              isActiveDest: true,
+            },
+          },
         },
       },
       bridgeSliceOverrides: {

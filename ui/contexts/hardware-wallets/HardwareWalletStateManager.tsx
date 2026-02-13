@@ -34,23 +34,6 @@ export type HardwareWalletState = {
 export type HardwareWalletRefs = {
   adapterRef: React.MutableRefObject<HardwareWalletAdapter | null>;
   abortControllerRef: React.MutableRefObject<AbortController | null>;
-  /**
-   * Stores the pending connection promise. When not null, a connection is in progress
-   * and concurrent callers should await this promise instead of starting a new connection.
-   */
-  connectingPromiseRef: React.MutableRefObject<Promise<void> | null>;
-  /**
-   * Stores the pending ensureDeviceReady promise to prevent overlapping checks.
-   */
-  ensureDeviceReadyPromiseRef: React.MutableRefObject<Promise<boolean> | null>;
-  /**
-   * Tracks the device ID for the in-flight ensureDeviceReady call.
-   */
-  ensureDeviceReadyDeviceIdRef: React.MutableRefObject<string | null>;
-  /**
-   * Flag to prevent concurrent connection attempts.
-   * Used to synchronously check-and-set before any async work.
-   */
   isConnectingRef: React.MutableRefObject<boolean>;
   hasAutoConnectedRef: React.MutableRefObject<boolean>;
   lastConnectedAccountRef: React.MutableRefObject<string | null>;
@@ -93,9 +76,6 @@ export const useHardwareWalletStateManager = () => {
   // Ref declarations
   const adapterRef = useRef<HardwareWalletAdapter | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  const connectingPromiseRef = useRef<Promise<void> | null>(null);
-  const ensureDeviceReadyPromiseRef = useRef<Promise<boolean> | null>(null);
-  const ensureDeviceReadyDeviceIdRef = useRef<string | null>(null);
   const isConnectingRef = useRef(false);
   const hasAutoConnectedRef = useRef(false);
   const lastConnectedAccountRef = useRef<string | null>(null);
@@ -130,9 +110,6 @@ export const useHardwareWalletStateManager = () => {
     () => ({
       adapterRef,
       abortControllerRef,
-      connectingPromiseRef,
-      ensureDeviceReadyPromiseRef,
-      ensureDeviceReadyDeviceIdRef,
       isConnectingRef,
       hasAutoConnectedRef,
       lastConnectedAccountRef,
@@ -174,11 +151,8 @@ export const useHardwareWalletStateManager = () => {
        * Resets connection-related refs to their initial state
        */
       resetConnectionRefs: () => {
-        connectingPromiseRef.current = null;
-        ensureDeviceReadyPromiseRef.current = null;
-        ensureDeviceReadyDeviceIdRef.current = null;
-        currentConnectionIdRef.current = null;
         isConnectingRef.current = false;
+        currentConnectionIdRef.current = null;
       },
     }),
     [setDeviceId, setHardwareConnectionPermissionState, setConnectionState],

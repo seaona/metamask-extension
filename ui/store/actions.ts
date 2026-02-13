@@ -21,6 +21,7 @@ import {
 import {
   AssetsContractController,
   BalanceMap,
+  Collection,
   Nft,
   Token,
 } from '@metamask/assets-controllers';
@@ -3497,6 +3498,18 @@ export async function checkAndUpdateSingleNftOwnershipStatus(
   ]);
 }
 
+export async function getNFTContractInfo(
+  contractAddresses: string[],
+  chainId: string,
+): Promise<{
+  collections: Collection[];
+}> {
+  return await submitRequestToBackground('getNFTContractInfo', [
+    contractAddresses,
+    chainId,
+  ]);
+}
+
 // When we upgrade to TypeScript 4.5 this is part of the language. It will get
 // the underlying type of a Promise generic type. So Awaited<Promise<void>> is
 // void.
@@ -4647,20 +4660,17 @@ export function resetOnboardingAction() {
 }
 
 /**
- * Reset the wallet.
+ * Reset the wallet
  *
- * @param restoreOnly - Whether to only restore the vault, without resetting the onboarding. @default false
  * @returns void
  */
-export function resetWallet(restoreOnly = false) {
+export function resetWallet() {
   return async (dispatch: MetaMaskReduxDispatch) => {
     try {
-      if (!restoreOnly) {
-        // reset onboarding
-        await dispatch(resetOnboarding());
-      }
+      // reset onboarding
+      await dispatch(resetOnboarding());
 
-      await submitRequestToBackground('resetWallet', [restoreOnly]);
+      await submitRequestToBackground('resetWallet');
 
       // force update metamask state
       await forceUpdateMetamaskState(dispatch);
@@ -8131,16 +8141,4 @@ export async function saveClaimDraft(
  */
 export async function deleteClaimDraft(draftId: string): Promise<void> {
   return await submitRequestToBackground<void>('deleteClaimDraft', [draftId]);
-}
-
-/**
- * Gets the app name and version from the connected Ledger device.
- *
- * @returns A promise that resolves to an object containing the app name and version.
- */
-export async function getAppNameAndVersion(): Promise<{
-  appName: string;
-  version: string;
-}> {
-  return await submitRequestToBackground('getAppNameAndVersion');
 }

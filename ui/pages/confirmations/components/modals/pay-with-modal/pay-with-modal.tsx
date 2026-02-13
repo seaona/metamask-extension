@@ -56,7 +56,7 @@ export const PayWithModal = ({ isOpen, onClose }: PayWithModalProps) => {
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} isClosedOnOutsideClick={false}>
+    <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader onClose={handleClose}>

@@ -16,6 +16,10 @@ import type MetamaskController from '../metamask-controller';
 
 const JSON_RPC_VERSION = '2.0' as const;
 
+const SIXTEEN_SECONDS_AS_MILLISECONDS = 16000;
+
+type Timer = ReturnType<typeof setTimeout>;
+
 /**
  * A JSON-RPC 2.0 request object, types with our request types.
  */
@@ -119,6 +123,7 @@ export class MetaRPCClient<Api extends FunctionRegistry<Api>> {
     {
       resolve: (value: Awaited<ReturnType<Api[keyof Api]>>) => void;
       reject: (error: Error) => void;
+      timer?: Timer;
     }
   >();
 
@@ -177,7 +182,14 @@ export class MetaRPCClient<Api extends FunctionRegistry<Api>> {
   async send(payload: JsonRpcApiRequest<Api>) {
     return new Promise<Awaited<ReturnType<Api[typeof payload.method]>>>(
       (resolve, reject) => {
-        this.requests.set(payload.id, { resolve, reject });
+        let timer: Timer | undefined;
+        if (payload.method === 'getState') {
+          timer = setTimeout(() => {
+            this.requests.delete(payload.id);
+            reject(new Error(`Background 'getState' call exceeded timeout`));
+          }, SIXTEEN_SECONDS_AS_MILLISECONDS);
+        }
+        this.requests.set(payload.id, { resolve, reject, timer });
         this.#connectionStream.write(payload);
       },
     );
@@ -214,7 +226,8 @@ export class MetaRPCClient<Api extends FunctionRegistry<Api>> {
     this.#connectionStream.off('end', this.close);
 
     // fail all unfinished requests
-    this.requests.forEach(({ reject }) => {
+    this.requests.forEach(({ reject, timer }) => {
+      clearTimeout(timer);
       reject(new DisconnectError(reason));
     });
     this.requests.clear();
@@ -264,12 +277,14 @@ export class MetaRPCClient<Api extends FunctionRegistry<Api>> {
       e.stack = stack;
       if (request) {
         requests.delete(id);
+        clearTimeout(request.timer);
         request.reject(e);
       } else {
         this.#uncaughtErrorChannel.emit('error', e);
       }
     } else if (request) {
       requests.delete(id);
+      clearTimeout(request.timer);
       request.resolve(response.result);
     }
   };

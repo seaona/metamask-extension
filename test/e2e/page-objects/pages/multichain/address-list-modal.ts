@@ -88,7 +88,7 @@ class AddressListModal {
   }
 
   async goBack(): Promise<void> {
-    await this.driver.clickElementAndWaitToDisappear(this.backButton);
+    await this.driver.clickElement(this.backButton);
   }
 }
 
