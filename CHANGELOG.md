@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [13.18.1]
 
+### Added
+
+- Nothing truly new, but a synthesis of 13.6.4, plus the unreleased 13.17.0 and 13.18.0
+
 ## [13.18.0]
 
 ### Added
