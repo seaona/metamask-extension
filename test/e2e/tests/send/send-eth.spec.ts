@@ -38,7 +38,7 @@ import { withTransactionEnvelopeTypeFixtures } from '../confirmations/helpers';
 
 const DEFAULT_RECIPIENT = '0x2f318C334780961FB129D2a6c30D0763d9a5C970';
 
-describe('Send ETH', function () {
+describe('Send ETH TEST', function () {
   describe('Wallet initiated', function () {
     it('sends ETH', async function () {
       await withTransactionEnvelopeTypeFixtures(
